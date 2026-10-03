@@ -51,11 +51,21 @@ export const updateProfile = async (req, res, next) => {
       "styles",
     ];
 
+    // Filter only allowed keys and trim string values
     const updates = Object.fromEntries(
-      Object.entries(req.body || {}).filter(([key]) => allowed.includes(key)),
+      Object.entries(req.body || {})
+        .filter(([key]) => allowed.includes(key))
+        .map(([key, value]) => [
+          key,
+          typeof value === "string" ? value.trim() : value,
+        ]),
     );
 
-    if (updates.name !== undefined && !String(updates.name).trim()) {
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: "No valid fields provided to update." });
+    }
+
+    if (updates.name !== undefined && !updates.name) {
       return res.status(400).json({ message: "Name cannot be empty." });
     }
 
