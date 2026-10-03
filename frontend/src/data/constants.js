@@ -9,7 +9,7 @@ const U = (id, w = 540, h = 680) =>
 export const IMG = {
   // ── Tops ──────────────────────────────────────────────────────────────────
   'white-shirt':    U('photo-1596755094514-f87e34085b2c'),  // crisp white dress shirt
-  'black-polo':     U('photo-1503341504253-dff4815485f1'),  // black polo on model
+  'black-polo':     U('photo-1581655353564-df123a1eb820'),  // black polo t-shirt flat lay (no human)
   'beige-sweater':  U('photo-1576566588028-4147f3842f27'),  // cosy beige knit sweater
   'green-shirt':    U('photo-1602810318383-e386cc2a3ccf'),  // olive green button-up
   'black-hoodie':   U('photo-1556821840-3a63f15732ce'),     // black pullover hoodie
@@ -26,7 +26,7 @@ export const IMG = {
   'black-blazer':   U('photo-1594938298603-c8148c4dae35'),  // fitted black suit blazer
   'leather-jacket': U('photo-1551028719-00167b16eac5'),     // black biker leather jacket
   'bomber-jacket':  U('photo-1545065118-2f47a4f9e3a7'),     // olive bomber jacket
-  'puffer-jacket':  U('photo-1607345366928-199ea26cfe3e'),  // white down puffer jacket
+  'puffer-jacket':  U('photo-1545594861-3bef43ff2fc8'),     // black quilted down puffer jacket
 
   // ── Shoes ─────────────────────────────────────────────────────────────────
   'white-sneakers': U('photo-1600269452121-4f2416e55c28'),  // white leather sneakers
@@ -86,7 +86,7 @@ export const IMG = {
 
   // ── UI Hero / Auth Images ─────────────────────────────────────────────────
   'hero-home':      '/img/hero-luxury.jpg',
-  'hero-wardrobe':  U('photo-1558618666-fcd25c85cd64', 1400, 700),      // colorful open wardrobe
+  'hero-wardrobe':  '/img/hero-wardrobe-luxury.jpg',
   'hero-profile':   U('photo-1558769132-cb1aea458c5e', 1400, 700),      // luxury boutique wardrobe room
   'auth-login':     U('photo-1483985988355-763728e1935b', 900, 1200),   // women fashion shopping
   'auth-signup':    U('photo-1469334031218-e382a71b716b', 900, 1200),   // luxury fashion editorial
