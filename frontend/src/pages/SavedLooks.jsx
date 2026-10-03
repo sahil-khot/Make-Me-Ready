@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Hero, Tabs } from "../ui.jsx";
 import LookCard from "./LookCard.jsx";
 import { useStore } from "../store.jsx";
+import { IMG } from "../data/constants.js";
 const m = {
   Casual: "Casual",
   Formal: "Formal",
@@ -26,7 +27,7 @@ export default function SavedLooks() {
   return (
     <div>
       <Hero
-        img="/img/hero-wardrobe.jpg"
+        img={IMG["hero-wardrobe"]}
         kicker="SAVED LOOKS"
         script={
           <>

@@ -2,6 +2,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Hero, Section, OccCard, Icon } from "../ui.jsx";
 import { useStore } from "../store.jsx";
+import { IMG } from "../data/constants.js";
 const qa = [
   ["Upload Clothes", "To My Wardrobe", "Shirt", "/wardrobe"],
   ["Get Outfit", "For an Occasion", "Shirt", "/create-outfit"],
@@ -15,7 +16,7 @@ export default function Home() {
   return (
     <div>
       <Hero
-        img="/img/hero-home.jpg"
+        img={IMG["hero-home"]}
         script={
           <>
             Your Wardrobe.

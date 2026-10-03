@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Section, Heart, Modal } from "../ui.jsx";
 import { useStore } from "../store.jsx";
+import { IMG, getImg } from "../data/constants.js";
 const P = ({ p, add, i }) => (
   <div className="card overflow-hidden hover:-translate-y-1 animate-up">
     <div className="group tile relative aspect-[4/3.2] overflow-hidden">
@@ -62,8 +63,8 @@ export default function Shopping() {
     <div>
       <div className="relative overflow-hidden rounded-3xl border border-line min-h-[300px] flex items-center">
         <img
-          src="/img/leather-jacket.jpg"
-          alt=""
+          src={IMG["leather-jacket"]}
+          alt="Premium Leather Jacket"
           className="absolute inset-0 w-full h-full object-cover object-center opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/80 to-transparent" />
@@ -106,7 +107,7 @@ export default function Shopping() {
               className={`group tile relative aspect-[3/4] rounded-xl overflow-hidden border ${cat === n ? "border-acc" : "border-line"}`}
             >
               <img
-                src={`/img/${im}.jpg`}
+                src={IMG[im] || getImg(im)}
                 alt={n}
                 className="w-full h-full object-cover"
               />
@@ -175,7 +176,7 @@ export default function Shopping() {
             className="relative overflow-hidden rounded-2xl border border-line p-6 min-h-[170px] bg-gradient-to-r from-acc/20 to-card"
           >
             <img
-              src={`/img/${im}.jpg`}
+              src={IMG[im] || getImg(im)}
               alt=""
               className="absolute right-0 inset-y-0 w-1/2 h-full object-cover opacity-70"
             />

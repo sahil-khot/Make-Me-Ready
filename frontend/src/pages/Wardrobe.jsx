@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Plus, Upload } from "lucide-react";
 import { Hero, Section, Heart, Modal, Tabs } from "../ui.jsx";
 import { useStore } from "../store.jsx";
+import { IMG } from "../data/constants.js";
 export const WCard = ({ w, on, onClick }) => (
   <div
     onClick={onClick}
@@ -42,7 +43,7 @@ export default function Wardrobe() {
   return (
     <div>
       <Hero
-        img="/img/hero-wardrobe.jpg"
+        img={IMG["hero-wardrobe"]}
         script={
           <>
             Your Style.

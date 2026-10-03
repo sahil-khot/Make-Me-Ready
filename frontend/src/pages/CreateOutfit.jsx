@@ -4,6 +4,7 @@ import { RefreshCw, ArrowRight, Plus } from "lucide-react";
 import { Hero, Heart, OccCard, Modal } from "../ui.jsx";
 import { WCard } from "./Wardrobe.jsx";
 import { useStore } from "../store.jsx";
+import { IMG } from "../data/constants.js";
 const Step = ({ n, t, s, right }) => (
   <div className="flex items-start justify-between gap-4 mb-5">
     <div className="flex gap-4">
@@ -48,7 +49,7 @@ export default function CreateOutfit() {
   return (
     <div>
       <Hero
-        img="/img/hero-wardrobe.jpg"
+        img={IMG["hero-wardrobe"]}
         script={
           <>
             Your Wardrobe.

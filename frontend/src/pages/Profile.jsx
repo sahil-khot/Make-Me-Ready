@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { IMG } from "../data/constants.js";
 import {
   Camera,
   Pencil,
@@ -162,14 +163,14 @@ export default function Profile() {
       <div className="card mt-6 overflow-hidden">
         <div className="relative p-6 flex items-center gap-6">
           <img
-            src="/img/hero-profile.jpg"
+            src={IMG["hero-profile"]}
             alt=""
             className="absolute inset-y-0 right-0 w-2/3 h-full object-cover opacity-70"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-card via-card/90 to-transparent" />
           <div className="relative">
             <img
-              src="/img/avatar.jpg"
+              src={IMG.avatar}
               alt={name || "User"}
               className="w-28 h-28 rounded-full object-cover border-2 border-acc"
             />
@@ -296,7 +297,7 @@ export default function Profile() {
                   className="group tile relative aspect-[4/4.3] rounded-2xl overflow-hidden border border-line hover:-translate-y-1 transition"
                 >
                   <img
-                    src={wardrobe.find((w) => w.cat === c)?.img || "/img/hero-wardrobe.jpg"}
+                    src={wardrobe.find((w) => w.cat === c)?.img || IMG["hero-wardrobe"]}
                     alt={c}
                     className="w-full h-full object-cover"
                   />
@@ -343,7 +344,7 @@ export default function Profile() {
                 recentActivity.map(([a, b, c, l]) => (
                   <div key={a} className="flex items-center gap-3 py-2.5 text-sm border-b border-line last:border-0">
                     <img
-                      src={l?.img || "/img/hero-wardrobe.jpg"}
+                      src={l?.img || IMG["hero-wardrobe"]}
                       alt=""
                       className="w-11 h-11 rounded-lg object-cover shrink-0"
                     />

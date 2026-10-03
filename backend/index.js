@@ -9,7 +9,7 @@ import { connectDB } from "./config/db.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import apiRoutes from "./routes/index.js";
 import { sendImage } from "./services/imageService.js";
-import { seedCatalog, seedImages } from "./services/seedService.js";
+import { seedCatalog } from "./services/seedService.js";
 
 const app = express();
 let databaseReady = false;
@@ -63,10 +63,9 @@ const initDatabase = async () => {
     await connectDB();
     databaseReady = true;
     databaseMessage = "MongoDB connected.";
-    console.log("Database connected. Seeding images and catalog...");
-    await seedImages();
+    console.log("Database connected. Seeding catalog…");
     await seedCatalog();
-    console.log("Catalog and images are seeded and ready.");
+    console.log("✓ Catalog seeded and ready.");
   } catch (error) {
     databaseReady = false;
     databaseMessage = `MongoDB connection failed: ${error.message}`;

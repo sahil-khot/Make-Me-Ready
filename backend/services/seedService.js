@@ -1,77 +1,120 @@
-import { createReadStream, readdirSync, existsSync } from "node:fs";
-import { join } from "node:path";
-import { fileURLToPath } from "node:url";
+/**
+ * seedService.js
+ *
+ * Populates MongoDB Atlas with dedicated collections:
+ * - occasions        (Occasion model)
+ * - wardrobes        (CatalogWardrobe model)
+ * - looks            (Look model)
+ * - products         (Product model)
+ * - configs          (AppConfig model)
+ * - catalogitems     (CatalogItem model - backward compatibility)
+ *
+ * Uses replaceOne + upsert so every startup refreshes Unsplash image URLs
+ * and keeps Atlas collections always up to date.
+ */
 import mongoose from "mongoose";
 import {
-  brands,
-  cats,
-  colors,
-  lookTabs,
-  looks,
-  occasions,
-  products,
-  shopCats,
-  styles,
-  wardrobe,
+  brands, cats, colors, lookTabs, looks, occasions,
+  products, shopCats, styles, wardrobe,
 } from "../../frontend/src/data.js";
-import { CatalogItem } from "../models/index.js";
-import { getGridFSBucket } from "../config/db.js";
-
-const imageDirectory = fileURLToPath(
-  new URL("../../frontend/public/img/", import.meta.url),
-);
-
-export async function seedImages() {
-  if (!mongoose.connection?.db) return;
-  const bucket = getGridFSBucket();
-  const collection = mongoose.connection.db.collection("images.files");
-
-  if (!existsSync(imageDirectory)) return;
-
-  for (const filename of readdirSync(imageDirectory)) {
-    if (!/\.(jpe?g|png|webp|gif)$/i.test(filename)) continue;
-    const exists = await collection.findOne(
-      { filename },
-      { projection: { _id: 1 } },
-    );
-    if (exists) continue;
-
-    await new Promise((resolve, reject) => {
-      const upload = bucket.openUploadStream(filename, {
-        contentType: `image/${filename.split(".").pop().replace("jpg", "jpeg")}`,
-      });
-      upload.on("error", reject);
-      upload.on("finish", resolve);
-      createReadStream(join(imageDirectory, filename)).pipe(upload);
-    });
-  }
-}
+import {
+  CatalogItem, Occasion, CatalogWardrobe, Look, Product, AppConfig,
+} from "../models/index.js";
 
 export async function seedCatalog() {
   if (!mongoose.connection?.db) return;
-  const records = [
-    ...occasions.map((data) => ({ type: "occasions", key: data.id, data })),
-    ...wardrobe.map((data) => ({ type: "wardrobe", key: data.id, data })),
-    ...looks.map((data) => ({ type: "looks", key: data.id, data })),
-    ...products.map((data) => ({ type: "products", key: data.id, data })),
-    {
-      type: "config",
-      key: "main",
-      data: { brands, cats, colors, lookTabs, shopCats, styles },
-    },
-  ];
 
-  await CatalogItem.bulkWrite(
-    records.map(({ type, key, data }) => ({
-      updateOne: {
-        filter: { type, key },
-        update: { $setOnInsert: { type, key, data } },
-        upsert: true,
+  try {
+    // 1. Seed dedicated Occasions collection
+    await Occasion.bulkWrite(
+      occasions.map((item) => ({
+        replaceOne: {
+          filter: { id: item.id },
+          replacement: { ...item, updatedAt: new Date() },
+          upsert: true,
+        },
+      })),
+    );
+
+    // 2. Seed dedicated Wardrobes collection
+    await CatalogWardrobe.bulkWrite(
+      wardrobe.map((item) => ({
+        replaceOne: {
+          filter: { id: item.id },
+          replacement: { ...item, updatedAt: new Date() },
+          upsert: true,
+        },
+      })),
+    );
+
+    // 3. Seed dedicated Looks collection
+    await Look.bulkWrite(
+      looks.map((item) => ({
+        replaceOne: {
+          filter: { id: item.id },
+          replacement: { ...item, updatedAt: new Date() },
+          upsert: true,
+        },
+      })),
+    );
+
+    // 4. Seed dedicated Products collection
+    await Product.bulkWrite(
+      products.map((item) => ({
+        replaceOne: {
+          filter: { id: item.id },
+          replacement: { ...item, updatedAt: new Date() },
+          upsert: true,
+        },
+      })),
+    );
+
+    // 5. Seed dedicated AppConfig collection
+    await AppConfig.findOneAndUpdate(
+      { key: "main" },
+      {
+        key: "main",
+        brands,
+        cats,
+        colors,
+        lookTabs,
+        shopCats,
+        styles,
+        updatedAt: new Date(),
       },
-    })),
-  );
+      { upsert: true, returnDocument: "after" },
+    );
+
+    // 6. Also keep polymorphic catalogitems collection in sync for legacy compatibility
+    const records = [
+      ...occasions.map((data) => ({ type: "occasions", key: data.id, data })),
+      ...wardrobe.map((data)  => ({ type: "wardrobe",  key: data.id, data })),
+      ...looks.map((data)     => ({ type: "looks",     key: data.id, data })),
+      ...products.map((data)  => ({ type: "products",  key: data.id, data })),
+      {
+        type: "config",
+        key: "main",
+        data: { brands, cats, colors, lookTabs, shopCats, styles },
+      },
+    ];
+
+    await CatalogItem.bulkWrite(
+      records.map(({ type, key, data }) => ({
+        replaceOne: {
+          filter: { type, key },
+          replacement: { type, key, data, updatedAt: new Date() },
+          upsert: true,
+        },
+      })),
+    );
+
+    console.log(
+      `✓ Seeded MongoDB Atlas: ${occasions.length} occasions, ${wardrobe.length} wardrobes, ${looks.length} looks, ${products.length} products, and configs in dedicated collections.`,
+    );
+  } catch (error) {
+    console.error("Error seeding MongoDB Atlas:", error.message);
+  }
 }
 
-export function getImageBucket() {
-  return getGridFSBucket();
-}
+// Legacy stub
+export async function seedImages() {}

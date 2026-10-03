@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Hero, Section, OccCard, Tabs } from "../ui.jsx";
 import { useStore } from "../store.jsx";
+import { IMG } from "../data/constants.js";
 const map = {
   Personal: "Personal",
   Professional: "Special",
@@ -18,7 +19,7 @@ export default function Occasions() {
   return (
     <div>
       <Hero
-        img="/img/hero-wardrobe.jpg"
+        img={IMG["hero-wardrobe"]}
         kicker="OCCASIONS"
         script={
           <>

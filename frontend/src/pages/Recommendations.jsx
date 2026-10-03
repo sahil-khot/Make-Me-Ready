@@ -3,6 +3,7 @@ import { Sparkles, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Hero, Section, Heart, Tabs, Modal } from "../ui.jsx";
 import { useStore } from "../store.jsx";
+import { IMG } from "../data/constants.js";
 const match = [95, 92, 90, 88];
 const tabs = [
   "For You",
@@ -34,7 +35,7 @@ export default function Recommendations() {
   return (
     <div>
       <Hero
-        img="/img/hero-wardrobe.jpg"
+        img={IMG["hero-wardrobe"]}
         kicker="RECOMMENDATIONS"
         script={
           <>
@@ -169,7 +170,7 @@ export default function Recommendations() {
               <span key={x} className="flex items-center gap-3">
                 <div className="card w-28 overflow-hidden">
                   <img
-                    src={by[x]?.img || "/img/hero-wardrobe.jpg"}
+                    src={by[x]?.img || IMG["hero-wardrobe"]}
                     alt={by[x]?.name || "Item"}
                     className="aspect-square object-cover"
                   />

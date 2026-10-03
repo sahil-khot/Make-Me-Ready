@@ -3,6 +3,7 @@ import { Shirt, Check } from "lucide-react";
 import { Heart } from "../common/Heart.jsx";
 import { Modal } from "../common/Modal.jsx";
 import { useStore } from "../../context/StoreContext.jsx";
+import { IMG } from "../../data/constants.js";
 
 export function LookCard({ l, saved }) {
   const { toggleSave, saved: sv = [], catalog } = useStore();
@@ -25,7 +26,7 @@ export function LookCard({ l, saved }) {
           {l.items.map((i) => (
             <img
               key={i}
-              src={by[i]?.img || "/img/hero-wardrobe.jpg"}
+              src={by[i]?.img || IMG["hero-wardrobe"]}
               alt={by[i]?.name || "Item"}
               className="flex-1 min-h-0 w-full rounded-lg object-cover bg-card2"
             />
@@ -84,7 +85,7 @@ export function LookCard({ l, saved }) {
           {l.items.map((i) => (
             <div key={i}>
               <img
-                src={by[i]?.img || "/img/hero-wardrobe.jpg"}
+                src={by[i]?.img || IMG["hero-wardrobe"]}
                 alt=""
                 className="aspect-square rounded-lg object-cover"
               />

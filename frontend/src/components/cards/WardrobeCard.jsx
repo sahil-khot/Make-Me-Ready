@@ -1,4 +1,5 @@
 import { Heart } from "../common/Heart.jsx";
+import { IMG } from "../../data/constants.js";
 
 export const WardrobeCard = ({ w, on, onClick }) => (
   <div
@@ -10,7 +11,7 @@ export const WardrobeCard = ({ w, on, onClick }) => (
     }`}
   >
     <img
-      src={w.img || "/img/hero-wardrobe.jpg"}
+      src={w.img || IMG["hero-wardrobe"]}
       alt={w.name}
       className="w-full h-full object-cover"
     />

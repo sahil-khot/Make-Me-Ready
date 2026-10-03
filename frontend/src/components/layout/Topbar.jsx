@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Menu, Search, Bell, ChevronDown } from "lucide-react";
 import { useStore } from "../../context/StoreContext.jsx";
 import { occasions } from "../../data.js";
+import { IMG } from "../../data/constants.js";
 
 export function Topbar({ menu }) {
   const { user, logout } = useStore();
@@ -87,7 +88,7 @@ export function Topbar({ menu }) {
             className="flex items-center gap-2.5"
           >
             <img
-              src="/img/avatar.jpg"
+              src={IMG.avatar}
               alt=""
               className="w-10 h-10 rounded-full object-cover border border-line2"
             />
