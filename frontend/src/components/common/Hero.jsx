@@ -7,8 +7,7 @@ export const Hero = ({
   script,
   h = "min-h-[260px]",
 }) => {
-  const resolvedImg =
-    !img || img.startsWith("/img/") ? IMG["hero-wardrobe"] : img;
+  const resolvedImg = img || IMG["hero-wardrobe"];
 
   return (
     <div

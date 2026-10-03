@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IMG } from "../data/constants.js";
 import {
   Camera,
@@ -44,6 +44,14 @@ const Row = ({ k, v }) => (
   </div>
 );
 
+const AVATAR_PRESETS = [
+  IMG.avatar,
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&h=300&q=80",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&h=300&q=80",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&h=300&q=80",
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&h=300&q=80",
+];
+
 const Tag = ({ t }) => (
   <span className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-line">
     {t}
@@ -68,6 +76,10 @@ export default function Profile() {
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
+  const fileInputRef = useRef(null);
+  const [photoModal, setPhotoModal] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
   // Keep form in sync when user object changes (e.g. after state sync from server)
   useEffect(() => {
     if (user?.name)     setName(user.name);
@@ -77,6 +89,63 @@ export default function Profile() {
     if (user?.height)   setHeight(user.height);
     if (user?.weight)   setWeight(user.weight);
   }, [user]);
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadingPhoto(true);
+    setError("");
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const img = new Image();
+        img.onload = async () => {
+          const canvas = document.createElement("canvas");
+          const size = Math.min(img.width, img.height);
+          canvas.width = 320;
+          canvas.height = 320;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(
+            img,
+            (img.width - size) / 2,
+            (img.height - size) / 2,
+            size,
+            size,
+            0,
+            0,
+            320,
+            320,
+          );
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
+          await updateProfile({ avatar: dataUrl });
+          setSuccessMsg("Profile photo updated successfully!");
+          setTimeout(() => setSuccessMsg(""), 2200);
+          setPhotoModal(false);
+          setUploadingPhoto(false);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setError("Failed to upload photo: " + err.message);
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleSelectPreset = async (url) => {
+    setUploadingPhoto(true);
+    try {
+      await updateProfile({ avatar: url });
+      setSuccessMsg("Profile photo updated successfully!");
+      setTimeout(() => setSuccessMsg(""), 2200);
+      setPhotoModal(false);
+    } catch (err) {
+      setError("Failed to set avatar.");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
 
   // Resolve user's favourite colors: user.colors is ["Black","White",...],
   // catalog.colors is [["Black","#000"],["White","#d8d8d8"],...]. Cross-reference to get hex.
@@ -168,15 +237,23 @@ export default function Profile() {
             className="absolute inset-y-0 right-0 w-2/3 h-full object-cover opacity-70"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-card via-card/90 to-transparent" />
-          <div className="relative">
+          <div className="relative group cursor-pointer" onClick={() => setPhotoModal(true)}>
             <img
-              src={IMG.avatar}
+              src={user?.avatar || IMG.avatar}
               alt={name || "User"}
-              className="w-28 h-28 rounded-full object-cover border-2 border-acc"
+              className="w-28 h-28 rounded-full object-cover border-2 border-acc shadow-[0_0_24px_rgba(255,159,47,.25)] group-hover:brightness-90 transition"
             />
-            <span className="absolute bottom-0 right-0 grid place-items-center w-8 h-8 rounded-full bg-card2 border border-line2">
-              <Camera size={14} />
-            </span>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setPhotoModal(true);
+              }}
+              title="Set Profile Photo"
+              className="absolute bottom-0 right-0 grid place-items-center w-9 h-9 rounded-full bg-acc text-black border-2 border-bg shadow hover:scale-110 transition cursor-pointer"
+            >
+              <Camera size={16} />
+            </button>
           </div>
           <div className="relative">
             <h2 className="font-serif font-semibold text-3xl">{name || "Your Style"}</h2>
@@ -486,6 +563,74 @@ export default function Profile() {
             </button>
           </div>
         </form>
+      </Modal>
+
+      {/* Hidden file input for photo upload */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileUpload}
+      />
+
+      {/* Set Profile Photo Modal */}
+      <Modal
+        open={photoModal}
+        onClose={() => setPhotoModal(false)}
+        title="Set Profile Photo"
+      >
+        <div className="space-y-6">
+          <div className="text-center">
+            <div className="relative inline-block">
+              <img
+                src={user?.avatar || IMG.avatar}
+                alt="Current profile"
+                className="w-28 h-28 rounded-full object-cover border-2 border-acc shadow-lg mx-auto"
+              />
+              {uploadingPhoto && (
+                <div className="absolute inset-0 rounded-full bg-black/70 grid place-items-center text-xs text-acc font-medium">
+                  Updating…
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-mute mt-3">
+              Upload a custom photo or pick a luxury style avatar
+            </p>
+          </div>
+
+          <div>
+            <button
+              type="button"
+              disabled={uploadingPhoto}
+              onClick={() => fileInputRef.current?.click()}
+              className="btn-p w-full h-12 flex items-center justify-center gap-2"
+            >
+              <Camera size={18} />
+              Upload Photo from Device
+            </button>
+          </div>
+
+          <div>
+            <div className="text-xs text-mute font-medium mb-3">Or choose a style avatar:</div>
+            <div className="flex justify-center gap-3">
+              {AVATAR_PRESETS.map((p, idx) => (
+                <button
+                  type="button"
+                  key={idx}
+                  onClick={() => handleSelectPreset(p)}
+                  className="relative group p-0.5 rounded-full hover:scale-110 transition border-2 hover:border-acc border-transparent"
+                >
+                  <img
+                    src={p}
+                    alt={`Avatar ${idx + 1}`}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </Modal>
     </div>
   );

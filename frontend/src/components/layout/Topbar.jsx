@@ -88,8 +88,8 @@ export function Topbar({ menu }) {
             className="flex items-center gap-2.5"
           >
             <img
-              src={IMG.avatar}
-              alt=""
+              src={user?.avatar || IMG.avatar}
+              alt={displayName}
               className="w-10 h-10 rounded-full object-cover border border-line2"
             />
             <span className="hidden sm:block text-sm font-medium">

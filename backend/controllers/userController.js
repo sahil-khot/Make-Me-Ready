@@ -47,6 +47,7 @@ export const updateProfile = async (req, res, next) => {
       "weight",
       "body",
       "location",
+      "avatar",
       "colors",
       "styles",
     ];

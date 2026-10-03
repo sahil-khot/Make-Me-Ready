@@ -50,16 +50,18 @@ export const IMG = {
   'pendant':        U('photo-1599643478518-a784e5dc4c8f', 500, 500),  // minimal pendant
 
   // ── Occasions ─────────────────────────────────────────────────────────────
-  'wedding':        U('photo-1519741497674-611481863552', 700, 520),  // elegant wedding attire
-  'party':          U('photo-1516450360452-9312f5e86fc7', 700, 520),  // chic evening party wear
-  'date':           U('photo-1516914657933-eed4b3728c78', 700, 520),  // stylish date night outfit
-  'office':         U('photo-1507679799987-c73779587ccf', 700, 520),  // professional business suit
+  'wedding':        '/img/occ-wedding.jpg',
+  'college':        '/img/occ-college.jpg',
+  'office':         '/img/occ-office.jpg',
+  'date':           '/img/occ-date.jpg',
+  'party':          '/img/occ-party.jpg',
+  'travel':         '/img/occ-travel.jpg',
   'casual':         U('photo-1523380744952-b8ecd94f8199', 700, 520),  // relaxed casual day outfit
   'gym':            U('photo-1534438327276-14e5300c3a48', 700, 520),  // athletic fitness performance wear
   'brunch':         U('photo-1561758033-7e924f619b47', 700, 520),  // brunch cafe aesthetic outfit
   'family':         U('photo-1583391733956-3750e0ff4e8b', 700, 520),  // rich traditional family attire
   'beach':          U('photo-1507525428034-b723cf961d3e', 700, 520),  // breezy beach resort wear
-  'mountain':       U('photo-1464822759023-fed622ff2c3b', 700, 520),  // outdoor mountain expedition jacket
+  'mountain':       '/img/occ-travel.jpg',
   'city':           U('photo-1477959858617-67f85cf4f1df', 700, 520),  // modern urban street style
   'international':  U('photo-1436491865332-7a61a109cc05', 700, 520),  // airport travel fashion
   'summer':         U('photo-1537640538966-79f369143f8f', 700, 520),  // breathable summer style
@@ -67,7 +69,6 @@ export const IMG = {
   'winter':         U('photo-1418985991508-e47386d96a71', 700, 520),  // warm layered winter outerwear
   'festive':        U('photo-1514222709107-a180c68d72b4', 700, 520),  // festive celebration attire
   'interview':      U('photo-1487222477894-8943e31ef7b2', 700, 520),  // sharp corporate interview attire
-  'college':        U('photo-1529156069898-49953e39b3ac', 700, 520),  // smart casual campus look
   'concert':        U('photo-1540039155733-5bb30b53aa14', 700, 520),  // edgy music concert outfit
   'religious':      U('photo-1517483000871-1dbf64a6e1c6', 700, 520),  // traditional modest ceremonial attire
 
@@ -84,7 +85,7 @@ export const IMG = {
   'necklace':         U('photo-1515562141207-7a88fb7ce338', 500, 500),  // unique diamond & gemstone necklace
 
   // ── UI Hero / Auth Images ─────────────────────────────────────────────────
-  'hero-home':      U('photo-1490481651871-ab68de25d43d', 1400, 700),   // elegant fashion store
+  'hero-home':      '/img/hero-luxury.jpg',
   'hero-wardrobe':  U('photo-1558618666-fcd25c85cd64', 1400, 700),      // colorful open wardrobe
   'hero-profile':   U('photo-1558769132-cb1aea458c5e', 1400, 700),      // luxury boutique wardrobe room
   'auth-login':     U('photo-1483985988355-763728e1935b', 900, 1200),   // women fashion shopping
@@ -105,9 +106,11 @@ export const occ = (id, t, s, g) => ({ id, title: t, sub: s, group: g, img: I(id
 
 export const occasions = [
   occ('wedding',     'Wedding',            'Elegant & Traditional',   'Popular'),
-  occ('party',       'Party',              'Bold & Trendy',            'Popular'),
-  occ('date',        'Date',               'Stylish & Confident',      'Popular'),
+  occ('college',     'College',            'Casual & Comfortable',    'Popular'),
   occ('office',      'Office',             'Formal & Professional',    'Popular'),
+  occ('date',        'Date',               'Stylish & Trendy',         'Popular'),
+  occ('party',       'Party',              'Bold & Confident',         'Popular'),
+  occ('travel',      'Travel',             'Comfy & Functional',       'Popular'),
   occ('casual',      'Casual Day',         'Comfortable & Effortless', 'Personal'),
   occ('gym',         'Workout / Gym',      'Sporty & Functional',      'Personal'),
   occ('brunch',      'Brunch',             'Chic & Relaxed',           'Personal'),
@@ -121,7 +124,6 @@ export const occasions = [
   occ('winter',      'Winter',             'Warm & Layered',           'Seasonal'),
   occ('festive',     'Festive (Diwali)',   'Traditional & Elegant',    'Seasonal'),
   occ('interview',   'Interview',          'Formal & Minimal',         'Special'),
-  occ('college',     'College',            'Casual & Smart',           'Special'),
   occ('concert',     'Concert',            'Edgy & Modern',            'Special'),
   occ('religious',   'Religious Visit',    'Traditional & Modest',     'Special'),
 ];

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Check, ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 export function OccCard({ o, onClick, on, small }) {
   const navigate = useNavigate();
@@ -8,10 +8,10 @@ export function OccCard({ o, onClick, on, small }) {
     <button
       type="button"
       onClick={() => (onClick ? onClick(o) : navigate("/create-outfit"))}
-      className={`group tile relative overflow-hidden rounded-2xl border text-left aspect-[4/5] transition duration-200 hover:-translate-y-1 ${
+      className={`group tile relative overflow-hidden rounded-2xl border text-left aspect-[4/5.2] transition duration-200 hover:-translate-y-1 ${
         on
           ? "border-acc shadow-[0_0_24px_rgba(255,159,47,.25)]"
-          : "border-line"
+          : "border-white/[.08] hover:border-amber-500/50"
       }`}
     >
       <img
@@ -19,20 +19,26 @@ export function OccCard({ o, onClick, on, small }) {
         alt={o.title}
         className="absolute inset-0 w-full h-full object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
       {on && (
         <span className="absolute top-2 right-2 grid place-items-center w-6 h-6 rounded-full bg-acc text-black">
           <Check size={14} />
         </span>
       )}
       <div className="absolute inset-x-0 bottom-0 p-3.5 flex items-end justify-between">
-        <div>
-          <div className="font-serif font-semibold">{o.title}</div>
-          {!small && <div className="text-[11px] text-mute">{o.sub}</div>}
+        <div className="min-w-0 pr-1">
+          <div className="font-serif font-bold text-[16px] text-white tracking-wide truncate">
+            {o.title}
+          </div>
+          {!small && (
+            <div className="text-[11px] text-stone-300 font-medium truncate mt-0.5">
+              {o.sub}
+            </div>
+          )}
         </div>
         {!small && (
-          <span className="grid place-items-center w-8 h-8 rounded-full border border-acc/60 text-acc bg-black/40">
-            <ArrowRight size={14} />
+          <span className="grid place-items-center w-7 h-7 rounded-full border border-white/20 text-amber-400 bg-black/60 shrink-0 group-hover:scale-110 group-hover:border-amber-500 transition">
+            <ArrowRight size={13} />
           </span>
         )}
       </div>

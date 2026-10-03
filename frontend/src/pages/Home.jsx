@@ -1,22 +1,58 @@
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { Hero, Section, OccCard, Icon } from "../ui.jsx";
+import { Hero, Icon, OccCard } from "../ui.jsx";
 import { useStore } from "../store.jsx";
 import { IMG } from "../data/constants.js";
-const qa = [
-  ["Upload Clothes", "To My Wardrobe", "Shirt", "/wardrobe"],
-  ["Get Outfit", "For an Occasion", "Shirt", "/create-outfit"],
-  ["Explore", "Recommendations", "Sparkles", "/recommendations"],
-  ["View", "Saved Looks", "Bookmark", "/saved-looks"],
+
+const popularOccasionIds = [
+  "wedding",
+  "college",
+  "office",
+  "date",
+  "party",
+  "travel",
 ];
+
+const qa = [
+  {
+    title: "Upload Clothes",
+    sub: "To My Wardrobe",
+    icon: "Shirt",
+    to: "/wardrobe",
+    featured: true,
+  },
+  {
+    title: "Get Outfit",
+    sub: "For an Occasion",
+    icon: "Shirt",
+    to: "/create-outfit",
+  },
+  {
+    title: "Explore",
+    sub: "Recommendations",
+    icon: "Sparkles",
+    to: "/recommendations",
+  },
+  {
+    title: "View",
+    sub: "Saved Looks",
+    icon: "Bookmark",
+    to: "/saved-looks",
+  },
+];
+
 export default function Home() {
   const { user, catalog } = useStore();
-  const { occasions } = catalog;
-  const nv = useNavigate();
+  const { occasions = [] } = catalog || {};
+  const navigate = useNavigate();
+
+  const firstName = user?.name ? user.name.split(" ")[0] : "Sahil";
+
   return (
-    <div>
+    <div className="space-y-10">
+      {/* Hero Banner */}
       <Hero
-        img={IMG["hero-home"]}
+        img={IMG["hero-home"] || "/img/hero-luxury.jpg"}
         script={
           <>
             Your Wardrobe.
@@ -26,62 +62,89 @@ export default function Home() {
             Every Occasion.
           </>
         }
-        h="min-h-[340px]"
+        h="min-h-[380px] md:min-h-[420px]"
       >
-        <p className="text-xl text-mute mb-1">
-          Hey {(user?.name || "there").split(" ")[0]},
+        <p className="text-lg md:text-xl text-stone-300 font-sans mb-1.5">
+          Hey {firstName},
         </p>
-        <h1 className="h1">
-          What’s the occasion <span className="text-acc block">today?</span>
+        <h1 className="font-serif font-bold text-4xl sm:text-5xl lg:text-[58px] leading-[1.08] text-white">
+          What’s the occasion{" "}
+          <span className="text-[#f59e0b] block mt-1">today?</span>
         </h1>
-        <p className="text-mute mt-4 mb-6 text-lg">
+        <p className="text-stone-300 mt-4 mb-7 text-base md:text-lg max-w-md leading-relaxed font-sans">
           Get personalized outfits from your wardrobe for any occasion —
           complete look, in seconds.
         </p>
         <button
-          onClick={() => nv("/create-outfit")}
-          className="btn-p h-14 px-8 text-base"
+          type="button"
+          onClick={() => navigate("/create-outfit")}
+          className="btn-p h-12 px-7 text-base bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-black font-semibold shadow-[0_0_25px_rgba(245,158,11,0.35)] flex items-center gap-2 hover:brightness-110 transition"
         >
           Create Outfit <ArrowRight size={18} />
         </button>
       </Hero>
-      <Section title="Popular Occasions" to="/occasions">
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-          {occasions
-            .filter((o) =>
-              [
-                "wedding",
-                "college",
-                "office",
-                "date",
-                "party",
-                "mountain",
-              ].includes(o.id),
-            )
-            .map((o) => (
-              <OccCard key={o.id} o={o} />
-            ))}
+
+      {/* Popular Occasions */}
+      <div>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="font-serif font-semibold text-2xl md:text-[28px] text-white tracking-wide">
+            Popular Occasions
+          </h2>
+          <Link
+            to="/occasions"
+            className="text-sm font-medium text-amber-500 hover:text-amber-400 transition flex items-center gap-1.5"
+          >
+            View All <ArrowRight size={15} />
+          </Link>
         </div>
-      </Section>
-      <Section title="Quick Actions" right={<i />}>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
+          {popularOccasionIds.map((id) => {
+            const found = occasions.find((o) => o.id === id);
+            const o = found || {
+              id,
+              title: id.charAt(0).toUpperCase() + id.slice(1),
+              sub: "Outfit Ready",
+              img: `/img/occ-${id}.jpg`,
+            };
+            return <OccCard key={o.id} o={o} />;
+          })}
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div>
+        <h2 className="font-serif font-semibold text-2xl md:text-[28px] text-white tracking-wide mb-5">
+          Quick Actions
+        </h2>
         <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          {qa.map(([a, b, ic, to], i) => (
+          {qa.map((item) => (
             <Link
-              key={to}
-              to={to}
-              className={`card flex items-center gap-4 p-4 hover:-translate-y-1 hover:border-acc/50 ${i == 0 ? "bg-gradient-to-br from-acc/25 to-card border-acc/30" : ""}`}
+              key={item.to}
+              to={item.to}
+              className={`flex items-center gap-4 p-4 rounded-2xl border transition duration-200 hover:-translate-y-1 ${
+                item.featured
+                  ? "bg-gradient-to-r from-[#2a1a0f] via-[#22150c] to-[#150d07] border-amber-600/50 shadow-[0_0_22px_rgba(217,119,6,0.18)] hover:border-amber-500"
+                  : "bg-[#121212]/90 border-white/[.08] hover:border-amber-500/40 hover:bg-[#161616]"
+              }`}
             >
-              <span className="grid place-items-center w-14 h-14 rounded-xl bg-white/5 border border-line2 text-acc">
-                <Icon n={ic} size={26} />
+              <span
+                className={`grid place-items-center w-14 h-14 rounded-2xl shrink-0 transition ${
+                  item.featured
+                    ? "bg-[#3d2413] border border-amber-600/40 text-amber-400"
+                    : "bg-white/[.04] border border-white/[.08] text-amber-400"
+                }`}
+              >
+                <Icon n={item.icon} size={24} />
               </span>
-              <div className="text-sm">
-                <div>{a}</div>
-                <div className="text-mute">{b}</div>
+              <div className="min-w-0">
+                <div className="font-medium text-white text-[15px]">{item.title}</div>
+                <div className="text-xs text-stone-400 mt-0.5">{item.sub}</div>
               </div>
             </Link>
           ))}
         </div>
-      </Section>
+      </div>
     </div>
   );
 }

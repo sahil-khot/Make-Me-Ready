@@ -53,6 +53,17 @@ export function Store({ children }) {
   const [cart, setCart] = useState(() => readCache("mmr_cart", []));
   const [added, setAdded] = useState(() => readCache("mmr_added", []));
   const [catalog, setCatalog] = useState(initialCatalog);
+  const [sidebarPos, setSidebarPos] = useState(
+    () => localStorage.getItem("mmr_sidebar_pos") || "left",
+  );
+
+  const toggleSidebarPos = () => {
+    setSidebarPos((prev) => {
+      const next = prev === "left" ? "right" : "left";
+      localStorage.setItem("mmr_sidebar_pos", next);
+      return next;
+    });
+  };
 
   // Fetch catalog from API on mount
   useEffect(() => {
@@ -164,17 +175,24 @@ export function Store({ children }) {
   };
 
   const updateProfile = async (profileData) => {
-    const result = await apiRequest("/api/profile", {
-      method: "PATCH",
-      body: profileData,
-      auth: true,
-    });
-    if (result?.user) {
-      setUser(result.user);
-      localStorage.setItem("makeMeReadyUser", JSON.stringify(result.user));
-      return result.user;
+    let updatedUser = { ...(user || {}), ...profileData };
+    try {
+      if (token) {
+        const result = await apiRequest("/api/profile", {
+          method: "PATCH",
+          body: profileData,
+          auth: true,
+        });
+        if (result?.user) {
+          updatedUser = result.user;
+        }
+      }
+    } catch (err) {
+      console.warn("Profile update saved locally:", err.message);
     }
-    return user;
+    setUser(updatedUser);
+    localStorage.setItem("makeMeReadyUser", JSON.stringify(updatedUser));
+    return updatedUser;
   };
 
   const toggleRemote = (key, path, responseKey) => async (id) => {
@@ -255,6 +273,9 @@ export function Store({ children }) {
         added,
         addItem,
         catalog,
+        sidebarPos,
+        setSidebarPos,
+        toggleSidebarPos,
       }}
     >
       {children}

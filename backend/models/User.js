@@ -10,6 +10,7 @@ const profileSchema = new mongoose.Schema(
     weight: { type: String, default: "" },
     body: { type: String, default: "" },
     location: { type: String, default: "" },
+    avatar: { type: String, default: "" },
     colors: { type: [String], default: [] },
     styles: { type: [String], default: [] },
   },

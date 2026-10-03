@@ -1,13 +1,14 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LogOut } from "lucide-react";
+import { LogOut, ArrowLeftRight } from "lucide-react";
 import { Logo } from "../common/Logo.jsx";
 import { Icon } from "../common/Icon.jsx";
 import { useStore } from "../../context/StoreContext.jsx";
 import { nav } from "../../data.js";
 
 export function Sidebar({ open, close }) {
-  const { logout } = useStore();
+  const { logout, sidebarPos = "left", toggleSidebarPos } = useStore();
   const navigate = useNavigate();
+  const isRight = sidebarPos === "right";
 
   return (
     <>
@@ -16,28 +17,48 @@ export function Sidebar({ open, close }) {
         className={`fixed inset-0 z-30 bg-black/60 lg:hidden ${open ? "" : "hidden"}`}
       />
       <aside
-        className={`fixed z-40 inset-y-0 left-0 w-[190px] bg-[#090908] border-r border-white/[.08] flex flex-col transition-transform duration-300 ease-out ${
-          open ? "" : "-translate-x-full"
-        } lg:translate-x-0`}
+        className={`fixed z-40 inset-y-0 ${
+          isRight ? "right-0 border-l" : "left-0 border-r"
+        } w-[270px] bg-[#090908] border-white/[.08] flex flex-col transition-all duration-300 ease-out ${
+          open
+            ? "translate-x-0"
+            : isRight
+              ? "translate-x-full lg:translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+        }`}
         style={{
           backgroundImage:
-            "radial-gradient(300px 260px at 0% 100%,rgba(216,137,36,.24),transparent)",
+            "radial-gradient(420px 320px at 0% 100%, rgba(216, 137, 36, 0.22), transparent)",
         }}
       >
-        <div className="h-[68px] px-4 flex items-center border-b border-white/[.08]">
-          <Logo size={30} />
+        {/* Header with Logo and Shift Button */}
+        <div className="h-[72px] px-5 flex items-center justify-between border-b border-white/[.08]">
+          <Logo size={32} />
+          <button
+            type="button"
+            onClick={toggleSidebarPos}
+            title={isRight ? "Shift sidebar to Left" : "Shift sidebar to Right"}
+            className="p-2 rounded-xl text-mute hover:text-acc hover:bg-white/[.04] transition border border-transparent hover:border-line2 flex items-center gap-1.5 text-xs"
+          >
+            <ArrowLeftRight size={15} />
+            <span className="hidden xl:inline text-[11px] text-mute capitalize">
+              {isRight ? "Dock Left" : "Dock Right"}
+            </span>
+          </button>
         </div>
-        <nav className="p-2.5 mt-3 space-y-1">
+
+        {/* Navigation Items */}
+        <nav className="p-3 mt-2 space-y-1.5 flex-1 overflow-y-auto">
           {nav.map(([label, to, iconName]) => (
             <NavLink
               key={to}
               to={to}
               onClick={close}
               className={({ isActive }) =>
-                `flex items-center gap-3 h-11 px-3 rounded-xl text-[13px] transition duration-200 ${
+                `flex items-center gap-3.5 h-12 px-4 rounded-2xl text-[15px] font-medium transition duration-200 ${
                   isActive
-                    ? "bg-gradient-to-r from-acc/25 to-acc/[.06] border border-acc/35 text-white shadow-[0_0_18px_rgba(255,159,47,.1)]"
-                    : "text-mute hover:text-white hover:bg-white/[.04] border border-transparent"
+                    ? "bg-gradient-to-r from-acc/25 via-acc/15 to-acc/[.05] border border-acc/45 text-white shadow-[0_0_20px_rgba(255,159,47,.18)]"
+                    : "text-stone-400 hover:text-white hover:bg-white/[.04] border border-transparent"
                 }`
               }
             >
@@ -45,43 +66,28 @@ export function Sidebar({ open, close }) {
                 <>
                   <Icon
                     n={iconName}
-                    size={18}
-                    className={isActive ? "text-acc" : ""}
+                    size={20}
+                    className={isActive ? "text-acc" : "text-stone-400"}
                   />
-                  {label}
+                  <span>{label}</span>
                 </>
               )}
             </NavLink>
           ))}
         </nav>
-        <div className="mt-auto p-3">
-          <div className="card p-4 mb-3 bg-gradient-to-br from-acc/15 to-transparent border-acc/30">
-            <div className="font-serif text-acc leading-tight">
-              Upgrade Your
-              <br />
-              <span className="text-white">Style Game</span>
-            </div>
-            <p className="text-[11px] text-mute my-2">
-              Premium brands curated for you.
-            </p>
-            <button
-              type="button"
-              onClick={() => navigate("/shopping")}
-              className="btn-p h-8 px-4 text-xs"
-            >
-              Explore Now
-            </button>
-          </div>
+
+        {/* Clean Footer - No promo cards or "Explore Now" text */}
+        <div className="p-3 border-t border-white/[.08] mt-auto">
           <button
             type="button"
             onClick={() => {
               logout();
               navigate("/login");
             }}
-            className="flex items-center gap-3 px-4 h-10 text-sm text-dim hover:text-white w-full text-left"
+            className="flex items-center gap-3 px-4 h-11 text-[14px] text-stone-400 hover:text-white hover:bg-white/[.04] rounded-xl w-full text-left transition"
           >
-            <LogOut size={16} />
-            Logout
+            <LogOut size={17} />
+            <span>Logout</span>
           </button>
         </div>
       </aside>
