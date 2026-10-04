@@ -212,15 +212,29 @@ export const looks = [
   L('outfit-19', 'Mocha Linen Minimalist Cafe',      'date',    ['Casual', 'Date', 'Minimal'],           ['beige-sweater', 'white-shirt', 'beige-chinos', 'watch', 'white-sneakers'], '/img/outfits/outfit-19.png', 'Men', 93),
   L('outfit-20', 'Autumn Quarter-Zip Knitwear',      'winter',  ['Autumn', 'Casual', 'Campus'],          ['beige-sweater', 'white-shirt', 'grey-cargo', 'watch', 'white-sneakers'],    '/img/outfits/outfit-20.png', 'Men', 94),
 
-  // ── Curated High-Fashion Women Looks ──
-  L('outfit-w1', 'Emerald Royal Velvet Lehenga',     'wedding', ['Wedding', 'Traditional', 'Royal'],      ['necklace', 'earrings', 'bracelet', 'ring'],                                 U('photo-1610030469983-98e550d6193c', 700, 850), 'Women', 96),
-  L('outfit-w2', 'Modern Ivory Blazer & Slip Dress', 'office',  ['Formal', 'Chic', 'Corporate'],          ['black-blazer', 'white-shirt', 'black-trousers', 'watch', 'formal-shoes'],   U('photo-1534528741775-53994a69daeb', 700, 850), 'Women', 94),
-  L('outfit-w3', 'Boho Sunset Resort Maxi Dress',    'beach',   ['Summer', 'Vacation', 'Resort'],        ['sunglasses', 'necklace', 'bracelet', 'white-sneakers'],                    U('photo-1496747611176-843222e1e57c', 700, 850), 'Women', 95),
-  L('outfit-w4', 'Varsity Streetwear Oversized Fit', 'casual',  ['Streetwear', 'Casual', 'Trendy'],       ['black-hoodie', 'grey-cargo', 'cap', 'white-sneakers'],                     U('photo-1515886657613-9f3515b0c78f', 700, 850), 'Women', 92),
-  L('outfit-w5', 'Satin Slip Date Night Gown',       'date',    ['Date', 'Glamour', 'Evening'],           ['necklace', 'earrings', 'ring', 'formal-shoes'],                            U('photo-1566174053879-31528523f8ae', 700, 850), 'Women', 95),
-  L('outfit-w6', 'Cozy Cashmere Winter Layering',    'winter',  ['Winter', 'Warmth', 'Layered'],          ['beige-sweater', 'blue-jeans', 'chelsea-boots', 'belt'],                    U('photo-1483985988355-763728e1935b', 700, 850), 'Women', 93),
-  L('outfit-w7', 'Festive Banarasi Silk Saree',      'festive', ['Festive', 'Traditional', 'Celebration'],['necklace', 'earrings', 'bracelet', 'ring'],                                 U('photo-1583391733956-3750e0ff4e8b', 700, 850), 'Women', 97),
-  L('outfit-w8', 'High-Performance Activewear Set',  'gym',     ['Sporty', 'Workout', 'Athletic'],        ['black-polo', 'grey-cargo', 'sports-shoes', 'watch'],                        U('photo-1518611012118-696072aa579a', 700, 850), 'Women', 98),
+  // ── 22 Curated High-Fashion Women Looks (Local Outfit Images) ──
+  L('outfit-w1',  'Glam Black Night-Out Mini',        'party',   ['Party', 'Evening', 'Glam'],            ['necklace', 'earrings', 'watch'],                                            '/img/outfits/outfit-w1.png',  'Women', 97),
+  L('outfit-w2',  'Cosy Heart Pyjama Set',            'casual',  ['Casual', 'Loungewear', 'Home'],         ['pendant', 'ring'],                                                          '/img/outfits/outfit-w2.png',  'Women', 93),
+  L('outfit-w3',  'Sky Blue Flowy Maxi Gown',         'date',    ['Date', 'Romantic', 'Elegant'],          ['necklace', 'earrings', 'watch'],                                            '/img/outfits/outfit-w3.png',  'Women', 96),
+  L('outfit-w4',  'Brown Ribbed Top & Jeans OOTD',   'casual',  ['Casual', 'Everyday', 'Street'],         ['watch', 'bracelet'],                                                        '/img/outfits/outfit-w4.png',  'Women', 94),
+  L('outfit-w5',  'Blush Floral Lehenga Choli',       'wedding', ['Wedding', 'Traditional', 'Festive'],    ['earrings', 'ring', 'necklace'],                                             '/img/outfits/outfit-w5.png',  'Women', 98),
+  L('outfit-w6',  'Emerald Royal Velvet Lehenga',     'wedding', ['Wedding', 'Traditional', 'Royal'],      ['necklace', 'earrings', 'bracelet', 'ring'],                                 '/img/outfits/outfit-w6.png',  'Women', 97),
+  L('outfit-w7',  'Modern Ivory Blazer & Slip Dress', 'office',  ['Formal', 'Chic', 'Corporate'],          ['black-blazer', 'white-shirt', 'watch', 'formal-shoes'],                     '/img/outfits/outfit-w7.png',  'Women', 94),
+  L('outfit-w8',  'Boho Sunset Resort Maxi Dress',    'beach',   ['Summer', 'Vacation', 'Resort'],         ['sunglasses', 'necklace', 'white-sneakers'],                                 '/img/outfits/outfit-w8.png',  'Women', 95),
+  L('outfit-w9',  'Varsity Streetwear Oversized Fit', 'casual',  ['Streetwear', 'Casual', 'Trendy'],       ['black-hoodie', 'cap', 'white-sneakers'],                                    '/img/outfits/outfit-w9.png',  'Women', 92),
+  L('outfit-w10', 'Satin Slip Date Night Gown',       'date',    ['Date', 'Glamour', 'Evening'],           ['necklace', 'earrings', 'ring', 'formal-shoes'],                             '/img/outfits/outfit-w10.png', 'Women', 96),
+  L('outfit-w11', 'Cozy Cashmere Winter Layering',    'winter',  ['Winter', 'Warmth', 'Layered'],          ['beige-sweater', 'blue-jeans', 'chelsea-boots'],                             '/img/outfits/outfit-w11.png', 'Women', 93),
+  L('outfit-w12', 'Festive Banarasi Silk Saree',      'festive', ['Festive', 'Traditional', 'Celebration'],['necklace', 'earrings', 'bracelet', 'ring'],                                 '/img/outfits/outfit-w12.png', 'Women', 97),
+  L('outfit-w13', 'High-Performance Activewear Set',  'gym',     ['Sporty', 'Workout', 'Athletic'],        ['sports-shoes', 'watch'],                                                    '/img/outfits/outfit-w13.png', 'Women', 98),
+  L('outfit-w14', 'Pastel Floral Summer Sundress',    'brunch',  ['Brunch', 'Casual', 'Summery'],          ['sunglasses', 'necklace', 'white-sneakers'],                                 '/img/outfits/outfit-w14.png', 'Women', 93),
+  L('outfit-w15', 'Deep Green Anarkali Kurta Set',    'festive', ['Festive', 'Ethnic', 'Traditional'],     ['earrings', 'necklace', 'formal-shoes'],                                     '/img/outfits/outfit-w15.png', 'Women', 96),
+  L('outfit-w16', 'Chic Trench Coat Office Look',     'office',  ['Office', 'Formal', 'Smart'],            ['black-blazer', 'watch', 'formal-shoes'],                                    '/img/outfits/outfit-w16.png', 'Women', 94),
+  L('outfit-w17', 'Sangeet Night Sequin Lehenga',     'party',   ['Party', 'Wedding', 'Sangeet', 'Glam'], ['earrings', 'ring', 'bracelet', 'necklace'],                                  '/img/outfits/outfit-w17.png', 'Women', 98),
+  L('outfit-w18', 'Cream Minimalist Kurti Palazzo',   'casual',  ['Casual', 'Ethnic', 'Minimal'],          ['earrings', 'bracelet'],                                                     '/img/outfits/outfit-w18.png', 'Women', 91),
+  L('outfit-w19', 'Luxe Airport Travel OOTD',         'travel',  ['Travel', 'Airport', 'Chic'],            ['sunglasses', 'watch', 'white-sneakers'],                                    '/img/outfits/outfit-w19.png', 'Women', 92),
+  L('outfit-w20', 'Burgundy Velvet Evening Gown',     'party',   ['Party', 'Gala', 'Evening', 'Luxury'],  ['necklace', 'earrings', 'ring', 'formal-shoes'],                             '/img/outfits/outfit-w20.png', 'Women', 97),
+  L('outfit-w21', 'Rose Gold Bridal Lehenga',         'wedding', ['Wedding', 'Bridal', 'Royal', 'Luxury'],['necklace', 'earrings', 'bracelet', 'ring'],                                  '/img/outfits/outfit-w21.png', 'Women', 99),
+  L('outfit-w22', 'Smart Casual Denim Co-ord',        'casual',  ['Casual', 'Street', 'Denim'],            ['white-sneakers', 'watch', 'sunglasses'],                                    '/img/outfits/outfit-w22.png', 'Women', 90),
 ];
 
 export const lookTabs = ['All Looks', 'Casual', 'Formal', 'Party', 'Traditional', 'Travel', 'Seasonal'];

@@ -7,10 +7,12 @@ import {
   BadgeCheck,
   Headphones,
   ChevronRight,
+  Sparkles,
 } from "lucide-react";
 import { Section, Heart, Modal } from "../ui.jsx";
 import { useStore } from "../store.jsx";
 import { IMG, getImg } from "../data/constants.js";
+
 const P = ({ p, add, i }) => (
   <div className="card overflow-hidden hover:-translate-y-1 animate-up">
     <div className="group tile relative aspect-[4/3.2] overflow-hidden">
@@ -34,12 +36,21 @@ const P = ({ p, add, i }) => (
   </div>
 );
 export default function Shopping() {
-  const { addCart, cart, catalog } = useStore();
+  const { addCart, cart, catalog, user } = useStore();
   const { products, shopCats, brands } = catalog;
   const [g, setG] = useState("All");
   const [toast, setToast] = useState(null);
   const [cartOpen, setCO] = useState(false);
   const [cat, setCat] = useState(null);
+
+  // Gender detection for smart ordering
+  const userGender = user?.profile?.gender || "";
+  const isFemale = userGender.toLowerCase() === "female" || userGender.toLowerCase() === "f";
+
+  // Get 22 women looks for the featured showcase strip
+  const womenOutfitStrip = (catalog?.looks || []).filter(
+    (l) => l.gender === "Women" || l.id?.includes("-w")
+  );
   const add = async (p) => {
     try {
       await addCart(p);
@@ -133,6 +144,40 @@ export default function Shopping() {
         </div>
       </Section>
       <div id="arrivals" />
+
+      {/* ── Gender-Smart Women Outfit Showcase (top for female users) ── */}
+      {womenOutfitStrip.length > 0 && isFemale && (
+        <Section
+          title="✨ Featured Women's Outfit Looks"
+          sub={`${womenOutfitStrip.length} curated looks from dresses to ethnic wear — click to explore`}
+          icon="Sparkles"
+        >
+          <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-none">
+            {womenOutfitStrip.map((l) => (
+              <div
+                key={l.id}
+                className="shrink-0 w-44 group relative rounded-2xl overflow-hidden border border-line hover:border-acc/60 hover:-translate-y-1 transition-all shadow-lg bg-black/60 cursor-pointer"
+              >
+                <div className="aspect-[3/4] overflow-hidden">
+                  <img
+                    src={l.img}
+                    alt={l.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => { e.target.onerror = null; e.target.src = IMG["hero-wardrobe"]; }}
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
+                <div className="absolute bottom-0 p-3 w-full">
+                  <p className="text-[11px] font-semibold text-white line-clamp-2 leading-tight">{l.title}</p>
+                  <p className="text-[10px] text-acc mt-0.5 capitalize">{l.occ}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+
+
       <Section
         title="New Arrivals"
         right={
@@ -165,6 +210,39 @@ export default function Shopping() {
           ))}
         </div>
       </Section>
+
+      {/* ── Gender-Smart Women Outfit Showcase (bottom for male / guest users) ── */}
+      {womenOutfitStrip.length > 0 && !isFemale && (
+        <Section
+          title="✨ Featured Women's Outfit Looks"
+          sub={`${womenOutfitStrip.length} curated looks from dresses to ethnic wear — scroll to explore`}
+          icon="Sparkles"
+        >
+          <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-none">
+            {womenOutfitStrip.map((l) => (
+              <div
+                key={l.id}
+                className="shrink-0 w-44 group relative rounded-2xl overflow-hidden border border-line hover:border-acc/60 hover:-translate-y-1 transition-all shadow-lg bg-black/60 cursor-pointer"
+              >
+                <div className="aspect-[3/4] overflow-hidden">
+                  <img
+                    src={l.img}
+                    alt={l.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => { e.target.onerror = null; e.target.src = IMG["hero-wardrobe"]; }}
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
+                <div className="absolute bottom-0 p-3 w-full">
+                  <p className="text-[11px] font-semibold text-white line-clamp-2 leading-tight">{l.title}</p>
+                  <p className="text-[10px] text-acc mt-0.5 capitalize">{l.occ}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+
       <div className="grid md:grid-cols-3 gap-5 mt-12">
         {[
           ["Flat 40% OFF", "On Premium Clothing", "white-shirt"],

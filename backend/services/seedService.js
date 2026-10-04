@@ -14,6 +14,9 @@
  */
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import { createReadStream, existsSync, readdirSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   brands, cats, colors, lookTabs, looks, occasions,
   products, shopCats, styles, wardrobe,
@@ -21,6 +24,65 @@ import {
 import {
   CatalogItem, Occasion, CatalogWardrobe, Look, Product, AppConfig, User,
 } from "../models/index.js";
+import { getGridFSBucket } from "../config/db.js";
+
+const outfitsDir = fileURLToPath(
+  new URL("../../frontend/public/img/outfits", import.meta.url)
+);
+
+/**
+ * Uploads local outfit images to MongoDB GridFS (images bucket).
+ * Skips files already in GridFS, so re-runs are safe.
+ */
+export async function seedImages() {
+  if (!mongoose.connection?.db) return;
+  if (!existsSync(outfitsDir)) return;
+
+  const bucket = getGridFSBucket();
+  const db = mongoose.connection.db;
+  const files = readdirSync(outfitsDir).filter((f) =>
+    /\.(png|jpg|jpeg|webp)$/i.test(f)
+  );
+
+  let uploaded = 0;
+  let skipped = 0;
+
+  for (const filename of files) {
+    try {
+      const existing = await db
+        .collection("images.files")
+        .findOne({ filename });
+      if (existing) {
+        skipped++;
+        continue;
+      }
+
+      const ext = filename.split(".").pop().toLowerCase();
+      const contentType = ext === "png" ? "image/png" : "image/jpeg";
+      const filePath = join(outfitsDir, filename);
+
+      await new Promise((resolve, reject) => {
+        const readStream = createReadStream(filePath);
+        const uploadStream = bucket.openUploadStream(filename, {
+          contentType,
+          metadata: { category: "outfits", source: "local-seed" },
+        });
+        readStream.pipe(uploadStream)
+          .on("finish", resolve)
+          .on("error", reject);
+      });
+      uploaded++;
+    } catch (err) {
+      console.warn(`GridFS upload skipped for ${filename}: ${err.message}`);
+    }
+  }
+
+  if (uploaded > 0 || skipped > 0) {
+    console.log(
+      `✓ GridFS outfit images: ${uploaded} uploaded, ${skipped} already existed.`
+    );
+  }
+}
 
 export async function seedCatalog() {
   if (!mongoose.connection?.db) return;
@@ -131,10 +193,11 @@ export async function seedCatalog() {
     console.log(
       `✓ Seeded MongoDB Atlas: ${occasions.length} occasions, ${wardrobe.length} wardrobes, ${looks.length} looks, ${products.length} products, configs, and demo account in dedicated collections.`,
     );
+
+    // 8. Upload local outfit images to GridFS
+    await seedImages();
   } catch (error) {
     console.error("Error seeding MongoDB Atlas:", error.message);
   }
 }
 
-// Legacy stub
-export async function seedImages() {}

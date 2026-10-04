@@ -40,10 +40,15 @@ export default function Recommendations() {
   const [modalLook, setModalLook] = useState(null);
   const [aiModal, setAiModal] = useState(false);
 
-  const { toggleSave, saved = [], catalog } = useStore();
+  const { toggleSave, saved = [], catalog, user } = useStore();
   const { looks = [], wardrobe = [] } = catalog || {};
   const by = Object.fromEntries(wardrobe.map((w) => [w.id, w]));
   const nv = useNavigate();
+
+  // Determine logged-in user gender for smart ordering
+  const userGender = user?.profile?.gender || "";
+  const isFemale = userGender.toLowerCase() === "female" || userGender.toLowerCase() === "f";
+  const isMale   = userGender.toLowerCase() === "male"   || userGender.toLowerCase() === "m";
 
   // Filter recommendations based on gender, occasion, and search query
   const filteredLooks = looks.filter((l) => {
@@ -69,6 +74,22 @@ export default function Recommendations() {
   // Master AI looks (Top 20 AI generated images)
   const masterAiLooks = looks.filter((l) => l.id.startsWith("outfit-") && !l.id.includes("-w"));
   const womenLooks = looks.filter((l) => l.gender === "Women" || l.id.includes("-w"));
+
+  // Gender-smart sorting: female users see Women's looks first, male users see Men's first
+  const genderSortedFilteredLooks = [...filteredLooks].sort((a, b) => {
+    const aIsWomen = a.gender === "Women";
+    const bIsWomen = b.gender === "Women";
+    if (isFemale) {
+      // Women first
+      if (aIsWomen && !bIsWomen) return -1;
+      if (!aIsWomen && bIsWomen) return 1;
+    } else if (isMale) {
+      // Men first
+      if (!aIsWomen && bIsWomen) return -1;
+      if (aIsWomen && !bIsWomen) return 1;
+    }
+    return 0;
+  });
 
   // Curated Trending picks from real database looks
   const trendingLooks = looks.filter((l) =>
@@ -197,19 +218,38 @@ export default function Recommendations() {
         </div>
       </div>
 
-      {/* ── Master AI Recommendations Section (4 in each row, 20 images = 5 rows) ── */}
+      {/* ── Gender-Smart Banner ── */}
+      {userGender && (
+        <div className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-acc/30 bg-gradient-to-r from-acc/10 to-transparent backdrop-blur-md">
+          <span className="text-2xl">{isFemale ? "👗" : "👔"}</span>
+          <div>
+            <p className="text-sm font-semibold text-white">
+              {isFemale
+                ? "Showing Women's looks first — Men's looks at the bottom"
+                : "Showing Men's looks first — Women's looks at the bottom"}
+            </p>
+            <p className="text-xs text-mute mt-0.5">
+              Personalised based on your profile · Change your gender in Profile settings
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Master AI Recommendations Section ── */}
       <Section
         title={
           genderFilter === "Men"
             ? "AI Generated Outfits for Men (20 Master Looks)"
             : genderFilter === "Women"
-            ? "Curated Fashion Outfits for Women"
+            ? "Curated Fashion Outfits for Women (22 Looks)"
+            : isFemale
+            ? "Recommended Outfits for You — Women's First"
             : "Recommended Outfits for You"
         }
         icon="Sparkles"
-        sub={`Showing ${filteredLooks.length} verified looks with matched accessories & footwear`}
+        sub={`Showing ${genderSortedFilteredLooks.length} verified looks${userGender ? ` · Sorted for ${userGender} preference` : ""}  with matched accessories & footwear`}
       >
-        {filteredLooks.length === 0 ? (
+        {genderSortedFilteredLooks.length === 0 ? (
           <div className="card p-12 text-center border-line">
             <p className="text-mute text-sm">No outfits found matching your filters.</p>
             <button
@@ -225,7 +265,7 @@ export default function Recommendations() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredLooks.map((l) => {
+            {genderSortedFilteredLooks.map((l) => {
               const isSaved = saved.includes(l.id);
               const matchScore = l.matchScore || 95;
 
