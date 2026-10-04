@@ -15,23 +15,24 @@ export function LookCard({ l, saved }) {
 
   return (
     <div className="card p-3 hover:-translate-y-1 hover:border-line2 animate-up">
-      <div className="group tile relative rounded-xl overflow-hidden aspect-[4/3] bg-card2">
+      <div className="group tile relative rounded-xl overflow-hidden aspect-[3/3.8] bg-card2">
         <img
           src={l.img}
           alt={l.title}
-          className="absolute left-0 top-0 h-full w-[68%] object-cover"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = IMG["hero-wardrobe"];
+          }}
         />
-        <Heart id={"look-" + l.id} cls="absolute top-2 left-2" />
-        <div className="absolute right-2 top-2 bottom-2 w-[26%] rounded-xl bg-black/50 backdrop-blur p-1.5 flex flex-col gap-1.5">
-          {l.items.map((i) => (
-            <img
-              key={i}
-              src={by[i]?.img || IMG["hero-wardrobe"]}
-              alt={by[i]?.name || "Item"}
-              className="flex-1 min-h-0 w-full rounded-lg object-cover bg-card2"
-            />
-          ))}
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-70" />
+        <Heart id={"look-" + l.id} cls="absolute top-2 right-2" />
+        <span className="absolute top-2 left-2 px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-600/90 text-white shadow-md">
+          {l.matchScore || 95}% Match
+        </span>
+        <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded text-[10px] uppercase font-semibold bg-black/70 text-acc border border-acc/20">
+          {l.occ}
+        </span>
       </div>
 
       <div className="px-1 pt-3">

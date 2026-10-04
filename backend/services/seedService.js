@@ -48,7 +48,9 @@ export async function seedCatalog() {
       })),
     );
 
-    // 3. Seed dedicated Looks collection
+    // 3. Seed dedicated Looks collection - sync and upsert all fresh looks
+    const validLookIds = looks.map((item) => item.id);
+    await Look.deleteMany({ id: { $nin: validLookIds } });
     await Look.bulkWrite(
       looks.map((item) => ({
         replaceOne: {
