@@ -13,12 +13,13 @@
  * and keeps Atlas collections always up to date.
  */
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 import {
   brands, cats, colors, lookTabs, looks, occasions,
   products, shopCats, styles, wardrobe,
 } from "../../frontend/src/data.js";
 import {
-  CatalogItem, Occasion, CatalogWardrobe, Look, Product, AppConfig,
+  CatalogItem, Occasion, CatalogWardrobe, Look, Product, AppConfig, User,
 } from "../models/index.js";
 
 export async function seedCatalog() {
@@ -108,8 +109,25 @@ export async function seedCatalog() {
       })),
     );
 
+    // 7. Ensure demo quick-login user exists
+    const demoEmail = "sahil@makemeready.in";
+    const existingDemoUser = await User.findOne({ email: demoEmail });
+    if (!existingDemoUser) {
+      const passwordHash = await bcrypt.hash("Sahil@123", 12);
+      await User.create({
+        email: demoEmail,
+        passwordHash,
+        profile: {
+          name: "Sahil Khot",
+          city: "Mumbai",
+          gender: "Male",
+          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&h=300&q=80",
+        },
+      });
+    }
+
     console.log(
-      `✓ Seeded MongoDB Atlas: ${occasions.length} occasions, ${wardrobe.length} wardrobes, ${looks.length} looks, ${products.length} products, and configs in dedicated collections.`,
+      `✓ Seeded MongoDB Atlas: ${occasions.length} occasions, ${wardrobe.length} wardrobes, ${looks.length} looks, ${products.length} products, configs, and demo account in dedicated collections.`,
     );
   } catch (error) {
     console.error("Error seeding MongoDB Atlas:", error.message);

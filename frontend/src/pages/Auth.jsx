@@ -84,7 +84,7 @@ const QUICK_CREDENTIALS = { email: "sahil@makemeready.in", password: "Sahil@123"
 
 function Login() {
   const nv = useNavigate();
-  const { login } = useStore();
+  const { login, quickLogin: storeQuickLogin } = useStore();
   const [f, setF] = useState({ email: "", pw: "" });
   const [e, setE] = useState({});
   const [loading, setLoading] = useState(false);
@@ -116,12 +116,22 @@ function Login() {
     }
   };
 
-  const quickLogin = async () => {
+  const handleQuickLogin = async () => {
     setE({});
     setQuickLoading(true);
     setF({ email: QUICK_CREDENTIALS.email, pw: QUICK_CREDENTIALS.password });
-    await doLogin({ email: QUICK_CREDENTIALS.email, password: QUICK_CREDENTIALS.password });
-    setQuickLoading(false);
+    try {
+      if (typeof storeQuickLogin === "function") {
+        await storeQuickLogin();
+      } else {
+        await login(QUICK_CREDENTIALS);
+      }
+      nv("/home");
+    } catch (err) {
+      setE({ form: err.message || "Failed to log in" });
+    } finally {
+      setQuickLoading(false);
+    }
   };
 
   return (
@@ -142,7 +152,7 @@ function Login() {
       {/* ⚡ Quick Login Banner */}
       <button
         type="button"
-        onClick={quickLogin}
+        onClick={handleQuickLogin}
         disabled={quickLoading}
         className="w-full flex items-center justify-between gap-3 px-4 h-12 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 hover:border-amber-500/70 transition group disabled:opacity-60"
       >

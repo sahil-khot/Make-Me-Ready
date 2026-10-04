@@ -112,3 +112,30 @@ export const getMe = async (req, res, next) => {
     next(error);
   }
 };
+
+export const quickLogin = async (req, res, next) => {
+  try {
+    const demoEmail = "sahil@makemeready.in";
+    const demoPassword = "Sahil@123";
+    let user = await User.findOne({ email: demoEmail });
+
+    if (!user) {
+      const passwordHash = await bcrypt.hash(demoPassword, 12);
+      user = await User.create({
+        email: demoEmail,
+        passwordHash,
+        profile: {
+          name: "Sahil Khot",
+          city: "Mumbai",
+          gender: "Male",
+          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&h=300&q=80",
+        },
+      });
+    }
+
+    return res.json(makeSession(user));
+  } catch (error) {
+    next(error);
+  }
+};
+

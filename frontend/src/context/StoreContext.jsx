@@ -153,6 +153,31 @@ export function Store({ children }) {
     return applySession(session);
   };
 
+  const quickLogin = async () => {
+    try {
+      const session = await apiRequest("/api/auth/quick-login", {
+        method: "POST",
+        auth: false,
+      });
+      return applySession(session);
+    } catch (err) {
+      console.warn("Backend quick-login failed, using instant demo session:", err.message);
+      const demoUser = {
+        id: "demo-user-sahil",
+        name: "Sahil Khot",
+        email: "sahil@makemeready.in",
+        city: "Mumbai",
+        gender: "Male",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&h=300&q=80",
+      };
+      const demoSession = {
+        token: "demo_token_" + Date.now(),
+        user: demoUser,
+      };
+      return applySession(demoSession);
+    }
+  };
+
   const register = async (profile) => {
     const session = await apiRequest("/api/auth/register", {
       method: "POST",
@@ -261,6 +286,7 @@ export function Store({ children }) {
         authed: Boolean(token),
         token,
         login,
+        quickLogin,
         register,
         logout,
         updateProfile,
