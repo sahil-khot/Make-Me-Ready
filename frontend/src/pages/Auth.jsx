@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight,
   Shirt, CalendarCheck, Briefcase, Heart, ShoppingBag,
-  Sparkles, Check,
+  Sparkles, Check, Zap,
 } from "lucide-react";
 import { Logo } from "../ui.jsx";
 import { useStore } from "../store.jsx";
@@ -78,16 +78,30 @@ const FormField = ({ label, children, err }) => (
 // ─────────────────────────────────────────────────────────────────────────────
 // Login Form
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Quick-login credentials for fast dev/demo access
+const QUICK_CREDENTIALS = { email: "sahil@makemeready.in", password: "Sahil@123" };
+
 function Login() {
   const nv = useNavigate();
   const { login } = useStore();
   const [f, setF] = useState({ email: "", pw: "" });
   const [e, setE] = useState({});
   const [loading, setLoading] = useState(false);
+  const [quickLoading, setQuickLoading] = useState(false);
 
   // Use functional state update to avoid stale closure on fast typing
   const setEmail = useCallback((ev) => setF((p) => ({ ...p, email: ev.target.value })), []);
   const setPw    = useCallback((ev) => setF((p) => ({ ...p, pw:    ev.target.value })), []);
+
+  const doLogin = async (credentials) => {
+    try {
+      await login(credentials);
+      nv("/home");
+    } catch (err) {
+      setE({ form: err.message });
+    }
+  };
 
   const go = async (ev) => {
     ev.preventDefault();
@@ -97,15 +111,17 @@ function Login() {
     setE(x);
     if (!Object.keys(x).length) {
       setLoading(true);
-      try {
-        await login({ email: f.email, password: f.pw });
-        nv("/home");
-      } catch (err) {
-        setE({ form: err.message });
-      } finally {
-        setLoading(false);
-      }
+      await doLogin({ email: f.email, password: f.pw });
+      setLoading(false);
     }
+  };
+
+  const quickLogin = async () => {
+    setE({});
+    setQuickLoading(true);
+    setF({ email: QUICK_CREDENTIALS.email, pw: QUICK_CREDENTIALS.password });
+    await doLogin({ email: QUICK_CREDENTIALS.email, password: QUICK_CREDENTIALS.password });
+    setQuickLoading(false);
   };
 
   return (
@@ -122,6 +138,23 @@ function Login() {
           Sign Up
         </Link>
       </div>
+
+      {/* ⚡ Quick Login Banner */}
+      <button
+        type="button"
+        onClick={quickLogin}
+        disabled={quickLoading}
+        className="w-full flex items-center justify-between gap-3 px-4 h-12 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 hover:border-amber-500/70 transition group disabled:opacity-60"
+      >
+        <span className="flex items-center gap-2.5">
+          <Zap size={16} className="text-amber-400 group-hover:text-amber-300" fill="currentColor" />
+          <span className="text-sm font-medium text-amber-300">
+            {quickLoading ? "Logging in…" : "Quick Login"}
+          </span>
+          <span className="text-xs text-amber-500/70 hidden sm:inline">— jump straight in</span>
+        </span>
+        <ArrowRight size={14} className="text-amber-500/60 group-hover:text-amber-400 transition" />
+      </button>
 
       {/* Email */}
       <div>

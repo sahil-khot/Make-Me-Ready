@@ -254,12 +254,13 @@ export const styles = [
 ];
 
 export const nav = [
-  ['Home',            '/home',            'Home'],
-  ['My Wardrobe',     '/wardrobe',        'Shirt'],
-  ['Create Outfit',   '/create-outfit',   'Wand2'],
-  ['Occasions',       '/occasions',       'CalendarCheck'],
-  ['Recommendations', '/recommendations', 'Gem'],
-  ['Saved Looks',     '/saved-looks',     'Heart'],
-  ['Shopping',        '/shopping',        'ShoppingBag'],
-  ['Profile',         '/profile',         'User'],
+  ['Home',              '/home',               'Home'],
+  ['My Wardrobe',       '/wardrobe',           'Shirt'],
+  ['Create Outfit',     '/create-outfit',      'Wand2'],
+  ['Occasions',         '/occasions',          'CalendarCheck'],
+  ['Fashion Assistant', '/fashion-assistant',  'Sparkles'],
+  ['Recommendations',   '/recommendations',   'Gem'],
+  ['Saved Looks',       '/saved-looks',       'Heart'],
+  ['Shopping',          '/shopping',          'ShoppingBag'],
+  ['Profile',           '/profile',           'User'],
 ];
