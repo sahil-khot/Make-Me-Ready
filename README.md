@@ -1,5 +1,7 @@
 # Make Me Ready 👔👗
 
+> **Style That Completes You.**
+
 A full-stack AI-driven personal stylist and wardrobe management platform built with React, Vite, Express, and MongoDB.
 
 ---

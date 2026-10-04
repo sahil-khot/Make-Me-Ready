@@ -462,9 +462,9 @@ export default function Auth({ mode }) {
         <div className="relative max-w-lg">
           <div className="text-xs tracking-[.3em] text-acc leading-7 mb-4">
             {reg ? (
-              <>YOUR PERSONAL<br />STYLE ASSISTANT</>
+              <>STYLE THAT<br />COMPLETES YOU.</>
             ) : (
-              <>YOUR WARDROBE.<br />OUR INTELLIGENCE.<br />A BETTER YOU.</>
+              <>STYLE THAT<br />COMPLETES YOU.</>
             )}
           </div>
           <h1 className="font-serif font-semibold text-6xl leading-[1.05]">
@@ -548,7 +548,7 @@ export default function Auth({ mode }) {
                   Welcome <span className="text-acc">Back</span>
                 </h1>
                 <p className="text-xs tracking-[.3em] text-mute mt-2">
-                  STYLE SMARTER. LIVE BETTER.
+                  STYLE THAT COMPLETES YOU.
                 </p>
               </>
             )}
