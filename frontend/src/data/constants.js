@@ -12,20 +12,20 @@ export const IMG = {
   'black-polo':     U('photo-1581655353564-df123a1eb820'),  // black polo t-shirt flat lay (no human)
   'beige-sweater':  U('photo-1576566588028-4147f3842f27'),  // cosy beige knit sweater
   'green-shirt':    U('photo-1602810318383-e386cc2a3ccf'),  // olive green button-up
-  'black-hoodie':   U('photo-1556821840-3a63f15732ce'),     // black pullover hoodie
+  'black-hoodie':   '/img/black-hoodie.jpg',                 // black pullover hoodie
 
   // ── Bottoms ───────────────────────────────────────────────────────────────
   'blue-jeans':     U('photo-1542272604-787c3835535d'),     // classic blue denim jeans
   'black-trousers': U('photo-1473966968600-fa801b869a1a'),  // slim black dress trousers
   'beige-chinos':   U('photo-1567401893414-76b7b1e5a7a5'),  // khaki/beige chinos
   'grey-cargo':     U('photo-1624378439575-d8705ad7ae80'),  // grey cargo pants
-  'black-shorts':   U('photo-1562886889-82e68e77bc0c'),     // black athletic shorts
+  'black-shorts':   '/img/black-shorts.jpg',                 // black athletic shorts
 
   // ── Outerwear ─────────────────────────────────────────────────────────────
   'denim-jacket':   U('photo-1551537482-f2075a1d41f2'),     // light-wash denim jacket
   'black-blazer':   U('photo-1594938298603-c8148c4dae35'),  // fitted black suit blazer
   'leather-jacket': U('photo-1551028719-00167b16eac5'),     // black biker leather jacket
-  'bomber-jacket':  U('photo-1545065118-2f47a4f9e3a7'),     // olive bomber jacket
+  'bomber-jacket':  '/img/bomber-jacket.jpg',                // olive bomber jacket
   'puffer-jacket':  U('photo-1545594861-3bef43ff2fc8'),     // black quilted down puffer jacket
 
   // ── Shoes ─────────────────────────────────────────────────────────────────
@@ -33,19 +33,19 @@ export const IMG = {
   'black-sneakers': U('photo-1542291026-7eec264c27ff'),     // black Nike Air sneakers
   'formal-shoes':   U('photo-1543163521-1bf539c55dd2'),     // classic brown oxford shoes
   'sports-shoes':   U('photo-1491553895911-0055eca6402d'),  // running / sports shoes
-  'chelsea-boots':  U('photo-1608256246200-99a0de47f85e'),  // brown suede chelsea boots
+  'chelsea-boots':  '/img/chelsea-boots.jpg',                // brown suede chelsea boots
 
   // ── Accessories ───────────────────────────────────────────────────────────
   'watch':          U('photo-1523275335684-37898b6baf30', 500, 500),  // luxury wristwatch
-  'belt':           U('photo-1624091166583-bd01af37f6a0', 500, 500),  // leather belt
+  'belt':           '/img/belt.jpg',                                   // leather belt
   'sunglasses':     U('photo-1572635196237-14b3f281503f', 500, 500),  // stylish sunglasses
   'cap':            U('photo-1588850561407-ed78c282e89b', 500, 500),  // white baseball cap
-  'wallet':         U('photo-1627123424574-724758594785', 500, 500),  // bifold leather wallet
+  'wallet':         '/img/wallet.jpg',                                 // bifold leather wallet
 
   // ── Jewelry ───────────────────────────────────────────────────────────────
   'chain':          U('photo-1611591437281-460bfbe1220a', 500, 500),  // gold chain necklace
   'ring':           U('photo-1605100804763-247f67b3557e', 500, 500),  // elegant gold ring
-  'bracelet':       U('photo-1573408301185-9519f94816b5', 500, 500),  // gold chain bracelet
+  'bracelet':       '/img/bracelet.jpg',                               // gold chain bracelet
   'earrings':       U('photo-1615655406736-b37c4fabf923', 500, 500),  // gold hoop earrings
   'pendant':        U('photo-1599643478518-a784e5dc4c8f', 500, 500),  // minimal pendant
 
@@ -56,16 +56,16 @@ export const IMG = {
   'date':           '/img/occ-date.jpg',
   'party':          '/img/occ-party.jpg',
   'travel':         '/img/occ-travel.jpg',
-  'casual':         U('photo-1523380744952-b8ecd94f8199', 700, 520),  // relaxed casual day outfit
+  'casual':         '/img/casual.jpg',                       // verified local relaxed casual day outfit
   'gym':            U('photo-1534438327276-14e5300c3a48', 700, 520),  // athletic fitness performance wear
   'brunch':         U('photo-1561758033-7e924f619b47', 700, 520),  // brunch cafe aesthetic outfit
   'family':         U('photo-1583391733956-3750e0ff4e8b', 700, 520),  // rich traditional family attire
   'beach':          U('photo-1507525428034-b723cf961d3e', 700, 520),  // breezy beach resort wear
-  'mountain':       '/img/occ-travel.jpg',
+  'mountain':       '/img/mountain.jpg',
   'city':           U('photo-1477959858617-67f85cf4f1df', 700, 520),  // modern urban street style
   'international':  U('photo-1436491865332-7a61a109cc05', 700, 520),  // airport travel fashion
   'summer':         U('photo-1537640538966-79f369143f8f', 700, 520),  // breathable summer style
-  'monsoon':        U('photo-1515695895503-17b83b4a62ee', 700, 520),  // stylish wet-weather trench style
+  'monsoon':        '/img/monsoon.jpg',                      // stylish wet-weather trench style
   'winter':         U('photo-1418985991508-e47386d96a71', 700, 520),  // warm layered winter outerwear
   'festive':        U('photo-1514222709107-a180c68d72b4', 700, 520),  // festive celebration attire
   'interview':      U('photo-1487222477894-8943e31ef7b2', 700, 520),  // sharp corporate interview attire
@@ -178,28 +178,59 @@ export const wardrobe = [
 
 export const cats = ['Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories', 'Jewelry'];
 
-const L = (id, title, occName, tags, items) => ({
+const L = (id, title, occName, tags, items, customImg) => ({
   id,
   title,
   occ: occName,
   tags,
-  img: I(occName),   // uses the occasion image as the look thumbnail
+  img: customImg || I(occName),
   items,
 });
 
 export const looks = [
-  L('casual-day',    'Casual Day Look',        'casual',      ['Casual', 'Everyday'],     ['white-shirt',   'beige-chinos',   'white-sneakers', 'watch',        'sunglasses']),
-  L('office-pro',    'Office Professional',    'office',      ['Office', 'Formal'],        ['black-blazer',  'white-shirt',    'black-trousers', 'formal-shoes', 'watch']),
-  L('dinner-date',   'Dinner Date Look',       'date',        ['Date', 'Trendy'],          ['green-shirt',   'black-trousers', 'white-sneakers', 'watch',        'chain']),
-  L('festive-trad',  'Festive Traditional',    'festive',     ['Traditional', 'Festive'],  ['white-shirt',   'beige-chinos',   'formal-shoes',   'watch',        'belt']),
-  L('mountain-trip', 'Mountain Trip Ready',    'mountain',    ['Travel', 'Outdoor'],       ['green-shirt',   'grey-cargo',     'sports-shoes',   'cap',          'sunglasses']),
-  L('beach-vac',     'Beach Vacation',         'beach',       ['Travel', 'Summer'],        ['white-shirt',   'black-shorts',   'white-sneakers', 'sunglasses',   'cap']),
-  L('winter-layers', 'Winter Layers',          'winter',      ['Winter', 'Layered'],       ['puffer-jacket', 'black-hoodie',   'black-trousers', 'chelsea-boots','belt']),
-  L('gym-fit',       'Gym Fit',                'gym',         ['Sporty', 'Gym'],           ['black-polo',    'black-shorts',   'sports-shoes',   'watch',        'cap']),
-  L('wedding-look',  'Wedding Guest Look',     'wedding',     ['Traditional', 'Formal'],   ['black-blazer',  'white-shirt',    'black-trousers', 'formal-shoes', 'watch']),
-  L('street',        'Street Style',           'city',        ['Streetwear', 'Trendy'],    ['black-hoodie',  'grey-cargo',     'black-sneakers', 'cap',          'chain']),
-  L('monsoon-ready', 'Monsoon Ready',          'monsoon',     ['Monsoon', 'Practical'],    ['denim-jacket',  'black-polo',     'blue-jeans',     'black-sneakers','watch']),
-  L('summer-ess',    'Summer Essentials',      'summer',      ['Summer', 'Minimal'],       ['white-shirt',   'beige-chinos',   'white-sneakers', 'sunglasses',   'belt']),
+  // ── Casual Looks ──
+  L('casual-day',        'Casual Day Look',        'casual',      ['Casual', 'Everyday'],     ['white-shirt',   'beige-chinos',   'white-sneakers', 'watch',        'sunglasses'], U('photo-1552374196-1ab2a1c593e8', 700, 520)),
+  L('casual-relaxed',    'Relaxed Weekend Fit',    'casual',      ['Casual', 'Comfort'],      ['black-polo',    'blue-jeans',     'white-sneakers', 'belt',         'sunglasses'], U('photo-1516257984-b1b4d707412e', 700, 520)),
+  L('casual-denim',      'Classic Denim Everyday', 'casual',      ['Casual', 'Timeless'],     ['denim-jacket',  'white-shirt',    'blue-jeans',     'black-sneakers', 'watch'],      '/img/casual.jpg'),
+
+  // ── College Looks ──
+  L('college-campus',    'Campus Cool',            'college',     ['College', 'Youth'],       ['black-hoodie',  'blue-jeans',     'white-sneakers', 'cap',          'watch'],      '/img/occ-college.jpg'),
+  L('college-varsity',   'Varsity Streetwear',     'college',     ['College', 'Trendy'],      ['denim-jacket',  'black-polo',     'grey-cargo',     'black-sneakers', 'chain'],      U('photo-1539109136881-3be0616acf4b', 700, 520)),
+  L('college-smart',     'Smart Campus Casual',    'college',     ['College', 'Clean'],       ['white-shirt',   'beige-chinos',   'white-sneakers', 'watch',        'sunglasses'], U('photo-1507679799987-c73779587ccf', 700, 520)),
+
+  // ── Office Looks ──
+  L('office-pro',        'Executive Formal Suit',  'office',      ['Office', 'Formal'],       ['black-blazer',  'white-shirt',    'black-trousers', 'formal-shoes', 'watch'],      '/img/occ-office.jpg'),
+  L('office-smart-casual','Smart Business Casual', 'office',      ['Office', 'Semi-Formal'],  ['green-shirt',   'beige-chinos',   'chelsea-boots',  'belt',         'watch'],      U('photo-1507679799987-c73779587ccf', 700, 520)),
+  L('office-monochrome', 'Modern Minimalist Office','office',     ['Office', 'Sharp'],        ['black-blazer',  'black-polo',     'black-trousers', 'formal-shoes', 'belt'],       '/img/office.jpg'),
+
+  // ── Wedding Looks ──
+  L('wedding-royal',     'Royal Wedding Grandeur', 'wedding',     ['Wedding', 'Traditional'], ['black-blazer',  'white-shirt',    'black-trousers', 'formal-shoes', 'watch'],      '/img/occ-wedding.jpg'),
+  L('wedding-reception', 'Celebration Glam',       'wedding',     ['Wedding', 'Reception'],   ['black-blazer',  'white-shirt',    'black-trousers', 'formal-shoes', 'chain'],      U('photo-1583391733956-3750e0ff4e8b', 700, 520)),
+  L('wedding-chic',      'Contemporary Reception', 'wedding',     ['Wedding', 'Elegant'],     ['white-shirt',   'beige-chinos',   'chelsea-boots',  'watch',        'ring'],       U('photo-1519741497674-611481863552', 700, 520)),
+
+  // ── Date Looks ──
+  L('dinner-date',       'Romantic Dinner Date',   'date',        ['Date', 'Trendy'],         ['green-shirt',   'black-trousers', 'white-sneakers', 'watch',        'chain'],      '/img/occ-date.jpg'),
+  L('date-sophisticated','Sophisticated Evening',  'date',        ['Date', 'Chic'],           ['black-polo',    'beige-chinos',   'chelsea-boots',  'watch',        'ring'],       U('photo-1506794778202-cad84cf45f1d', 700, 520)),
+  L('date-leather',      'Chic Night Out',         'date',        ['Date', 'Bold'],           ['leather-jacket', 'white-shirt',   'black-trousers', 'black-sneakers', 'watch'],      U('photo-1534528741775-53994a69daeb', 700, 520)),
+
+  // ── Party Looks ──
+  L('party-vip',         'VIP Nightclub Look',     'party',       ['Party', 'Nightlife'],     ['leather-jacket', 'black-polo',     'black-trousers', 'chelsea-boots', 'chain'],      '/img/occ-party.jpg'),
+  L('party-urban',       'Downtown Clubbing Fit',  'party',       ['Party', 'Urban'],         ['bomber-jacket', 'white-shirt',    'grey-cargo',     'black-sneakers', 'chain'],      U('photo-1492562080023-ab3db95bfbce', 700, 520)),
+  L('party-statement',   'Midnight Party Statement','party',      ['Party', 'Statement'],     ['black-blazer',  'black-hoodie',   'black-trousers', 'white-sneakers', 'watch'],      '/img/party.jpg'),
+
+  // ── Mountain Looks ──
+  L('mountain-trip',     'Alpine Trail Ready',     'mountain',    ['Travel', 'Outdoor'],      ['puffer-jacket', 'grey-cargo',     'sports-shoes',   'cap',          'sunglasses'], '/img/mountain.jpg'),
+  L('mountain-trek',     'Summit Explorer',        'mountain',    ['Travel', 'Adventure'],    ['green-shirt',   'grey-cargo',     'sports-shoes',   'watch',        'sunglasses'], U('photo-1501555088652-021faa106b9b', 700, 520)),
+  L('mountain-knit',     'Cozy Highland Layering', 'mountain',    ['Travel', 'Warmth'],       ['beige-sweater', 'blue-jeans',     'chelsea-boots',  'belt',         'cap'],        U('photo-1464822759023-fed622ff2c3b', 700, 520)),
+
+  // ── Seasonal & Special Looks ──
+  L('festive-trad',      'Festive Celebration',    'festive',     ['Traditional', 'Festive'], ['white-shirt',   'beige-chinos',   'formal-shoes',   'watch',        'belt'],       '/img/festive.jpg'),
+  L('beach-vac',         'Breezy Beach Resort',    'beach',       ['Travel', 'Summer'],       ['white-shirt',   'black-shorts',   'white-sneakers', 'sunglasses',   'cap'],        '/img/beach.jpg'),
+  L('winter-layers',     'Winter Down Warmth',     'winter',      ['Winter', 'Layered'],      ['puffer-jacket', 'black-hoodie',   'black-trousers', 'chelsea-boots', 'belt'],       '/img/winter.jpg'),
+  L('gym-fit',           'Athletic Performance',   'gym',         ['Sporty', 'Gym'],          ['black-polo',    'black-shorts',   'sports-shoes',   'watch',        'cap'],        '/img/gym.jpg'),
+  L('street-style',      'Urban Streetwear',       'city',        ['Streetwear', 'Trendy'],   ['black-hoodie',  'grey-cargo',     'black-sneakers', 'cap',          'chain'],      '/img/city.jpg'),
+  L('summer-ess',        'Summer Linen Breeze',    'summer',      ['Summer', 'Minimal'],      ['white-shirt',   'beige-chinos',   'white-sneakers', 'sunglasses',   'belt'],       '/img/summer.jpg'),
+  L('monsoon-ready',     'Monsoon Weather Shield', 'monsoon',     ['Monsoon', 'Practical'],   ['denim-jacket',  'black-polo',     'blue-jeans',     'black-sneakers', 'watch'],      '/img/monsoon.jpg'),
 ];
 
 export const lookTabs = ['All Looks', 'Casual', 'Formal', 'Party', 'Traditional', 'Travel', 'Seasonal'];

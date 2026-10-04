@@ -17,6 +17,10 @@ export function OccCard({ o, onClick, on, small }) {
       <img
         src={o.img}
         alt={o.title}
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = `/img/${o.id}.jpg`;
+        }}
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
