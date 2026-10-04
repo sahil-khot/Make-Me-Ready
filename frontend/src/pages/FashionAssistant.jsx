@@ -1,141 +1,275 @@
-﻿import { useState, useRef, useEffect } from "react";
-import { Send, ImageIcon, Info, ArrowRight, Sparkles, X } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import {
+  Send,
+  ImageIcon,
+  Info,
+  ArrowRight,
+  Sparkles,
+  X,
+  RotateCcw,
+  Palette,
+  Layers,
+  SlidersHorizontal,
+} from "lucide-react";
 import { useStore } from "../store.jsx";
+import { IMG } from "../data/constants.js";
 
-// ─── Gemini API ───────────────────────────────────────────────────────────────
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${import.meta.env.VITE_GEMINI_KEY}`;
+// ─── Gemini Models & Fallback ────────────────────────────────────────────────
+const CANDIDATE_MODELS = [
+  "gemini-3.7-flash",
+  "gemini-3.5-flash",
+  "gemini-flash-lite-latest",
+  "gemini-3-flash-preview",
+];
 
-const SYSTEM_PROMPT = `You are a helpful Fashion Assistant for "Make Me Ready", an AI-powered personal stylist app built for Indian users.
-You can answer ANY question the user asks — fashion-related or general knowledge.
+const SYSTEM_PROMPT = `You are the personal Fashion Assistant for "Make Me Ready", an AI-powered styling and wardrobe management platform.
+You can answer ANY question the user asks — both fashion-related and general questions.
 
-For fashion topics you specialise in:
-- Outfit ideas and combinations for any occasion (wedding, college, office, date, party, travel, gym, etc.)
-- Color combination and palette suggestions
-- Accessory and footwear recommendations
-- Wardrobe building, capsule wardrobe tips
-- Shopping and brand suggestions (Indian and international)
-- Style tips, grooming, and personal styling
-- Seasonal and occasion-based dressing
+For fashion questions, you are an elite celebrity stylist:
+- Recommend outfits, color palettes, and aesthetics for any event (wedding, college, interview, date, travel, party, etc.)
+- Suggest accessories, footwear, grooming, and wardrobe curation tips
+- Provide practical advice suitable for modern wardrobes, Indian occasions, and global trends
 
-For non-fashion questions, answer helpfully and naturally as a knowledgeable AI.
+For general questions:
+- Answer accurately, helpfully, concisely, and warmly.
 
-Be friendly, warm, and concise. Use bullet points for lists. Bold key items with **text**. Keep responses clear and easy to read.`;
+Formatting:
+- Use bullet points for recommendations
+- Highlight key clothing items or terms in **bold**
+- Keep responses readable, friendly, and structured.`;
 
 async function askGemini(history, newMessage) {
+  const apiKey = import.meta.env.VITE_GEMINI_KEY;
+  if (!apiKey) {
+    throw new Error("Gemini API key is not configured.");
+  }
+
   const contents = [
     { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
-    { role: "model", parts: [{ text: "Got it! I am your Fashion Assistant, ready to help with style advice, outfit ideas, and any other questions you have." }] },
+    {
+      role: "model",
+      parts: [
+        {
+          text: "Understood! I am the Make Me Ready Fashion Assistant. I am ready to help you with outfit curation, styling advice, color combinations, and any other questions you may have.",
+        },
+      ],
+    },
     ...history
-      .filter(m => !m.loading && m.id !== "greeting")
-      .map(m => ({
+      .filter((m) => !m.loading && m.id !== "greeting" && m.content)
+      .map((m) => ({
         role: m.role === "assistant" ? "model" : "user",
         parts: [{ text: m.content }],
       })),
     { role: "user", parts: [{ text: newMessage }] },
   ];
 
-  const res = await fetch(GEMINI_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents,
-      generationConfig: { temperature: 0.8, maxOutputTokens: 1024 },
-    }),
-  });
+  let lastError = null;
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || `Error ${res.status}`);
+  for (const model of CANDIDATE_MODELS) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents,
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 1200,
+          },
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) return text;
+      } else {
+        const err = await res.json().catch(() => ({}));
+        console.warn(`Model ${model} returned ${res.status}:`, err.error?.message);
+        lastError = err.error?.message || `Status ${res.status}`;
+      }
+    } catch (e) {
+      console.warn(`Network error with ${model}:`, e.message);
+      lastError = e.message;
+    }
   }
-  const data = await res.json();
-  return (
-    data.candidates?.[0]?.content?.parts?.[0]?.text ||
-    "I could not generate a response. Please try again."
-  );
+
+  throw new Error(lastError || "Could not connect to Gemini AI. Please try again.");
 }
 
-// ─── Quick prompts ─────────────────────────────────────────────────────────────
+// ─── Quick Prompts ───────────────────────────────────────────────────────────
 const QUICK_PROMPTS = [
   "Suggest an outfit for a wedding",
   "What should I wear for an interview?",
-  "Help me style a denim jacket",
-  "Recommend matching shoes for chinos",
-  "Suggest accessories for a date night",
+  "Help me style this jacket",
+  "Recommend matching shoes",
+  "Suggest accessories",
   "Give me color combination ideas",
-  "Create a party look from basics",
+  "Create a party look from my wardrobe",
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Initial Demo Conversation (Matching Reference Design) ───────────────────
+function buildInitialMessages(userName = "Sahil") {
+  return [
+    {
+      id: "greeting",
+      role: "assistant",
+      content: `Hi ${userName}! 👋\nI'm your Fashion Assistant, powered by Gemini.\nI can help you with outfit ideas, styling tips, color combinations, occasion-based looks, shopping suggestions and more.\nWhat would you like to explore today?`,
+    },
+    {
+      id: "user-demo-1",
+      role: "user",
+      content:
+        "Suggest a complete outfit for a college day from my wardrobe. I want something casual and trendy.",
+    },
+    {
+      id: "ai-demo-1",
+      role: "assistant",
+      content:
+        "Here's a casual and trendy college outfit for you from your wardrobe 👕",
+      outfit: {
+        items: [
+          {
+            title: "Oversized T-Shirt",
+            subtitle: "From your wardrobe",
+            image:
+              IMG["tshirt-p"] ||
+              "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=400&q=80",
+          },
+          {
+            title: "Blue Jeans",
+            subtitle: "From your wardrobe",
+            image:
+              IMG["blue-jeans"] ||
+              "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=400&q=80",
+          },
+          {
+            title: "White Sneakers",
+            subtitle: "From your wardrobe",
+            image:
+              IMG["white-sneakers"] ||
+              "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?auto=format&fit=crop&w=400&q=80",
+          },
+          {
+            title: "Analog Watch",
+            subtitle: "From your wardrobe",
+            image:
+              IMG["watch"] ||
+              "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80",
+          },
+        ],
+        footerNote:
+          "This look is clean, comfortable and perfect for college. You can also add a light jacket if it's a bit chilly.",
+      },
+    },
+  ];
+}
+
+// ─── Markdown Renderer ───────────────────────────────────────────────────────
 function renderMarkdown(text) {
+  if (!text) return null;
   const lines = text.split("\n");
+
   return lines.map((line, i) => {
-    // Render **bold**
-    const parts = line.split(/\*\*(.*?)\*\*/g);
-    const rendered = parts.map((p, j) =>
-      j % 2 === 1 ? <strong key={j} className="text-white font-semibold">{p}</strong> : p
-    );
+    // Check if line is a bullet
     const isBullet = /^[\-\*•]\s/.test(line.trim());
+    const cleanLine = isBullet ? line.trim().replace(/^[\-\*•]\s/, "") : line;
+
+    // Parse **bold** parts
+    const parts = cleanLine.split(/\*\*(.*?)\*\*/g);
+    const rendered = parts.map((part, j) =>
+      j % 2 === 1 ? (
+        <strong key={j} className="text-white font-semibold">
+          {part}
+        </strong>
+      ) : (
+        part
+      )
+    );
+
     if (isBullet) {
-      const stripped = line.trim().replace(/^[\-\*•]\s/, "");
-      const bParts = stripped.split(/\*\*(.*?)\*\*/g);
-      const bRendered = bParts.map((p, j) =>
-        j % 2 === 1 ? <strong key={j} className="text-white font-semibold">{p}</strong> : p
-      );
       return (
-        <div key={i} className="flex gap-2.5 mt-1 first:mt-0">
-          <span className="text-amber-400 mt-[3px] shrink-0 text-xs leading-5">◆</span>
-          <span className="flex-1">{bRendered}</span>
+        <div key={i} className="flex gap-2.5 mt-2 first:mt-0 text-[15px] leading-relaxed">
+          <span className="text-amber-400 mt-1 shrink-0 text-xs">◆</span>
+          <span className="flex-1 text-stone-200">{rendered}</span>
         </div>
       );
     }
-    if (!line.trim()) return <div key={i} className="h-2" />;
+
+    if (!line.trim()) {
+      return <div key={i} className="h-2.5" />;
+    }
+
     return (
-      <p key={i} className={`leading-relaxed ${i > 0 ? "mt-1.5" : ""}`}>
+      <p
+        key={i}
+        className={`text-[15px] leading-relaxed text-stone-200 ${
+          i > 0 ? "mt-2" : ""
+        }`}
+      >
         {rendered}
       </p>
     );
   });
 }
 
-// ─── How it works modal ───────────────────────────────────────────────────────
+// ─── How It Works Modal ──────────────────────────────────────────────────────
 function HowItWorksModal({ onClose }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md"
       onClick={onClose}
     >
       <div
-        className="bg-[#111009] border border-amber-500/20 rounded-2xl p-7 max-w-[440px] w-full shadow-2xl"
-        onClick={e => e.stopPropagation()}
+        className="bg-[#12100d] border border-amber-500/25 rounded-2xl p-7 max-w-[460px] w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between mb-5">
-          <h2 className="font-serif font-semibold text-xl flex items-center gap-2.5">
-            <Sparkles size={18} className="text-amber-400" />
+          <h2 className="font-serif font-semibold text-xl text-white flex items-center gap-2.5">
+            <Sparkles size={20} className="text-amber-400" />
             How it works
           </h2>
-          <button onClick={onClose} className="text-stone-500 hover:text-white transition">
+          <button
+            onClick={onClose}
+            className="p-1 rounded-lg text-stone-400 hover:text-white hover:bg-white/5 transition"
+          >
             <X size={18} />
           </button>
         </div>
         <ul className="space-y-4">
           {[
-            ["Ask anything", "Type any fashion or general question — outfits, occasions, colors, accessories, and more."],
-            ["Quick Prompts", "Click the suggestions on the right panel to explore ideas instantly."],
-            ["Powered by Gemini", "Uses Google Gemini AI for intelligent, personalised fashion guidance."],
-            ["Contextual memory", "The assistant remembers your conversation for follow-up questions."],
+            [
+              "Ask Any Question",
+              "Ask for outfit styling, wedding dress codes, color theory, footwear suggestions, or any general question.",
+            ],
+            [
+              "Try Asking Prompts",
+              "Click any suggestion on the right panel to instantly generate styled inspiration.",
+            ],
+            [
+              "Powered by Gemini",
+              "Uses Google's Gemini models with automatic multi-model fallback for guaranteed, instantaneous responses.",
+            ],
+            [
+              "Personalized Wardrobe Integration",
+              "Recommends pieces from your own Make Me Ready collection tailored to your personal taste.",
+            ],
           ].map(([title, desc]) => (
-            <li key={title} className="flex gap-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shrink-0" />
+            <li key={title} className="flex gap-3.5">
+              <span className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0 shadow-sm shadow-amber-400/50" />
               <div>
                 <div className="text-white font-medium text-sm">{title}</div>
-                <div className="text-stone-400 text-sm mt-0.5 leading-relaxed">{desc}</div>
+                <div className="text-stone-400 text-sm mt-0.5 leading-relaxed">
+                  {desc}
+                </div>
               </div>
             </li>
           ))}
         </ul>
         <button
           onClick={onClose}
-          className="mt-6 w-full h-11 rounded-xl bg-amber-500 text-black font-semibold text-sm hover:brightness-110 transition"
+          className="mt-6 w-full h-11 rounded-xl bg-amber-500 text-stone-950 font-semibold text-sm hover:bg-amber-400 transition shadow-lg shadow-amber-500/20"
         >
           Got it
         </button>
@@ -144,102 +278,71 @@ function HowItWorksModal({ onClose }) {
   );
 }
 
-// ─── Message bubble ──────────────────────────────────────────────────────────
-function MessageBubble({ msg, userName, userAvatar }) {
-  const isUser = msg.role === "user";
-
-  if (isUser) {
-    return (
-      <div className="flex items-end justify-end gap-2.5">
-        <div className="max-w-[65%] bg-[#1e1b12] border border-amber-500/15 rounded-2xl rounded-br-sm px-4 py-3 text-sm text-stone-100 leading-relaxed">
-          {renderMarkdown(msg.content)}
-        </div>
-        {userAvatar ? (
-          <img
-            src={userAvatar}
-            alt={userName}
-            className="w-8 h-8 rounded-full object-cover border border-white/10 shrink-0"
-          />
-        ) : (
-          <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-xs font-bold text-amber-400 shrink-0 uppercase">
-            {userName?.[0] || "U"}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex items-start gap-2.5">
-      <div className="w-8 h-8 rounded-full overflow-hidden border border-amber-500/25 shrink-0">
-        <img src="/img/logo.jpg" alt="AI" className="w-full h-full object-cover" />
-      </div>
-      <div className="max-w-[72%] bg-[#111009] border border-white/[.06] rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-stone-200 leading-relaxed">
-        {msg.loading ? (
-          <div className="flex items-center gap-1.5 py-0.5">
-            {[0, 1, 2].map(i => (
-              <span
-                key={i}
-                className="w-1.5 h-1.5 rounded-full bg-amber-400/70 animate-bounce"
-                style={{ animationDelay: `${i * 0.18}s` }}
-              />
-            ))}
-            <span className="text-xs text-stone-500 ml-1.5">Thinking…</span>
-          </div>
-        ) : (
-          renderMarkdown(msg.content)
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Main Fashion Assistant Component ────────────────────────────────────────
 export default function FashionAssistant() {
   const { user } = useStore();
-  const firstName = user?.name ? user.name.split(" ")[0] : "there";
+  const firstName = user?.name ? user.name.split(" ")[0] : "Sahil";
 
-  const greeting = {
-    role: "assistant",
-    id: "greeting",
-    content: `Hi ${firstName}! 👋\nI'm your Fashion Assistant, powered by Gemini.\nI can help you with outfit ideas, styling tips, color combinations, occasion-based looks, shopping suggestions and more.\nWhat would you like to explore today?`,
-  };
-
-  const [messages, setMessages] = useState([greeting]);
+  const [messages, setMessages] = useState(() => buildInitialMessages(firstName));
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
-  const chatRef = useRef(null);
+  const chatScrollRef = useRef(null);
 
+  // Auto-scroll when messages change
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, loading]);
 
-  const send = async (text) => {
-    const msg = (typeof text === "string" ? text : input).trim();
-    if (!msg || loading) return;
+  const send = async (textToSend) => {
+    const query = (typeof textToSend === "string" ? textToSend : input).trim();
+    if (!query || loading) return;
     setInput("");
 
-    const userMsg = { role: "user", content: msg, id: `u-${Date.now()}` };
-    const thinkId = `a-${Date.now()}`;
-    const thinking = { role: "assistant", content: "", loading: true, id: thinkId };
+    const userMessageId = `user-${Date.now()}`;
+    const assistantMessageId = `assistant-${Date.now()}`;
 
-    setMessages(prev => [...prev, userMsg, thinking]);
+    const userMsg = {
+      id: userMessageId,
+      role: "user",
+      content: query,
+    };
+
+    const thinkingMsg = {
+      id: assistantMessageId,
+      role: "assistant",
+      content: "",
+      loading: true,
+    };
+
+    setMessages((prev) => [...prev, userMsg, thinkingMsg]);
     setLoading(true);
 
     try {
-      const history = messages.filter(m => !m.loading);
-      const reply = await askGemini(history, msg);
-      setMessages(prev =>
-        prev.map(m => m.id === thinkId ? { role: "assistant", content: reply, id: thinkId } : m)
+      const history = messages.filter((m) => !m.loading);
+      const reply = await askGemini(history, query);
+
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === assistantMessageId
+            ? { id: assistantMessageId, role: "assistant", content: reply }
+            : m
+        )
       );
     } catch (err) {
-      setMessages(prev =>
-        prev.map(m =>
-          m.id === thinkId
-            ? { role: "assistant", content: `⚠️ ${err.message || "Something went wrong. Please try again."}`, id: thinkId }
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === assistantMessageId
+            ? {
+                id: assistantMessageId,
+                role: "assistant",
+                content: `⚠️ ${
+                  err.message || "Something went wrong. Please try again."
+                }`,
+              }
             : m
         )
       );
@@ -249,135 +352,309 @@ export default function FashionAssistant() {
     }
   };
 
-  return (
-    <div className="flex flex-col" style={{ height: "calc(100vh - 68px - 2.5rem)" }}>
+  const resetChat = () => {
+    setMessages(buildInitialMessages(firstName));
+  };
 
+  return (
+    <div
+      className="flex flex-col w-full max-w-[1440px] mx-auto"
+      style={{ height: "calc(100vh - 84px)" }}
+    >
       {/* ── Page Header ── */}
-      <div className="flex items-center justify-between mb-4 shrink-0">
+      <div className="flex items-center justify-between mb-4 shrink-0 px-1">
         <div>
           <div className="flex items-center gap-3">
-            <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
-              <path d="M14 2L16.2 11.5L25 14L16.2 16.5L14 26L11.8 16.5L3 14L11.8 11.5Z" fill="#f59e0b" />
-            </svg>
-            <h1 className="font-serif font-semibold text-[1.75rem] text-white leading-tight">
+            {/* Sparkle Logo */}
+            <div className="text-amber-400">
+              <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+                <path
+                  d="M14 2L16.2 11.5L25 14L16.2 16.5L14 26L11.8 16.5L3 14L11.8 11.5Z"
+                  fill="#f59e0b"
+                />
+              </svg>
+            </div>
+            <h1 className="font-serif font-semibold text-2xl lg:text-[28px] text-white tracking-wide">
               Fashion Assistant
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full border border-amber-500/50 bg-amber-500/10 text-amber-400 text-[10px] font-bold tracking-widest">
+            <span className="px-2.5 py-0.5 rounded-full border border-amber-500/50 bg-amber-500/10 text-amber-400 text-xs font-bold tracking-wider">
               BETA
             </span>
           </div>
-          <p className="text-[13px] text-stone-400 mt-0.5 ml-[38px] flex items-center gap-1.5">
+          <p className="text-sm text-stone-400 mt-1 ml-9 flex items-center gap-1.5 font-normal">
             Your personal AI stylist powered by&nbsp;
-            <span className="flex items-center gap-1 text-blue-400 font-medium">
-              <svg width="12" height="12" viewBox="0 0 28 28" fill="none">
-                <path d="M14 2L16.2 11.5L25 14L16.2 16.5L14 26L11.8 16.5L3 14L11.8 11.5Z" fill="#4285f4" />
+            <span className="inline-flex items-center gap-1 text-blue-400 font-medium">
+              <svg width="13" height="13" viewBox="0 0 28 28" fill="none">
+                <path
+                  d="M14 2L16.2 11.5L25 14L16.2 16.5L14 26L11.8 16.5L3 14L11.8 11.5Z"
+                  fill="#4285f4"
+                />
               </svg>
               Gemini
             </span>
           </p>
         </div>
-        <button
-          onClick={() => setShowInfo(true)}
-          className="flex items-center gap-2 px-4 h-9 rounded-xl border border-white/[.08] bg-white/[.02] text-stone-400 hover:text-white hover:border-white/[.15] text-xs font-medium transition"
-        >
-          <Info size={13} />
-          How it works
-        </button>
+
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={resetChat}
+            title="Reset conversation"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-[#12110e]/70 text-stone-400 hover:text-white hover:border-white/20 text-xs font-medium transition"
+          >
+            <RotateCcw size={13} />
+            <span className="hidden sm:inline">Reset</span>
+          </button>
+          <button
+            onClick={() => setShowInfo(true)}
+            className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-[#12110e]/70 text-stone-300 hover:text-white hover:border-amber-500/30 text-xs sm:text-sm font-medium transition shadow-sm"
+          >
+            <Info size={14} className="text-amber-400/90" />
+            How it works?
+          </button>
+        </div>
       </div>
 
-      {/* ── Body: Chat + Sidebar ── */}
-      <div className="flex gap-4 flex-1 min-h-0">
-
-        {/* ── Chat panel ── */}
-        <div className="flex-1 flex flex-col min-w-0 border border-white/[.06] rounded-2xl bg-[#0c0b09] overflow-hidden">
-
-          {/* Messages scroll area */}
+      {/* ── Main Two-Column Body ── */}
+      <div className="flex gap-4 sm:gap-5 flex-1 min-h-0">
+        {/* Left Column: Chat Conversation Container */}
+        <div className="flex-1 flex flex-col min-w-0 bg-[#0e0d0b] border border-white/[.08] rounded-2xl lg:rounded-3xl p-4 sm:p-6 overflow-hidden shadow-2xl">
           <div
-            ref={chatRef}
-            className="flex-1 overflow-y-auto px-5 py-5 space-y-4 min-h-0"
-            style={{ scrollbarWidth: "thin", scrollbarColor: "#2a2520 transparent" }}
+            ref={chatScrollRef}
+            className="flex-1 overflow-y-auto pr-1 sm:pr-2 space-y-6 min-h-0"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "#26221d transparent",
+            }}
           >
-            {messages.map(msg => (
-              <MessageBubble
-                key={msg.id}
-                msg={msg}
-                userName={user?.name || "You"}
-                userAvatar={user?.avatar}
-              />
-            ))}
-            <div ref={bottomRef} />
-          </div>
+            {messages.map((msg) => {
+              const isUser = msg.role === "user";
 
-          {/* ── Input bar ── */}
-          <div className="shrink-0 border-t border-white/[.06] bg-[#0e0d0b] px-4 py-3 flex items-center gap-3">
-            <button
-              type="button"
-              title="Attach image (coming soon)"
-              className="text-stone-600 hover:text-stone-400 transition shrink-0"
-            >
-              <ImageIcon size={18} />
-            </button>
-            <textarea
-              ref={inputRef}
-              rows={1}
-              value={input}
-              autoFocus
-              onChange={e => {
-                setInput(e.target.value);
-                e.target.style.height = "auto";
-                e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
-              }}
-              onKeyDown={e => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  send();
-                }
-              }}
-              placeholder="Ask me anything about fashion…"
-              className="flex-1 bg-transparent text-[13.5px] text-white placeholder:text-stone-600 outline-none resize-none leading-[1.6] overflow-hidden"
-              style={{ minHeight: "24px", maxHeight: "120px" }}
-            />
-            <button
-              type="button"
-              onClick={() => send()}
-              disabled={!input.trim() || loading}
-              className="w-8 h-8 rounded-full bg-amber-500 text-black flex items-center justify-center shrink-0 hover:bg-amber-400 transition disabled:opacity-35 disabled:cursor-not-allowed"
-            >
-              <Send size={13} />
-            </button>
+              if (isUser) {
+                return (
+                  <div key={msg.id} className="flex items-start justify-end gap-3">
+                    <div className="max-w-[80%] lg:max-w-[70%] bg-[#362414] border border-amber-600/30 rounded-2xl rounded-tr-sm px-5 py-3.5 text-[15px] text-white leading-relaxed shadow-md">
+                      {msg.content}
+                    </div>
+                    {user?.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt="User"
+                        className="w-10 h-10 rounded-full object-cover border border-amber-500/40 shrink-0"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-sm font-bold text-amber-400 shrink-0 uppercase">
+                        {firstName[0] || "U"}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              // Assistant Message
+              return (
+                <div key={msg.id} className="flex items-start gap-3.5">
+                  {/* Brand Crown Avatar */}
+                  <div className="w-10 h-10 rounded-full border border-amber-500/50 bg-[#161410] flex items-center justify-center shrink-0 p-1 shadow-md shadow-amber-500/10">
+                    <img
+                      src="/img/logo.jpg"
+                      alt="Make Me Ready"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  </div>
+
+                  {/* Bubble Container */}
+                  <div className="max-w-[85%] lg:max-w-[82%] bg-[#181613] border border-white/[.07] rounded-2xl rounded-tl-sm px-5 py-4 text-[15px] text-stone-200 leading-relaxed shadow-lg">
+                    {msg.loading ? (
+                      <div className="flex items-center gap-2 py-1">
+                        <span
+                          className="w-2 h-2 rounded-full bg-amber-400 animate-bounce"
+                          style={{ animationDelay: "0ms" }}
+                        />
+                        <span
+                          className="w-2 h-2 rounded-full bg-amber-400 animate-bounce"
+                          style={{ animationDelay: "150ms" }}
+                        />
+                        <span
+                          className="w-2 h-2 rounded-full bg-amber-400 animate-bounce"
+                          style={{ animationDelay: "300ms" }}
+                        />
+                        <span className="text-xs text-stone-400 ml-2 font-medium">
+                          Styling your answer…
+                        </span>
+                      </div>
+                    ) : (
+                      <div>
+                        {renderMarkdown(msg.content)}
+
+                        {/* Outfit Recommendation Cards Grid (if present) */}
+                        {msg.outfit && (
+                          <div className="mt-4 pt-3 border-t border-white/[.07]">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 my-3">
+                              {msg.outfit.items.map((item, idx) => (
+                                <div
+                                  key={idx}
+                                  className="bg-[#12110e] border border-white/[.06] rounded-xl p-2.5 flex flex-col items-center text-center group hover:border-amber-500/30 transition"
+                                >
+                                  <div className="w-full h-24 sm:h-28 rounded-lg overflow-hidden bg-black/40 mb-2.5 flex items-center justify-center">
+                                    <img
+                                      src={item.image}
+                                      alt={item.title}
+                                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                                      loading="lazy"
+                                    />
+                                  </div>
+                                  <div className="text-xs sm:text-sm font-semibold text-white truncate w-full">
+                                    {item.title}
+                                  </div>
+                                  <div className="text-[11px] text-stone-400 mt-0.5 truncate w-full">
+                                    {item.subtitle}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            {msg.outfit.footerNote && (
+                              <p className="text-[14px] text-stone-300 mt-3 leading-relaxed">
+                                {msg.outfit.footerNote}
+                              </p>
+                            )}
+
+                            {/* Action Buttons Row */}
+                            <div className="flex flex-wrap items-center gap-2.5 mt-4">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  send("Show me full look styling details and tips for this outfit")
+                                }
+                                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition shadow-md shadow-amber-500/20"
+                              >
+                                View Full Look
+                                <ArrowRight size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  send("Suggest a different style for this college day outfit")
+                                }
+                                className="px-3.5 py-2 rounded-xl border border-white/10 bg-white/[.03] hover:bg-white/[.08] hover:border-white/20 text-stone-300 hover:text-white text-xs sm:text-sm font-medium flex items-center gap-1.5 transition"
+                              >
+                                <Sparkles size={13} className="text-amber-400" />
+                                Try Different Style
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  send("Give me alternative color combination options for this look")
+                                }
+                                className="px-3.5 py-2 rounded-xl border border-white/10 bg-white/[.03] hover:bg-white/[.08] hover:border-white/20 text-stone-300 hover:text-white text-xs sm:text-sm font-medium flex items-center gap-1.5 transition"
+                              >
+                                <Palette size={13} className="text-amber-400" />
+                                Change Color
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  send("Recommend accessories and shoes to complete this college look")
+                                }
+                                className="px-3.5 py-2 rounded-xl border border-white/10 bg-white/[.03] hover:bg-white/[.08] hover:border-white/20 text-stone-300 hover:text-white text-xs sm:text-sm font-medium flex items-center gap-1.5 transition"
+                              >
+                                <Layers size={13} className="text-amber-400" />
+                                Add Accessories
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            <div ref={bottomRef} />
           </div>
         </div>
 
-        {/* ── Try asking sidebar ── */}
-        <aside className="w-[240px] shrink-0 hidden lg:flex flex-col gap-3">
-          <div className="border border-white/[.06] bg-[#0c0b09] rounded-2xl p-4 flex-1 flex flex-col">
-            <div className="flex items-center gap-2 mb-3 shrink-0">
-              <span className="text-base leading-none">💡</span>
-              <span className="text-sm font-semibold text-white">Try asking…</span>
-            </div>
-            <div className="space-y-1.5 flex-1">
-              {QUICK_PROMPTS.map(p => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => send(p)}
-                  disabled={loading}
-                  className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border border-white/[.06] bg-white/[.02] hover:bg-amber-500/10 hover:border-amber-500/30 text-left leading-snug transition group disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <span className="text-[12.5px] text-stone-300 group-hover:text-white transition flex-1">
-                    {p}
-                  </span>
-                  <ArrowRight
-                    size={12}
-                    className="text-stone-600 group-hover:text-amber-400 shrink-0 transition"
-                  />
-                </button>
-              ))}
-            </div>
+        {/* Right Column: "Try asking..." Sidebar */}
+        <aside className="w-[310px] xl:w-[350px] shrink-0 hidden lg:flex flex-col bg-[#0e0d0b] border border-white/[.08] rounded-2xl lg:rounded-3xl p-5 shadow-2xl">
+          {/* Sidebar Title */}
+          <div className="flex items-center gap-2.5 mb-4 shrink-0">
+            <span className="text-lg">💡</span>
+            <h2 className="text-base font-semibold text-white tracking-wide">
+              Try asking...
+            </h2>
+          </div>
+
+          {/* Quick Prompts List */}
+          <div
+            className="flex-1 overflow-y-auto space-y-2.5 pr-1 min-h-0"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "#26221d transparent",
+            }}
+          >
+            {QUICK_PROMPTS.map((prompt) => (
+              <button
+                key={prompt}
+                type="button"
+                onClick={() => send(prompt)}
+                disabled={loading}
+                className="w-full flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border border-white/[.07] bg-[#161412] hover:bg-[#201d18] hover:border-amber-500/40 text-left transition duration-200 group disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+              >
+                <span className="text-sm font-normal text-stone-200 group-hover:text-white transition leading-snug">
+                  {prompt}
+                </span>
+                <ArrowRight
+                  size={15}
+                  className="text-amber-500/70 group-hover:text-amber-400 group-hover:translate-x-0.5 transition shrink-0"
+                />
+              </button>
+            ))}
           </div>
         </aside>
       </div>
 
+      {/* ── Full-Width Bottom Input Bar ── */}
+      <div className="shrink-0 mt-4 bg-[#0e0d0b] border border-white/[.08] rounded-2xl px-5 py-3.5 flex items-center gap-3.5 shadow-2xl">
+        <button
+          type="button"
+          title="Attach image (coming soon)"
+          className="text-stone-400 hover:text-amber-400 transition p-1 shrink-0"
+        >
+          <ImageIcon size={22} />
+        </button>
+
+        <textarea
+          ref={inputRef}
+          rows={1}
+          value={input}
+          autoFocus
+          onChange={(e) => {
+            setInput(e.target.value);
+            e.target.style.height = "auto";
+            e.target.style.height = `${Math.min(e.target.scrollHeight, 100)}px`;
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              send();
+            }
+          }}
+          placeholder="Ask me anything about fashion..."
+          className="flex-1 bg-transparent text-[15px] text-white placeholder:text-stone-500 outline-none resize-none leading-relaxed overflow-hidden py-1"
+          style={{ minHeight: "26px", maxHeight: "100px" }}
+        />
+
+        <button
+          type="button"
+          onClick={() => send()}
+          disabled={!input.trim() || loading}
+          className="w-10 h-10 rounded-full bg-amber-500 text-stone-950 flex items-center justify-center shrink-0 hover:bg-amber-400 transition disabled:opacity-35 disabled:cursor-not-allowed shadow-lg shadow-amber-500/20 active:scale-95"
+        >
+          <Send size={15} className="translate-x-[1px]" />
+        </button>
+      </div>
+
+      {/* ── Modal ── */}
       {showInfo && <HowItWorksModal onClose={() => setShowInfo(false)} />}
     </div>
   );
