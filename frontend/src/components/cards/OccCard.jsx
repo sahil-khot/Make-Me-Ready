@@ -18,7 +18,7 @@ export function OccCard({ o, onClick, on, small }) {
     <button
       type="button"
       onClick={handleClick}
-      className={`group tile relative overflow-hidden rounded-2xl border text-left aspect-[4/5.2] transition duration-200 hover:-translate-y-1 ${
+      className={`group tile relative overflow-hidden rounded-2xl border text-left aspect-[2/3] transition duration-200 hover:-translate-y-1 ${
         on
           ? "border-acc shadow-[0_0_24px_rgba(255,159,47,.25)]"
           : "border-white/[.08] hover:border-amber-500/50"
@@ -31,9 +31,9 @@ export function OccCard({ o, onClick, on, small }) {
           e.currentTarget.onerror = null;
           e.currentTarget.src = `/img/${o.id}.jpg`;
         }}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover object-top"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
       {on && (
         <span className="absolute top-2 right-2 grid place-items-center w-6 h-6 rounded-full bg-acc text-black">
           <Check size={14} />

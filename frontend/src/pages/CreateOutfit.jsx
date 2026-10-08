@@ -559,39 +559,39 @@ export default function CreateOutfit() {
                 <div
                   key={occ.id}
                   onClick={() => setSelectedOccId(occ.id)}
-                  className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-[#151515] text-left transition-all duration-300 cursor-pointer ${
+                  className={`group relative flex flex-col justify-between p-3 sm:p-3.5 rounded-2xl bg-[#141414] text-left transition-all duration-300 cursor-pointer ${
                     isSelected
                       ? "border-2 border-amber-500 ring-4 ring-amber-500/25 shadow-[0_0_30px_rgba(245,158,11,0.3)] -translate-y-1.5"
                       : "border border-white/[.08] hover:border-amber-500/50 hover:-translate-y-1"
                   }`}
                 >
-                  <div className="relative aspect-[3/3.7] w-full overflow-hidden bg-black/40">
+                  <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-black/60">
                     <img
                       src={occ.image}
                       alt={occ.name}
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                       }}
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
+                    <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
 
                     {/* Category Tag */}
-                    <span className="absolute top-3 left-3 text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-amber-400 border border-amber-500/30">
+                    <span className="absolute top-2.5 left-2.5 text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md text-amber-400 border border-amber-500/30 shadow-md">
                       {occ.category}
                     </span>
 
                     {/* Checkmark Indicator */}
                     {isSelected && (
-                      <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-amber-500 text-black grid place-items-center shadow-md shadow-amber-500/40 animate-up">
+                      <div className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-amber-500 text-black grid place-items-center shadow-md shadow-amber-500/40 animate-up">
                         <Check size={16} strokeWidth={3} />
                       </div>
                     )}
                   </div>
 
-                  <div className="p-4 bg-[#151515] border-t border-white/[.04]">
+                  <div className="pt-3.5 pb-1 px-1">
                     <h3
-                      className={`font-serif font-bold text-base sm:text-lg transition ${
+                      className={`font-serif font-bold text-base sm:text-lg transition truncate ${
                         isSelected ? "text-amber-400" : "text-white group-hover:text-amber-400"
                       }`}
                     >

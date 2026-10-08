@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Sparkles,
   ArrowRight,
@@ -17,7 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Hero, Section, Modal } from "../ui.jsx";
 import { useStore } from "../store.jsx";
-import { IMG } from "../data/constants.js";
+import { IMG, looks as defaultLooks } from "../data/constants.js";
 
 const occasionFilters = [
   { id: "all", label: "All Occasions" },
@@ -41,25 +41,61 @@ export default function Recommendations() {
   const [aiModal, setAiModal] = useState(false);
 
   const { toggleSave, saved = [], catalog, user } = useStore();
-  const { looks = [], wardrobe = [] } = catalog || {};
+  const { wardrobe = [] } = catalog || {};
   const by = Object.fromEntries(wardrobe.map((w) => [w.id, w]));
   const nv = useNavigate();
 
   // Determine logged-in user gender for smart ordering
-  const userGender = user?.profile?.gender || "";
+  const userGender = user?.profile?.gender || user?.gender || "";
   const isFemale = userGender.toLowerCase() === "female" || userGender.toLowerCase() === "f";
   const isMale   = userGender.toLowerCase() === "male"   || userGender.toLowerCase() === "m";
 
+  // Merge catalog looks with defaultLooks so all 20 Men and 22 Women looks are always present
+  const allLooks = useMemo(() => {
+    const list = Array.isArray(catalog?.looks) && catalog.looks.length > 0 ? catalog.looks : defaultLooks;
+    const map = new Map();
+    // Default base looks first (guarantees all 20 Men + 22 Women looks)
+    defaultLooks.forEach((l) => map.set(l.id, l));
+    // Overlay any catalog updates
+    list.forEach((l) => {
+      const existing = map.get(l.id) || {};
+      map.set(l.id, { ...existing, ...l });
+    });
+    return Array.from(map.values());
+  }, [catalog?.looks]);
+
+  const isMenLook = (l) => {
+    const g = (l.gender || "").toLowerCase();
+    return g === "men" || g === "male" || (l.id && l.id.startsWith("outfit-") && !l.id.includes("-w"));
+  };
+
+  const isWomenLook = (l) => {
+    const g = (l.gender || "").toLowerCase();
+    return g === "women" || g === "female" || (l.id && l.id.includes("-w"));
+  };
+
+  // Master AI looks: guaranteed 20 Men looks and 22 Women looks
+  const masterAiLooks = allLooks.filter(isMenLook);
+  const womenLooks = allLooks.filter(isWomenLook);
+
   // Filter recommendations based on gender, occasion, and search query
-  const filteredLooks = looks.filter((l) => {
+  const filteredLooks = allLooks.filter((l) => {
     // Gender filter
-    if (genderFilter !== "All" && l.gender && l.gender !== genderFilter) {
+    if (genderFilter === "Men" && !isMenLook(l)) {
       return false;
     }
+    if (genderFilter === "Women" && !isWomenLook(l)) {
+      return false;
+    }
+
     // Occasion filter
-    if (occFilter !== "all" && l.occ !== occFilter) {
-      return false;
+    if (occFilter !== "all") {
+      const targetOcc = occFilter.toLowerCase();
+      const matchOcc = (l.occ || "").toLowerCase() === targetOcc;
+      const matchTags = l.tags?.some((t) => t.toLowerCase() === targetOcc);
+      if (!matchOcc && !matchTags) return false;
     }
+
     // Search query filter
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -71,20 +107,14 @@ export default function Recommendations() {
     return true;
   });
 
-  // Master AI looks (Top 20 AI generated images)
-  const masterAiLooks = looks.filter((l) => l.id.startsWith("outfit-") && !l.id.includes("-w"));
-  const womenLooks = looks.filter((l) => l.gender === "Women" || l.id.includes("-w"));
-
   // Gender-smart sorting: female users see Women's looks first, male users see Men's first
   const genderSortedFilteredLooks = [...filteredLooks].sort((a, b) => {
-    const aIsWomen = a.gender === "Women";
-    const bIsWomen = b.gender === "Women";
+    const aIsWomen = isWomenLook(a);
+    const bIsWomen = isWomenLook(b);
     if (isFemale) {
-      // Women first
       if (aIsWomen && !bIsWomen) return -1;
       if (!aIsWomen && bIsWomen) return 1;
     } else if (isMale) {
-      // Men first
       if (!aIsWomen && bIsWomen) return -1;
       if (aIsWomen && !bIsWomen) return 1;
     }
@@ -92,7 +122,7 @@ export default function Recommendations() {
   });
 
   // Curated Trending picks from real database looks
-  const trendingLooks = looks.filter((l) =>
+  const trendingLooks = allLooks.filter((l) =>
     ["outfit-17", "outfit-12", "outfit-15", "outfit-8", "outfit-14"].includes(l.id)
   );
 
@@ -153,7 +183,7 @@ export default function Recommendations() {
           {/* Gender Selector Tabs */}
           <div className="flex items-center gap-1.5 p-1 bg-black/40 rounded-xl border border-line w-fit">
             {[
-              { id: "All", label: "All Looks", count: looks.length },
+              { id: "All", label: "All Looks", count: allLooks.length },
               { id: "Men", label: "Men's Looks", count: masterAiLooks.length },
               { id: "Women", label: "Women's Looks", count: womenLooks.length },
             ].map((g) => (
@@ -264,7 +294,7 @@ export default function Recommendations() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
             {genderSortedFilteredLooks.map((l) => {
               const isSaved = saved.includes(l.id);
               const matchScore = l.matchScore || 95;
@@ -272,31 +302,32 @@ export default function Recommendations() {
               return (
                 <div
                   key={l.id}
-                  className="card group relative flex flex-col rounded-2xl overflow-hidden border border-line hover:border-acc/60 hover:-translate-y-1.5 transition-all duration-300 shadow-xl hover:shadow-acc/10 bg-card/90"
+                  className="group relative flex flex-col justify-between p-3 sm:p-3.5 rounded-2xl bg-[#141414] border border-white/[.08] hover:border-amber-500/50 hover:-translate-y-1.5 transition-all duration-300 shadow-xl hover:shadow-[0_18px_40px_rgba(0,0,0,0.8)] cursor-pointer"
                 >
-                  {/* Full Outfit Image Card */}
+                  {/* Full Outfit Image Card with Consistent Dimensions & Zero Awkward Cropping */}
                   <div
-                    className="relative aspect-[3/4] w-full overflow-hidden bg-black/60 cursor-pointer"
+                    className="relative aspect-[4/4.6] w-full overflow-hidden rounded-xl bg-black/60 cursor-pointer flex items-center justify-center"
                     onClick={() => setModalLook(l)}
                   >
                     <img
                       src={l.img}
                       alt={l.title}
                       loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain p-2 group-hover:scale-104 transition-transform duration-500"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = IMG["hero-wardrobe"];
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
+                    {/* Subtle top vignette for readable badges */}
+                    <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
 
                     {/* Top Badges */}
-                    <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
-                      <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-600/90 text-white backdrop-blur-md shadow-md">
+                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 z-10">
+                      <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-600/90 text-white backdrop-blur-md shadow-md">
                         {matchScore}% Match
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-black/70 text-acc border border-acc/30 backdrop-blur-md w-fit">
+                      <span className="px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider bg-black/80 text-amber-400 border border-amber-500/30 backdrop-blur-md">
                         {l.occ}
                       </span>
                     </div>
@@ -309,21 +340,21 @@ export default function Recommendations() {
                         e.stopPropagation();
                         toggleSave(l.id);
                       }}
-                      className={`absolute top-3 right-3 grid place-items-center w-9 h-9 rounded-full backdrop-blur-md transition-all z-10 ${
+                      className={`absolute top-2.5 right-2.5 grid place-items-center w-8 h-8 rounded-full backdrop-blur-md transition-all z-10 ${
                         isSaved
-                          ? "bg-acc text-black shadow-lg shadow-acc/30 scale-110"
-                          : "bg-black/60 text-white/80 hover:text-acc hover:bg-black/80"
+                          ? "bg-amber-500 text-black shadow-lg shadow-amber-500/30 scale-110"
+                          : "bg-black/70 text-white/80 hover:text-amber-400 hover:bg-black/90 border border-white/10"
                       }`}
                     >
                       <HeartIcon
-                        size={16}
+                        size={15}
                         className={isSaved ? "fill-black text-black" : "text-white"}
                       />
                     </button>
 
-                    {/* Hover Quick View Trigger - Sharp and Clear without blur or dark overlay */}
+                    {/* Hover Quick View Trigger */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                      <span className="btn-p text-xs px-3.5 py-2 flex items-center gap-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.7)] pointer-events-auto cursor-pointer">
+                      <span className="btn-p text-xs px-3.5 py-2 flex items-center gap-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.8)] pointer-events-auto cursor-pointer">
                         <Eye size={14} />
                         <span>Quick View</span>
                       </span>
@@ -331,13 +362,13 @@ export default function Recommendations() {
                   </div>
 
                   {/* Card Information & Action Bar */}
-                  <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div className="pt-3.5 pb-1 px-1 flex-1 flex flex-col justify-between space-y-3">
                     <div>
                       <div className="flex items-center justify-between gap-2">
-                        <h3 className="font-serif font-semibold text-sm text-white group-hover:text-acc transition-colors line-clamp-1">
+                        <h3 className="font-serif font-semibold text-sm sm:text-base text-white group-hover:text-amber-400 transition-colors line-clamp-1">
                           {l.title}
                         </h3>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-white/5 text-mute border border-white/10 shrink-0">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-stone-300 border border-white/10 shrink-0 font-medium">
                           {l.gender || "Men"}
                         </span>
                       </div>
@@ -345,7 +376,7 @@ export default function Recommendations() {
                         {(l.tags || []).slice(0, 3).map((tag) => (
                           <span
                             key={tag}
-                            className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-mute border border-white/5"
+                            className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-stone-400 border border-white/5"
                           >
                             #{tag}
                           </span>
@@ -354,10 +385,10 @@ export default function Recommendations() {
                     </div>
 
                     {/* Card Actions */}
-                    <div className="pt-2 border-t border-line/60 flex items-center justify-between gap-2">
+                    <div className="pt-2 border-t border-white/[.06] flex items-center justify-between gap-2">
                       <button
                         onClick={() => nv(`/create-outfit?occ=${l.occ}`)}
-                        className="flex-1 py-2 px-3 rounded-xl bg-white/5 hover:bg-acc hover:text-black text-xs font-medium text-mute transition flex items-center justify-center gap-1.5"
+                        className="flex-1 py-2 px-3 rounded-xl bg-white/5 hover:bg-amber-500 hover:text-black text-xs font-semibold text-stone-300 hover:font-bold transition flex items-center justify-center gap-1.5"
                       >
                         <Wand2 size={13} />
                         <span>Try in Studio</span>
@@ -366,8 +397,8 @@ export default function Recommendations() {
                         onClick={() => toggleSave(l.id)}
                         className={`p-2 rounded-xl border transition ${
                           isSaved
-                            ? "bg-acc/15 text-acc border-acc/40"
-                            : "border-line text-mute hover:text-white hover:border-line/80"
+                            ? "bg-amber-500/15 text-amber-400 border-amber-500/40"
+                            : "border-white/10 text-stone-400 hover:text-white hover:border-white/20"
                         }`}
                         title={isSaved ? "Saved to your looks" : "Save look"}
                       >
@@ -594,11 +625,11 @@ export default function Recommendations() {
           title={modalLook.title}
         >
           <div className="space-y-5">
-            <div className="relative aspect-[3/3.8] rounded-xl overflow-hidden bg-black/70 border border-line">
+            <div className="relative aspect-[4/4.6] rounded-xl overflow-hidden bg-black/70 border border-white/10 flex items-center justify-center">
               <img
                 src={modalLook.img}
                 alt={modalLook.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain p-2"
               />
               <span className="absolute top-3 left-3 px-3 py-1 rounded-md text-xs font-bold bg-emerald-600 text-white shadow-md">
                 {modalLook.matchScore || 95}% Match Score

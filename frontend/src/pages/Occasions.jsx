@@ -140,55 +140,55 @@ export default function Occasions() {
       </div>
 
       {/* ── Premium Occasion Cards Grid: 4 columns on desktop, 2 on tablet, 1 on mobile ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
         {filteredOccasions.map((occ) => (
           <div
             key={occ.id}
             onClick={() => handleOccasionClick(occ)}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-[#131313] border border-white/[.08] hover:border-amber-500/50 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] cursor-pointer"
+            className="group relative flex flex-col justify-between p-3 sm:p-3.5 rounded-2xl bg-[#141414] border border-white/[.08] hover:border-amber-500/50 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(0,0,0,0.7)] cursor-pointer"
           >
-            {/* Large Occasion Image Container */}
-            <div className="relative aspect-[3/3.8] sm:aspect-[3/3.7] w-full overflow-hidden bg-black/40">
+            {/* Consistent Full-Body 2:3 Aspect Ratio Container (matches 1024x1536 source images) */}
+            <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-black/60">
               <img
                 src={occ.image}
                 alt={occ.name}
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                 }}
-                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+                className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500 ease-out"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none" />
+              {/* Subtle top vignette for badge readability without obscuring shoes at bottom */}
+              <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
 
               {/* Category Pill Tag on Image Top-Left */}
-              <div className="absolute top-3 left-3 z-10">
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-amber-400 border border-amber-500/30">
+              <div className="absolute top-2.5 left-2.5 z-10">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md text-amber-400 border border-amber-500/30 shadow-md">
                   {occ.category}
                 </span>
               </div>
 
               {/* Interactive Arrow Button Top-Right */}
-              <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-stone-300 group-hover:text-amber-400 group-hover:border-amber-500/50 group-hover:scale-110 flex items-center justify-center transition-all duration-300">
+              <div className="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-stone-300 group-hover:text-amber-400 group-hover:border-amber-500/60 group-hover:scale-110 flex items-center justify-center transition-all duration-300 shadow-md">
                 <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
               </div>
             </div>
 
-            {/* Occasion Information Below the Image */}
-            <div className="p-4 flex items-center justify-between gap-3 bg-[#131313] border-t border-white/[.04]">
-              <div className="min-w-0 flex-1">
+            {/* Occasion Information Below the Image with Generous Spacing */}
+            <div className="pt-3.5 pb-1 px-1 flex flex-col gap-1">
+              <div className="flex items-center justify-between gap-2">
                 <h3 className="font-serif font-bold text-base sm:text-lg text-white group-hover:text-amber-400 transition-colors duration-200 truncate">
                   {occ.name}
                 </h3>
-                {occ.sub && (
-                  <p className="text-xs text-stone-400 font-sans mt-0.5 truncate">
-                    {occ.sub}
-                  </p>
-                )}
+                <span className="text-[11px] font-semibold text-amber-400/90 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-1 shrink-0">
+                  <span>Style</span>
+                  <ArrowRight size={11} />
+                </span>
               </div>
-
-              <span className="text-[11px] font-semibold text-amber-400/90 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-1">
-                <span>Style</span>
-                <ArrowRight size={11} />
-              </span>
+              {occ.sub && (
+                <p className="text-xs text-stone-400 font-sans leading-relaxed truncate">
+                  {occ.sub}
+                </p>
+              )}
             </div>
           </div>
         ))}

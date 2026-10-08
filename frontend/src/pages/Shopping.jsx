@@ -2,12 +2,14 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Star,
+  ShoppingCart,
   ShoppingBag,
   Truck,
   ShieldCheck,
   BadgeCheck,
   Headphones,
   ChevronRight,
+  ChevronLeft,
   Sparkles,
   Check,
   Heart,
@@ -346,32 +348,54 @@ export default function Shopping() {
               onClick={() =>
                 document.getElementById("catalog-grid")?.scrollIntoView({ behavior: "smooth" })
               }
-              className="btn-p h-11 px-6 text-black font-semibold text-sm shadow-[0_0_24px_rgba(245,158,11,0.35)]"
+              className="btn-p h-12 px-6 text-black font-semibold text-sm shadow-[0_0_24px_rgba(245,158,11,0.35)] cursor-pointer"
             >
               Browse Catalog ↓
             </button>
             <button
               type="button"
               onClick={() => setCartOpen(true)}
-              className="btn-s h-11 px-5 text-sm bg-black/60 border-white/20 text-white hover:border-amber-500/50 flex items-center gap-2"
+              className="h-12 px-5 rounded-xl bg-black/75 hover:bg-black/90 border border-amber-500/40 hover:border-amber-400 text-white flex items-center gap-3 transition-all shadow-lg hover:scale-105 cursor-pointer"
             >
-              <ShoppingBag size={16} />
-              <span>Cart ({cart.length})</span>
+              <div className="relative">
+                <ShoppingCart size={20} className="text-amber-400" />
+                {cart.length > 0 && (
+                  <span className="absolute -top-2 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full bg-amber-500 text-black font-bold text-[10px] flex items-center justify-center">
+                    {cart.length}
+                  </span>
+                )}
+              </div>
+              <span className="font-semibold text-sm">My Shopping Cart</span>
+              <span className="text-xs text-amber-300 font-bold ml-1">
+                {cart.length > 0 ? `(₹${totalCartPrice.toLocaleString("en-IN")})` : "(0)"}
+              </span>
             </button>
           </div>
         </div>
 
-        {/* Floating Cart Button Top-Right on Banner */}
+        {/* Prominent "My Shopping Cart" Card Top-Right on Banner */}
         <button
           type="button"
           onClick={() => setCartOpen(true)}
-          className="hidden md:flex absolute top-6 right-6 z-10 items-center gap-2.5 px-4 py-2.5 rounded-full bg-black/75 backdrop-blur-md border border-white/15 text-white hover:border-amber-500/60 transition shadow-lg"
+          className="absolute top-5 right-5 sm:top-6 sm:right-6 z-10 flex items-center gap-3.5 px-4 py-3 sm:px-5 sm:py-3.5 rounded-2xl bg-black/85 backdrop-blur-md border border-amber-500/40 text-white hover:border-amber-400 hover:bg-black/95 transition-all shadow-[0_8px_30px_rgba(0,0,0,0.7)] hover:scale-105 cursor-pointer group"
+          aria-label="Open My Shopping Cart"
         >
-          <ShoppingBag size={16} className="text-amber-400" />
-          <span className="text-xs font-semibold">Shopping Cart</span>
-          <span className="px-2 py-0.5 rounded-full bg-amber-500 text-black font-bold text-[11px]">
-            {cart.length}
-          </span>
+          <div className="relative w-11 h-11 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover:bg-amber-500 group-hover:text-black transition">
+            <ShoppingCart size={22} />
+            {cart.length > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1 rounded-full bg-amber-500 group-hover:bg-black text-black group-hover:text-amber-400 font-bold text-[10px] flex items-center justify-center shadow-md">
+                {cart.length}
+              </span>
+            )}
+          </div>
+          <div className="text-left hidden xs:block sm:block">
+            <div className="text-xs uppercase font-bold tracking-wider text-amber-400">
+              My Shopping Cart
+            </div>
+            <div className="text-[11px] text-stone-300 font-medium">
+              {cart.length} {cart.length === 1 ? "item" : "items"} · ₹{totalCartPrice.toLocaleString("en-IN")}
+            </div>
+          </div>
         </button>
       </div>
 
@@ -514,19 +538,48 @@ export default function Shopping() {
         </div>
       </Section>
 
-      {/* ── Featured Outfits Strip (for styling inspiration) ── */}
+      {/* ── Featured Outfits Strip (Redesigned with generous breathing room & larger cards) ── */}
       {outfitStrip.length > 0 && (
         <Section
           title="✨ Styled Outfits & Looks"
           sub="Pair individual wardrobe items together to recreate these complete looks"
+          right={
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  document.getElementById("styled-outfits-scroll")?.scrollBy({ left: -340, behavior: "smooth" });
+                }}
+                className="w-8 h-8 rounded-full border border-white/10 bg-black/50 text-stone-300 hover:text-white hover:border-amber-500/50 flex items-center justify-center transition cursor-pointer"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  document.getElementById("styled-outfits-scroll")?.scrollBy({ left: 340, behavior: "smooth" });
+                }}
+                className="w-8 h-8 rounded-full border border-white/10 bg-black/50 text-stone-300 hover:text-white hover:border-amber-500/50 flex items-center justify-center transition cursor-pointer"
+                aria-label="Scroll right"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          }
         >
-          <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-none">
-            {outfitStrip.slice(0, 15).map((l) => (
+          <div
+            id="styled-outfits-scroll"
+            className="flex gap-6 sm:gap-7 overflow-x-auto pb-4 pt-1 px-1 scroll-smooth scrollbar-none"
+          >
+            {outfitStrip.slice(0, 10).map((l) => (
               <div
                 key={l.id}
-                className="shrink-0 w-44 group relative rounded-2xl overflow-hidden border border-white/[.08] hover:border-amber-500/60 hover:-translate-y-1 transition-all shadow-lg bg-black/60 cursor-pointer"
+                onClick={() => navigate(`/create-outfit?occ=${l.occ}`)}
+                className="shrink-0 w-72 sm:w-80 group relative flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-[#141414] border border-white/[.08] hover:border-amber-500/60 hover:-translate-y-1.5 transition-all duration-300 shadow-xl hover:shadow-[0_16px_40px_rgba(0,0,0,0.8)] cursor-pointer"
               >
-                <div className="aspect-[3/4] overflow-hidden">
+                {/* Full Outfit Image Container with Proper Proportions & Zero Cropping */}
+                <div className="relative aspect-[4/4.6] w-full overflow-hidden rounded-xl bg-black/60 flex items-center justify-center p-2">
                   <img
                     src={l.img}
                     alt={l.title}
@@ -534,15 +587,42 @@ export default function Shopping() {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src = "/img/hero-wardrobe-luxury.jpg";
                     }}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-contain group-hover:scale-104 transition-transform duration-500"
                   />
+                  {/* Subtle top vignette */}
+                  <div className="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
+
+                  {/* Occasion Badge */}
+                  <div className="absolute top-2.5 left-2.5 z-10">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md text-amber-400 border border-amber-500/30 shadow-md">
+                      {l.occ}
+                    </span>
+                  </div>
+
+                  {l.matchScore && (
+                    <div className="absolute top-2.5 right-2.5 z-10">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-600/90 text-white backdrop-blur-md shadow-md">
+                        {l.matchScore}% Match
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 p-3 w-full">
-                  <p className="text-[11px] font-semibold text-white line-clamp-2 leading-tight">
-                    {l.title}
-                  </p>
-                  <p className="text-[10px] text-amber-400 mt-0.5 capitalize">{l.occ}</p>
+
+                {/* Information Area with Generous Spacing */}
+                <div className="pt-3.5 pb-1 px-1 flex flex-col justify-between flex-1 gap-2">
+                  <div>
+                    <h3 className="font-serif font-bold text-base sm:text-lg text-white group-hover:text-amber-400 transition-colors line-clamp-1">
+                      {l.title}
+                    </h3>
+                    <p className="text-xs text-stone-400 mt-0.5 capitalize">
+                      {l.occ} Ensemble · {l.gender || "All"}
+                    </p>
+                  </div>
+
+                  <div className="pt-2 border-t border-white/[.06] flex items-center justify-between text-xs font-semibold text-amber-400">
+                    <span>Recreate Outfit</span>
+                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -894,8 +974,8 @@ export default function Shopping() {
           </div>
         ) : (
           <div className="py-10 text-center space-y-3">
-            <div className="w-14 h-14 rounded-2xl bg-white/5 text-stone-400 grid place-items-center mx-auto">
-              <ShoppingBag size={24} />
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 grid place-items-center mx-auto shadow-inner">
+              <ShoppingCart size={26} />
             </div>
             <h4 className="font-serif font-bold text-lg text-white">Your cart is empty.</h4>
             <p className="text-stone-400 text-xs max-w-xs mx-auto leading-relaxed">
