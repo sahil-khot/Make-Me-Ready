@@ -52,7 +52,7 @@ export default function Home() {
     <div className="space-y-10">
       {/* Hero Banner */}
       <Hero
-        img={IMG["hero-home"] || "/img/hero-luxury.jpg"}
+        img={IMG["hero-home"] || "/BackGround Images/Home BackGround Image.png"}
         script={
           <>
             Your Wardrobe.

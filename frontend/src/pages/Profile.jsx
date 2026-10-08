@@ -856,7 +856,7 @@ export default function Profile() {
         {/* Luxury Background Overlay */}
         <div className="relative p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <img
-            src={IMG["hero-profile"] || "/img/hero-luxury.jpg"}
+            src={IMG["hero-profile"] || "/BackGround Images/Profile BG.png"}
             alt="Profile cover"
             className="absolute inset-y-0 right-0 w-2/3 h-full object-cover opacity-60 pointer-events-none"
           />

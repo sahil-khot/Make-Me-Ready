@@ -142,18 +142,23 @@ export const IMG = {
   'concert':        U('photo-1470225620780-dba8ba36b745', 1080, 1350),
   'religious':      U('photo-1519817650390-64a93db51149', 1080, 1350),
 
-  // ── UI Hero / Auth Images ─────────────────────────────────────────────────
-  'hero-home':      '/img/hero-luxury.jpg',
-  'hero-wardrobe':  '/img/hero-wardrobe-luxury.jpg',
-  'hero-profile':   U('photo-1558769132-cb1aea458c5e', 1400, 700),
-  'auth-login':     U('photo-1483985988355-763728e1935b', 900, 1200),
-  'auth-signup':    U('photo-1469334031218-e382a71b716b', 900, 1200),
-  'avatar':         U('photo-1534528741775-53994a69daeb', 400, 400),
+  // ── UI Hero / Auth Images (Stored in public/BackGround Images/) ──────────
+  'hero-home':              '/BackGround Images/Home BackGround Image.png',
+  'hero-wardrobe':          '/BackGround Images/Wardrobe BackGround Image.png',
+  'hero-create-outfit':     '/BackGround Images/Create Outfit BackGround Image.png',
+  'hero-occasions':         '/BackGround Images/Occasions BackGround Image.png',
+  'hero-profile':           '/BackGround Images/Profile BG.png',
+  'hero-recommendations':   '/BackGround Images/Recommendations BackGround Image.png',
+  'hero-saved-looks':       '/BackGround Images/Saved Looks BG.png',
+  'hero-shopping':          '/BackGround Images/Shopping BackGround Image.png',
+  'auth-login':             '/BackGround Images/Login BG.png',
+  'auth-signup':            '/BackGround Images/Create Account BG.png',
+  'avatar':                 U('photo-1534528741775-53994a69daeb', 400, 400),
 };
 
 /** Get a catalog image URL by key, with a safe fallback */
 export const getImg = (key) =>
-  IMG[key] ?? '/img/hero-wardrobe-luxury.jpg';
+  IMG[key] ?? '/BackGround Images/Wardrobe BackGround Image.png';
 
 /** Internal helper — keeps catalog builder functions short */
 const I = (id) => getImg(id);

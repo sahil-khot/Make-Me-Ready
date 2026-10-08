@@ -151,7 +151,7 @@ export default function SavedLooks() {
 
       {/* ── Hero Banner ── */}
       <Hero
-        img={IMG["hero-wardrobe"] || "/img/hero-wardrobe-luxury.jpg"}
+        img={IMG["hero-saved-looks"] || "/BackGround Images/Saved Looks BG.png"}
         kicker="SAVED COLLECTION"
         script={
           <>

@@ -244,9 +244,9 @@ export default function Wardrobe() {
       {/* ── Hero Banner ── */}
       <div className="relative overflow-hidden rounded-3xl border border-white/[.08] min-h-[360px] md:min-h-[400px] flex items-center">
         <img
-          src={IMG["hero-wardrobe"] || "/img/hero-wardrobe-luxury.jpg"}
+          src={IMG["hero-wardrobe"] || "/BackGround Images/Wardrobe BackGround Image.png"}
           alt="Luxury Wardrobe"
-          className="absolute inset-0 w-full h-full object-cover object-right"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 md:via-black/60 to-transparent" />
 

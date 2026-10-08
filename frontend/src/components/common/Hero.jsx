@@ -7,7 +7,7 @@ export const Hero = ({
   script,
   h = "min-h-[260px]",
 }) => {
-  const resolvedImg = img || IMG["hero-wardrobe"];
+  const resolvedImg = img || IMG["hero-wardrobe"] || "/BackGround Images/Wardrobe BackGround Image.png";
 
   return (
     <div
@@ -16,7 +16,7 @@ export const Hero = ({
       <img
         src={resolvedImg}
         alt=""
-        className="absolute inset-0 w-full h-full object-cover object-right"
+        className="absolute inset-0 w-full h-full object-cover object-center"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/85 md:via-bg/60 to-transparent" />
       <div className="relative p-6 md:p-10 max-w-xl">

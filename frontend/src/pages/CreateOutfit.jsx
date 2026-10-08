@@ -463,7 +463,7 @@ export default function CreateOutfit() {
 
       {/* ── Hero Banner ── */}
       <Hero
-        img={IMG["hero-wardrobe"] || "/img/hero-wardrobe-luxury.jpg"}
+        img={IMG["hero-create-outfit"] || "/BackGround Images/Create Outfit BackGround Image.png"}
         script={
           <>
             Your Wardrobe.

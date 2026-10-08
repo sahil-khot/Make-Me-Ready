@@ -128,17 +128,17 @@ export default function Recommendations() {
 
   // Curated Seasonal picks from real database looks
   const seasonalPicks = [
-    { label: "Summer Resort", look: looks.find((l) => l.id === "outfit-9") },
-    { label: "Winter & Autumn", look: looks.find((l) => l.id === "outfit-20") },
-    { label: "Festive Season", look: looks.find((l) => l.id === "outfit-4") },
-    { label: "Monsoon & Urban", look: looks.find((l) => l.id === "outfit-18") },
+    { label: "Summer Resort", look: allLooks.find((l) => l.id === "outfit-9") },
+    { label: "Winter & Autumn", look: allLooks.find((l) => l.id === "outfit-20") },
+    { label: "Festive Season", look: allLooks.find((l) => l.id === "outfit-4") },
+    { label: "Monsoon & Urban", look: allLooks.find((l) => l.id === "outfit-18") },
   ].filter((item) => item.look);
 
   return (
     <div className="space-y-12 pb-16">
       {/* ── Hero Banner ── */}
       <Hero
-        img={IMG["hero-wardrobe"]}
+        img={IMG["hero-recommendations"] || "/BackGround Images/Recommendations BackGround Image.png"}
         kicker="AI-POWERED RECOMMENDATIONS"
         script={
           <>
@@ -504,7 +504,7 @@ export default function Recommendations() {
 
           <div className="card flex items-center gap-4 p-3 flex-1 min-w-[280px] rounded-xl border border-acc/40 bg-gradient-to-r from-acc/10 to-card">
             <img
-              src={looks[0]?.img || "/img/outfits/outfit-1.png"}
+              src={allLooks[0]?.img || "/img/outfits/outfit-1.png"}
               alt="Result Look"
               className="w-24 h-28 rounded-xl object-cover border border-line"
             />
@@ -513,7 +513,7 @@ export default function Recommendations() {
                 98% Synergy
               </span>
               <div className="font-serif font-semibold mt-1">
-                {looks[0]?.title || "Smart Casual Set"}
+                {allLooks[0]?.title || "Smart Casual Set"}
               </div>
               <div className="text-xs text-mute mb-2">
                 Versatile, clean & effortlessly coordinated

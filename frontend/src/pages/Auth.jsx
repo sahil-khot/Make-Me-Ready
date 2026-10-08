@@ -432,9 +432,13 @@ export default function Auth({ mode }) {
       {/* Left panel — decorative hero image */}
       <div className="relative hidden lg:flex flex-col justify-between p-10 overflow-hidden">
         <img
-          src={reg ? IMG["auth-signup"] : IMG["auth-login"]}
+          src={
+            reg
+              ? (IMG["auth-signup"] || "/BackGround Images/Create Account BG.png")
+              : (IMG["auth-login"] || "/BackGround Images/Login BG.png")
+          }
           alt="Fashion hero"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-black/20" />
 

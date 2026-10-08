@@ -76,7 +76,7 @@ export default function Occasions() {
     <div className="space-y-8">
       {/* ── Hero Banner ── */}
       <Hero
-        img={IMG["hero-wardrobe"] || "/img/hero-wardrobe-luxury.jpg"}
+        img={IMG["hero-occasions"] || "/BackGround Images/Occasions BackGround Image.png"}
         kicker="OCCASIONS"
         script={
           <>

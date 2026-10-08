@@ -322,7 +322,7 @@ export default function Shopping() {
       {/* ── Hero Banner ── */}
       <div className="relative overflow-hidden rounded-3xl border border-line min-h-[320px] md:min-h-[360px] flex items-center">
         <img
-          src={IMG["hero-home"] || "/img/hero-luxury.jpg"}
+          src={IMG["hero-shopping"] || "/BackGround Images/Shopping BackGround Image.png"}
           alt="Premium Luxury Collection"
           className="absolute inset-0 w-full h-full object-cover object-center opacity-70"
         />
