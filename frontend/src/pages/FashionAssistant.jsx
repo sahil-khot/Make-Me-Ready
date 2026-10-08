@@ -287,6 +287,7 @@ export default function FashionAssistant() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
@@ -613,14 +614,20 @@ export default function FashionAssistant() {
         </aside>
       </div>
 
-      {/* ── Full-Width Bottom Input Bar ── */}
-      <div className="shrink-0 mt-4 bg-[#0e0d0b] border border-white/[.08] rounded-2xl px-5 py-3.5 flex items-center gap-3.5 shadow-2xl">
+      {/* ── Polished & Modern Bottom Input Bar ── */}
+      <div
+        className={`shrink-0 mt-4 bg-[#12110e]/95 backdrop-blur-md rounded-2xl px-4 py-2.5 sm:px-5 sm:py-3 flex items-center gap-3 shadow-2xl transition-all duration-300 border ${
+          isFocused
+            ? "border-amber-500/70 shadow-[0_0_28px_rgba(245,158,11,0.22)] ring-1 ring-amber-500/30"
+            : "border-white/[.12] hover:border-white/20"
+        }`}
+      >
         <button
           type="button"
-          title="Attach image (coming soon)"
-          className="text-stone-400 hover:text-amber-400 transition p-1 shrink-0"
+          title="Upload or attach fashion image"
+          className="w-9 h-9 rounded-xl grid place-items-center text-stone-400 hover:text-amber-400 hover:bg-white/[.05] transition shrink-0 cursor-pointer"
         >
-          <ImageIcon size={22} />
+          <ImageIcon size={20} />
         </button>
 
         <textarea
@@ -628,10 +635,12 @@ export default function FashionAssistant() {
           rows={1}
           value={input}
           autoFocus
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           onChange={(e) => {
             setInput(e.target.value);
             e.target.style.height = "auto";
-            e.target.style.height = `${Math.min(e.target.scrollHeight, 100)}px`;
+            e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
@@ -640,17 +649,18 @@ export default function FashionAssistant() {
             }
           }}
           placeholder="Ask me anything about fashion..."
-          className="flex-1 bg-transparent text-[15px] text-white placeholder:text-stone-500 outline-none resize-none leading-relaxed overflow-hidden py-1"
-          style={{ minHeight: "26px", maxHeight: "100px" }}
+          className="flex-1 bg-transparent text-[15px] text-white placeholder:text-stone-400 placeholder:font-normal outline-none resize-none leading-relaxed overflow-hidden py-1.5 px-2"
+          style={{ minHeight: "36px", maxHeight: "120px" }}
         />
 
         <button
           type="button"
           onClick={() => send()}
           disabled={!input.trim() || loading}
-          className="w-10 h-10 rounded-full bg-amber-500 text-stone-950 flex items-center justify-center shrink-0 hover:bg-amber-400 transition disabled:opacity-35 disabled:cursor-not-allowed shadow-lg shadow-amber-500/20 active:scale-95"
+          className="w-10 h-10 rounded-xl bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-black font-semibold flex items-center justify-center shrink-0 hover:brightness-110 transition disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_2px_14px_rgba(245,158,11,0.3)] active:scale-95 cursor-pointer"
+          title="Send message"
         >
-          <Send size={15} className="translate-x-[1px]" />
+          <Send size={16} className="translate-x-[0.5px]" />
         </button>
       </div>
 

@@ -1,8 +1,8 @@
-import { Heart, MoreVertical } from "lucide-react";
+import { Heart, MoreVertical, Trash2 } from "lucide-react";
 import { useStore } from "../../context/StoreContext.jsx";
 import { IMG } from "../../data/constants.js";
 
-export const WardrobeCard = ({ w, on, onClick }) => {
+export const WardrobeCard = ({ w, on, onClick, onRemove }) => {
   const { favs = [], toggleFav } = useStore();
   const isFav = favs.includes(w.id);
 
@@ -27,7 +27,7 @@ export const WardrobeCard = ({ w, on, onClick }) => {
       <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent pointer-events-none" />
 
       {/* Action buttons at top right */}
-      <div className="absolute top-2.5 right-2.5 flex items-center gap-1 z-10">
+      <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10">
         <button
           type="button"
           onClick={(e) => {
@@ -35,13 +35,27 @@ export const WardrobeCard = ({ w, on, onClick }) => {
             toggleFav(w.id);
           }}
           title={isFav ? "Remove from favorites" : "Add to favorites"}
-          className="w-7 h-7 rounded-full bg-black/40 backdrop-blur-sm grid place-items-center hover:scale-110 transition border border-white/10"
+          className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm grid place-items-center hover:scale-110 transition border border-white/10"
         >
           <Heart
             size={13}
             className={isFav ? "fill-[#ef4444] text-[#ef4444]" : "text-white/60 hover:text-white"}
           />
         </button>
+
+        {onRemove && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove(w);
+            }}
+            title="Remove item"
+            className="w-7 h-7 rounded-full bg-black/60 hover:bg-red-500/80 backdrop-blur-sm grid place-items-center hover:scale-110 transition border border-white/10 text-white/60 hover:text-white"
+          >
+            <Trash2 size={12} />
+          </button>
+        )}
       </div>
 
       {/* Bottom item information */}
@@ -49,8 +63,9 @@ export const WardrobeCard = ({ w, on, onClick }) => {
         <div className="text-[14px] font-medium text-white truncate leading-snug">
           {w.name}
         </div>
-        <div className="text-[11px] text-stone-400 font-sans mt-0.5 truncate">
-          {w.tag || "Casual"}
+        <div className="text-[11px] text-stone-400 font-sans mt-0.5 truncate flex items-center justify-between">
+          <span>{w.tag || "Casual"}</span>
+          {w.brand && <span className="text-[10px] text-acc/80 uppercase font-semibold">{w.brand}</span>}
         </div>
       </div>
     </div>

@@ -37,13 +37,11 @@ export function Sidebar({ open, close }) {
           <button
             type="button"
             onClick={toggleSidebarPos}
-            title={isRight ? "Shift sidebar to Left" : "Shift sidebar to Right"}
-            className="p-2 rounded-xl text-mute hover:text-acc hover:bg-white/[.04] transition border border-transparent hover:border-line2 flex items-center gap-1.5 text-xs"
+            title={isRight ? "Move sidebar to left" : "Move sidebar to right"}
+            aria-label="Toggle sidebar position"
+            className="w-8 h-8 rounded-xl grid place-items-center text-stone-400 hover:text-acc hover:bg-white/[.06] transition border border-white/[.08] hover:border-acc/40 text-sm font-semibold cursor-pointer select-none"
           >
-            <ArrowLeftRight size={15} />
-            <span className="hidden xl:inline text-[11px] text-mute capitalize">
-              {isRight ? "Dock Left" : "Dock Right"}
-            </span>
+            ↔
           </button>
         </div>
 

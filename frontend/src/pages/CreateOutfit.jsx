@@ -275,9 +275,9 @@ export default function CreateOutfit() {
               key={l.id}
               className="card p-3.5 bg-card2 border border-white/[.08] hover:border-amber-500/40 transition flex flex-col group"
             >
-              {/* Look Preview with Right-Side Matching Accessories Strip */}
-              <div className="relative aspect-[4/3.4] rounded-xl overflow-hidden bg-black/40 shadow-inner">
-                {/* Main Look Photo */}
+              {/* Full Outfit Image Presentation without right thumbnails */}
+              <div className="relative aspect-[3/3.8] sm:aspect-[3/3.9] rounded-2xl overflow-hidden bg-black/60 shadow-inner border border-white/[.06]">
+                {/* Main Look Photo - Properly fitted, full outfit and person visible */}
                 <img
                   src={l.img}
                   alt={l.title}
@@ -285,41 +285,16 @@ export default function CreateOutfit() {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = `/img/${l.occ}.jpg`;
                   }}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                 />
 
-                {/* Subtle Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+                {/* Subtle Bottom Gradient for Depth */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none" />
 
-                {/* Vertical Matching Accessories Column on Right */}
-                <div
-                  className="absolute right-2.5 top-2.5 bottom-2.5 w-14 sm:w-16 rounded-xl bg-black/65 backdrop-blur-md p-1.5 flex flex-col gap-1.5 border border-white/15 shadow-xl z-10"
-                  title="Matching clothing & accessories in this look"
-                >
-                  {(l.items || []).map((itemId) => {
-                    const itemObj = allWardrobe.find((w) => w.id === itemId);
-                    const itemImg = itemObj?.img || `/img/${itemId}.jpg`;
-                    const itemName = itemObj?.name || itemId.replace("-", " ");
-
-                    return (
-                      <div
-                        key={itemId}
-                        className="relative flex-1 min-h-0 rounded-lg overflow-hidden bg-white/5 border border-white/10 group/thumb hover:border-amber-400 transition"
-                        title={itemName}
-                      >
-                        <img
-                          src={itemImg}
-                          alt={itemName}
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = `/img/${itemId}.jpg`;
-                          }}
-                          className="w-full h-full object-cover group-hover/thumb:scale-110 transition duration-300"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
+                {/* Occasion badge */}
+                <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-black/65 backdrop-blur-sm text-acc border border-acc/30">
+                  {l.occ}
+                </span>
               </div>
 
               {/* Look Details & Meta */}

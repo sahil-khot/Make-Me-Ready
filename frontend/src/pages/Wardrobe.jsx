@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Plus,
   Upload,
   LayoutGrid,
   Shirt,
-  Layers,
   Footprints,
   Watch,
   Gem,
@@ -12,8 +11,13 @@ import {
   Sparkles,
   ArrowRight,
   Package,
+  Trash2,
+  AlertCircle,
+  Check,
+  X,
+  Image as ImageIcon,
 } from "lucide-react";
-import { Hero, Modal } from "../ui.jsx";
+import { Modal } from "../ui.jsx";
 import { WardrobeCard } from "../components/cards/WardrobeCard.jsx";
 import { useStore } from "../store.jsx";
 import { IMG } from "../data/constants.js";
@@ -57,27 +61,116 @@ const CATEGORY_META = {
 };
 
 export default function Wardrobe() {
-  const { added = [], addItem, favs = [], catalog = {} } = useStore();
-  const { wardrobe = [], cats = ["Shirts", "Pants", "Shoes", "Accessories", "Jewelry", "Others"] } = catalog;
+  const {
+    added = [],
+    addItem,
+    removeItem,
+    favs = [],
+    catalog = {},
+  } = useStore();
+
+  const {
+    wardrobe = [],
+    cats = ["Shirts", "Pants", "Shoes", "Accessories", "Jewelry", "Others"],
+  } = catalog;
+
   const [tab, setTab] = useState("All");
+
+  // Add Item Modal states
   const [modalOpen, setModalOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", cat: "Shirts", tag: "Casual" });
+  const [form, setForm] = useState({
+    name: "",
+    cat: "Shirts",
+    brand: "",
+    color: "",
+    size: "",
+    tag: "Casual",
+  });
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageError, setImageError] = useState(false);
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const allItems = [...added, ...wardrobe];
+  // Remove Item Confirmation Modal state
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
+  // Toast feedback
+  const [toastMsg, setToastMsg] = useState("");
+  const triggerToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(""), 3200);
+  };
+
+  // Combine items and calculate active counts
+  const allItems = useMemo(() => [...added, ...wardrobe], [added, wardrobe]);
+
+  // Handle image selection with preview
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      setImageError(false);
+      setError("");
+      const reader = new FileReader();
+      reader.onload = (ev) => setImagePreview(ev.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Add item handler with strict image validation
   const handleAddItem = async (e) => {
     e.preventDefault();
-    if (!form.name.trim()) return;
     setError("");
+    setImageError(false);
+
+    if (!form.name.trim()) {
+      setError("Item name is required.");
+      return;
+    }
+
+    if (!image) {
+      setImageError(true);
+      setError("Item image is required.");
+      return;
+    }
+
+    setSaving(true);
     try {
       await addItem(form, image);
       setModalOpen(false);
-      setForm({ name: "", cat: "Shirts", tag: "Casual" });
+      setForm({
+        name: "",
+        cat: "Shirts",
+        brand: "",
+        color: "",
+        size: "",
+        tag: "Casual",
+      });
       setImage(null);
+      setImagePreview(null);
+      triggerToast("✓ Item added to wardrobe successfully!");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to add wardrobe item.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Remove item handler with confirmation
+  const handleConfirmRemove = async () => {
+    if (!confirmDelete) return;
+    const targetItem = confirmDelete;
+    setDeleting(true);
+    try {
+      await removeItem(targetItem.id);
+      setConfirmDelete(null);
+      triggerToast(`✓ "${targetItem.name}" removed from wardrobe.`);
+    } catch (err) {
+      console.error("Failed to remove item:", err);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -86,8 +179,34 @@ export default function Wardrobe() {
       ? ["Shirts", "Pants", "Shoes", "Accessories", "Jewelry", "Others"]
       : [tab];
 
+  // Calculate active categories that have at least 1 item
+  const activeCategoriesCount = useMemo(() => {
+    const uniqueCats = new Set(allItems.map((w) => w.cat));
+    return uniqueCats.size || 6;
+  }, [allItems]);
+
   return (
-    <div className="space-y-9">
+    <div className="space-y-9 relative">
+      {/* ── Global Toast Notification ── */}
+      {toastMsg && (
+        <div
+          role="status"
+          className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-[#0a1a12] border-2 border-emerald-500/80 text-white shadow-[0_12px_45px_rgba(16,185,129,0.45)] backdrop-blur-md animate-up text-sm font-semibold max-w-md w-[92%]"
+        >
+          <div className="w-6 h-6 rounded-full bg-emerald-500 text-black grid place-items-center font-bold text-xs shrink-0">
+            ✓
+          </div>
+          <span className="flex-1 text-emerald-300">{toastMsg}</span>
+          <button
+            type="button"
+            onClick={() => setToastMsg("")}
+            className="text-stone-400 hover:text-white"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      )}
+
       {/* ── Hero Banner ── */}
       <div className="relative overflow-hidden rounded-3xl border border-white/[.08] min-h-[360px] md:min-h-[400px] flex items-center">
         <img
@@ -102,7 +221,7 @@ export default function Wardrobe() {
             My <span className="text-[#f59e0b]">Wardrobe</span>
           </h1>
           <p className="text-stone-300 mt-2.5 mb-7 text-sm md:text-base leading-relaxed font-sans max-w-lg">
-            Add your clothes, accessories and build your perfect style.
+            Add your clothes, accessories and footwear to build your perfect style.
           </p>
 
           {/* 3 Stat Badges */}
@@ -112,8 +231,10 @@ export default function Wardrobe() {
                 <Shirt size={18} />
               </span>
               <div>
-                <div className="font-bold text-lg text-white leading-tight">{allItems.length}</div>
-                <div className="text-[11px] text-stone-400">Items</div>
+                <div className="font-bold text-lg text-white leading-tight">
+                  {allItems.length}
+                </div>
+                <div className="text-[11px] text-stone-400">Total Items</div>
               </div>
             </div>
 
@@ -122,7 +243,9 @@ export default function Wardrobe() {
                 <Package size={18} />
               </span>
               <div>
-                <div className="font-bold text-lg text-white leading-tight">6</div>
+                <div className="font-bold text-lg text-white leading-tight">
+                  {activeCategoriesCount}
+                </div>
                 <div className="text-[11px] text-stone-400">Categories</div>
               </div>
             </div>
@@ -132,7 +255,9 @@ export default function Wardrobe() {
                 <Sparkles size={18} />
               </span>
               <div>
-                <div className="font-bold text-lg text-white leading-tight">{favs.length > 0 ? favs.length : 12}</div>
+                <div className="font-bold text-lg text-white leading-tight">
+                  {favs.length > 0 ? favs.length : 12}
+                </div>
                 <div className="text-[11px] text-stone-400">Favorite Items</div>
               </div>
             </div>
@@ -150,11 +275,15 @@ export default function Wardrobe() {
 
         <button
           type="button"
-          onClick={() => setModalOpen(true)}
+          onClick={() => {
+            setError("");
+            setImageError(false);
+            setModalOpen(true);
+          }}
           className="absolute right-6 md:right-10 bottom-6 md:bottom-10 z-10 h-11 px-6 rounded-full bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-black font-semibold text-sm shadow-[0_0_24px_rgba(245,158,11,0.35)] flex items-center gap-2 hover:brightness-110 transition cursor-pointer"
         >
           <Plus size={16} className="stroke-[2.5]" />
-          Add New Item
+          Add Items
         </button>
       </div>
 
@@ -163,30 +292,33 @@ export default function Wardrobe() {
         {CATEGORY_TABS.map((item) => {
           const IconComponent = item.icon;
           const isActive = tab === item.id;
+          const count =
+            item.id === "All"
+              ? allItems.length
+              : allItems.filter((w) => w.cat === item.id).length;
+
           return (
             <button
               key={item.id}
               type="button"
               onClick={() => setTab(item.id)}
-              className={`min-w-[80px] h-[72px] px-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-all duration-200 shrink-0 ${
+              className={`min-w-[84px] h-[72px] px-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-all duration-200 shrink-0 ${
                 isActive
                   ? "bg-gradient-to-b from-[#2e1d11] to-[#1c120a] border border-amber-600/60 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.22)]"
                   : "bg-[#131313] border border-white/[.08] text-stone-400 hover:text-white hover:border-white/20"
               }`}
             >
-              <IconComponent
-                size={20}
-                className={isActive ? "text-amber-400" : "text-stone-400"}
-              />
-              <span className="text-[12px] font-medium leading-none">
-                {item.label}
-              </span>
+              <IconComponent size={20} />
+              <div className="flex items-center gap-1">
+                <span className="text-xs font-medium leading-none">{item.label}</span>
+                <span className="text-[10px] text-stone-500 leading-none">({count})</span>
+              </div>
             </button>
           );
         })}
       </div>
 
-      {/* ── Category Sections ── */}
+      {/* ── Category Rows / Items ── */}
       <div className="space-y-10">
         {visibleCategories.map((catKey) => {
           const meta = CATEGORY_META[catKey] || { label: catKey, icon: Shirt };
@@ -204,27 +336,58 @@ export default function Wardrobe() {
                   <h2 className="font-serif font-semibold text-2xl text-white tracking-wide">
                     {meta.label}
                   </h2>
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-white/5 border border-line text-stone-400">
+                    {items.length} {items.length === 1 ? "item" : "items"}
+                  </span>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setTab(catKey)}
-                  className="text-sm font-medium text-amber-500 hover:text-amber-400 transition flex items-center gap-1 cursor-pointer"
-                >
-                  View All <ArrowRight size={14} />
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForm((f) => ({ ...f, cat: catKey }));
+                      setModalOpen(true);
+                    }}
+                    className="text-xs font-semibold text-acc hover:underline flex items-center gap-1"
+                  >
+                    + Add to {meta.label}
+                  </button>
+                  {tab === "All" && (
+                    <button
+                      type="button"
+                      onClick={() => setTab(catKey)}
+                      className="text-sm font-medium text-stone-400 hover:text-white transition flex items-center gap-1 cursor-pointer"
+                    >
+                      View Only <ArrowRight size={14} />
+                    </button>
+                  )}
+                </div>
               </div>
 
-              {/* Items Grid (5 columns on large screens as in photo) */}
+              {/* Items Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4">
                 {items.map((w) => (
-                  <WardrobeCard key={w.id} w={w} />
+                  <WardrobeCard
+                    key={w.id}
+                    w={w}
+                    onRemove={(item) => setConfirmDelete(item)}
+                  />
                 ))}
               </div>
 
               {items.length === 0 && (
-                <div className="card p-8 text-center text-sm text-stone-400">
-                  No items in this category yet. Click "+ Add New Item" to add clothes!
+                <div className="card p-8 text-center text-sm text-stone-400 border-dashed border-white/10">
+                  <p className="mb-3">No items in {meta.label} yet.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForm((f) => ({ ...f, cat: catKey }));
+                      setModalOpen(true);
+                    }}
+                    className="btn-s h-9 px-4 text-xs border-acc/40 text-acc hover:border-acc"
+                  >
+                    + Add New {meta.label}
+                  </button>
                 </div>
               )}
             </section>
@@ -232,72 +395,261 @@ export default function Wardrobe() {
         })}
       </div>
 
-      {/* ── Add New Item Modal ── */}
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Add New Item">
+      {/* ── Fully Functional Add New Item Modal ── */}
+      <Modal
+        open={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setError("");
+          setImageError(false);
+        }}
+        title="Add New Wardrobe Item"
+      >
         <form onSubmit={handleAddItem} className="space-y-4">
-          <label className="block text-sm">
-            <span className="block mb-1 text-white/80">Item Name</span>
-            <input
-              autoFocus
-              className="inp"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="e.g. Linen Overshirt"
-            />
-          </label>
+          {/* Category & Item Name */}
+          <div className="grid sm:grid-cols-2 gap-3">
+            <label className="block text-sm">
+              <span className="block mb-1 text-white/80 font-medium">
+                Category <span className="text-red-400">*</span>
+              </span>
+              <select
+                className="inp"
+                value={form.cat}
+                onChange={(e) => setForm({ ...form, cat: e.target.value })}
+              >
+                {cats.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <label className="block text-sm">
-            <span className="block mb-1 text-white/80">Category</span>
-            <select
-              className="inp"
-              value={form.cat}
-              onChange={(e) => setForm({ ...form, cat: e.target.value })}
+            <label className="block text-sm">
+              <span className="block mb-1 text-white/80 font-medium">
+                Item Name <span className="text-red-400">*</span>
+              </span>
+              <input
+                autoFocus
+                className="inp"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="e.g. Italian Wool Blazer"
+                required
+              />
+            </label>
+          </div>
+
+          {/* Brand & Style Tag */}
+          <div className="grid sm:grid-cols-2 gap-3">
+            <label className="block text-sm">
+              <span className="block mb-1 text-white/80 font-medium">
+                Brand <span className="text-xs text-stone-500">(Optional)</span>
+              </span>
+              <input
+                className="inp"
+                value={form.brand}
+                onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                placeholder="e.g. ZARA, Nike, H&M"
+              />
+            </label>
+
+            <label className="block text-sm">
+              <span className="block mb-1 text-white/80 font-medium">
+                Style Tag
+              </span>
+              <select
+                className="inp"
+                value={form.tag}
+                onChange={(e) => setForm({ ...form, tag: e.target.value })}
+              >
+                {[
+                  "Casual",
+                  "Formal",
+                  "Party",
+                  "Sports",
+                  "Streetwear",
+                  "Traditional",
+                  "Winter",
+                  "Accessory",
+                  "Footwear",
+                  "Luxury",
+                ].map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          {/* Color & Size */}
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block text-sm">
+              <span className="block mb-1 text-white/80 font-medium">
+                Color <span className="text-xs text-stone-500">(Optional)</span>
+              </span>
+              <input
+                className="inp"
+                value={form.color}
+                onChange={(e) => setForm({ ...form, color: e.target.value })}
+                placeholder="e.g. Navy, Black, White"
+              />
+            </label>
+
+            <label className="block text-sm">
+              <span className="block mb-1 text-white/80 font-medium">
+                Size <span className="text-xs text-stone-500">(Optional)</span>
+              </span>
+              <input
+                className="inp"
+                value={form.size}
+                onChange={(e) => setForm({ ...form, size: e.target.value })}
+                placeholder="e.g. M, 32, UK 9"
+              />
+            </label>
+          </div>
+
+          {/* Mandatory Image Upload with Preview & Highlight Validation */}
+          <div>
+            <span className="block mb-1 text-sm text-white/80 font-medium">
+              Item Image <span className="text-red-400">*</span>
+            </span>
+            <label
+              className={`rounded-2xl border-2 border-dashed p-4 flex flex-col items-center justify-center cursor-pointer transition relative overflow-hidden ${
+                imageError
+                  ? "border-red-500 bg-red-500/10 ring-2 ring-red-500/40"
+                  : imagePreview
+                  ? "border-amber-500/80 bg-amber-500/5"
+                  : "border-white/15 bg-white/[.02] hover:border-amber-500/50"
+              }`}
             >
-              {cats.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </label>
+              {imagePreview ? (
+                <div className="flex items-center gap-4 w-full">
+                  <img
+                    src={imagePreview}
+                    alt="Upload Preview"
+                    className="w-20 h-20 rounded-xl object-cover border border-amber-500/40 shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-white truncate">
+                      {image?.name || "Selected Photo"}
+                    </p>
+                    <p className="text-xs text-emerald-400 mt-0.5">
+                      ✓ Image ready for upload
+                    </p>
+                    <span className="text-[11px] text-stone-400 mt-1 block">
+                      Click to choose a different photo
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="py-4 text-center">
+                  <Upload
+                    size={28}
+                    className={`mx-auto mb-2 ${
+                      imageError ? "text-red-400 animate-bounce" : "text-stone-400"
+                    }`}
+                  />
+                  <p className="text-sm font-medium text-stone-200">
+                    Click to browse and upload item image
+                  </p>
+                  <p className="text-xs text-stone-500 mt-1">
+                    PNG, JPG, JPEG or WebP accepted (Required)
+                  </p>
+                </div>
+              )}
 
-          <label className="block text-sm">
-            <span className="block mb-1 text-white/80">Style Tag</span>
-            <select
-              className="inp"
-              value={form.tag}
-              onChange={(e) => setForm({ ...form, tag: e.target.value })}
-            >
-              {["Casual", "Formal", "Winter", "Sports", "Accessory", "Jewelry"].map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="btn-s w-full h-12 cursor-pointer flex items-center justify-center gap-2">
-            <Upload size={16} />
-            <span>{image?.name || "Upload Clothing Photo"}</span>
-            <input
-              type="file"
-              accept="image/*"
-              className="sr-only"
-              onChange={(e) => setImage(e.target.files?.[0] || null)}
-            />
-          </label>
+              <input
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                onChange={handleImageChange}
+              />
+            </label>
+          </div>
 
           {error && (
-            <p role="alert" className="text-sm text-red-400">
-              {error}
+            <p
+              role="alert"
+              className="text-sm text-red-400 flex items-center gap-1.5 font-medium"
+            >
+              <AlertCircle size={15} /> {error}
             </p>
           )}
 
-          <button type="submit" className="btn-p w-full h-12 mt-2">
-            Add to Wardrobe
-          </button>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                setModalOpen(false);
+                setError("");
+                setImageError(false);
+              }}
+              className="btn-s flex-1 h-12"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="btn-p flex-1 h-12 text-black font-semibold shadow-md shadow-amber-500/20 disabled:opacity-60"
+            >
+              {saving ? "Adding Item…" : "Add to Wardrobe"}
+            </button>
+          </div>
         </form>
       </Modal>
+
+      {/* ── Remove Item Confirmation Dialog ── */}
+      {confirmDelete && (
+        <Modal
+          open={Boolean(confirmDelete)}
+          onClose={() => setConfirmDelete(null)}
+          title="Remove Item from Wardrobe"
+        >
+          <div className="space-y-4">
+            <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/[.03] border border-white/10">
+              <img
+                src={confirmDelete.img || IMG["white-shirt"]}
+                alt={confirmDelete.name}
+                className="w-16 h-16 rounded-xl object-cover border border-white/10 shrink-0"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold text-white truncate text-base">
+                  {confirmDelete.name}
+                </div>
+                <div className="text-xs text-stone-400 mt-0.5">
+                  Category: {confirmDelete.cat} · Tag: {confirmDelete.tag || "Casual"}
+                </div>
+              </div>
+            </div>
+
+            <p className="text-stone-300 text-sm leading-relaxed">
+              Are you sure you want to remove this item? This action will remove it
+              from your active wardrobe collection and outfit recommendations.
+            </p>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(null)}
+                className="btn-s flex-1 h-11"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmRemove}
+                disabled={deleting}
+                className="btn-p flex-1 h-11 bg-red-600 hover:bg-red-500 text-white font-semibold disabled:opacity-60"
+              >
+                {deleting ? "Removing…" : "Yes, Remove Item"}
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

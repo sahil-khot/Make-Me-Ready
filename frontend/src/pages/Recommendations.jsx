@@ -321,9 +321,9 @@ export default function Recommendations() {
                       />
                     </button>
 
-                    {/* Hover Quick View Trigger */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 backdrop-blur-[2px]">
-                      <span className="btn-p text-xs px-3.5 py-2 flex items-center gap-1.5 shadow-xl">
+                    {/* Hover Quick View Trigger - Sharp and Clear without blur or dark overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                      <span className="btn-p text-xs px-3.5 py-2 flex items-center gap-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.7)] pointer-events-auto cursor-pointer">
                         <Eye size={14} />
                         <span>Quick View</span>
                       </span>

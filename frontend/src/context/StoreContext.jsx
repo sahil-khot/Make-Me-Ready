@@ -52,6 +52,7 @@ export function Store({ children }) {
   const [saved, setSaved] = useState(() => readCache("mmr_saved", []));
   const [cart, setCart] = useState(() => readCache("mmr_cart", []));
   const [added, setAdded] = useState(() => readCache("mmr_added", []));
+  const [removedIds, setRemovedIds] = useState(() => readCache("mmr_removed_items", []));
   const [catalog, setCatalog] = useState(initialCatalog);
   const [sidebarPos, setSidebarPos] = useState(
     () => localStorage.getItem("mmr_sidebar_pos") || "left",
@@ -126,10 +127,11 @@ export function Store({ children }) {
     localStorage.setItem("mmr_saved", JSON.stringify(saved));
     localStorage.setItem("mmr_cart", JSON.stringify(cart));
     localStorage.setItem("mmr_added", JSON.stringify(added));
+    localStorage.setItem("mmr_removed_items", JSON.stringify(removedIds));
     if (user) {
       localStorage.setItem("makeMeReadyUser", JSON.stringify(user));
     }
-  }, [favs, saved, cart, added, user]);
+  }, [favs, saved, cart, added, removedIds, user]);
 
   const applySession = (session) => {
     if (!session || !session.token) {
@@ -256,25 +258,86 @@ export function Store({ children }) {
   };
 
   const addItem = async (item, image) => {
-    const body = new FormData();
-    for (const [key, value] of Object.entries(item)) {
-      body.append(key, value);
-    }
-    if (image) {
-      body.append("image", image);
+    let dataUrl = "";
+    if (image instanceof Blob || image instanceof File) {
+      dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => resolve("");
+        reader.readAsDataURL(image);
+      });
+    } else if (typeof image === "string") {
+      dataUrl = image;
     }
 
-    const result = await apiRequest("/api/wardrobe", {
-      method: "POST",
-      body,
-      auth: true,
+    const localId = "user-item-" + Date.now();
+    const localItem = {
+      id: localId,
+      name: item.name.trim(),
+      cat: item.cat,
+      tag: item.tag || "Casual",
+      brand: item.brand?.trim() || "",
+      color: item.color?.trim() || "",
+      size: item.size?.trim() || "",
+      img: dataUrl || "/img/hero-wardrobe-luxury.jpg",
+    };
+
+    setAdded((current) => [localItem, ...current]);
+
+    if (token) {
+      try {
+        const body = new FormData();
+        for (const [key, value] of Object.entries(item)) {
+          body.append(key, value);
+        }
+        if (image instanceof File) {
+          body.append("image", image);
+        }
+        const result = await apiRequest("/api/wardrobe", {
+          method: "POST",
+          body,
+          auth: true,
+        });
+        if (result?.item) {
+          setAdded((current) =>
+            current.map((w) =>
+              w.id === localId
+                ? { ...result.item, img: dataUrl || result.item.img }
+                : w,
+            ),
+          );
+          return result.item;
+        }
+      } catch (err) {
+        console.warn("Item persisted locally:", err.message);
+      }
+    }
+
+    return localItem;
+  };
+
+  const removeItem = async (id) => {
+    // 1. Remove from local added state
+    setAdded((current) => current.filter((item) => item.id !== id));
+    // 2. Add to removedIds state & localStorage
+    setRemovedIds((current) => {
+      const next = current.includes(id) ? current : [...current, id];
+      localStorage.setItem("mmr_removed_items", JSON.stringify(next));
+      return next;
     });
 
-    if (result?.item) {
-      setAdded((current) => [result.item, ...current]);
-      return result.item;
+    // 3. If online & authenticated, notify backend
+    if (token) {
+      try {
+        await apiRequest(`/api/wardrobe/${encodeURIComponent(id)}`, {
+          method: "DELETE",
+          auth: true,
+        });
+      } catch (err) {
+        console.warn("Remote deletion note:", err.message);
+      }
     }
-    throw new Error("Failed to add wardrobe item.");
+    return true;
   };
 
   const changePassword = async ({ currentPassword, newPassword }) => {
@@ -286,6 +349,13 @@ export function Store({ children }) {
   };
 
   const fallbackUser = user || { name: "Your Style", email: "" };
+
+  const filteredCatalog = {
+    ...catalog,
+    wardrobe: (catalog.wardrobe || []).filter((w) => !removedIds.includes(w.id)),
+  };
+
+  const filteredAdded = added.filter((w) => !removedIds.includes(w.id));
 
   return (
     <StoreContext.Provider
@@ -305,9 +375,11 @@ export function Store({ children }) {
         toggleSave: toggleRemote("saved", "/api/saved-looks", "savedLooks"),
         cart,
         addCart,
-        added,
+        added: filteredAdded,
         addItem,
-        catalog,
+        removeItem,
+        removedIds,
+        catalog: filteredCatalog,
         sidebarPos,
         setSidebarPos,
         toggleSidebarPos,

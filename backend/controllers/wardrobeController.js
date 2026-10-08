@@ -45,6 +45,9 @@ export const addWardrobeItem = async (req, res, next) => {
       name,
       cat,
       tag: String(req.body?.tag || "Casual"),
+      brand: String(req.body?.brand || ""),
+      color: String(req.body?.color || ""),
+      size: String(req.body?.size || ""),
       imageFile,
     });
 
@@ -54,6 +57,9 @@ export const addWardrobeItem = async (req, res, next) => {
         name: item.name,
         cat: item.cat,
         tag: item.tag,
+        brand: item.brand,
+        color: item.color,
+        size: item.size,
         img: `/img/${encodeURIComponent(item.imageFile)}`,
       },
     });
@@ -74,9 +80,30 @@ export const getWardrobeItems = async (req, res, next) => {
         name: item.name,
         cat: item.cat,
         tag: item.tag,
+        brand: item.brand,
+        color: item.color,
+        size: item.size,
         img: `/img/${encodeURIComponent(item.imageFile)}`,
       })),
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeWardrobeItem = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Item ID is required." });
+    }
+
+    await WardrobeItem.findOneAndDelete({
+      _id: id,
+      userId: req.auth.sub,
+    });
+
+    return res.json({ success: true, message: "Item removed successfully." });
   } catch (error) {
     next(error);
   }
