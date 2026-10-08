@@ -50,6 +50,12 @@ export const getCatalog = async (_req, res) => {
         wardrobe: dbWardrobe.length > 0 ? dbWardrobe : wardrobe,
         looks: dbLooks.length > 0 ? dbLooks : looks,
         products: dbProducts.length > 0 ? dbProducts : products,
+        cats: dbConfig?.cats || cats,
+        shopCats: dbConfig?.shopCats || shopCats,
+        brands: dbConfig?.brands || brands,
+        styles: dbConfig?.styles || styles,
+        colors: dbConfig?.colors || colors,
+        lookTabs: dbConfig?.lookTabs || lookTabs,
         config: dbConfig
           ? {
               brands: dbConfig.brands || brands,

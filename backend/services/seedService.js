@@ -29,57 +29,68 @@ import { getGridFSBucket } from "../config/db.js";
 const outfitsDir = fileURLToPath(
   new URL("../../frontend/public/img/outfits", import.meta.url)
 );
+const wardrobeDir = fileURLToPath(
+  new URL("../../frontend/public/wardrobe", import.meta.url)
+);
 
 /**
- * Uploads local outfit images to MongoDB GridFS (images bucket).
+ * Uploads local outfit and wardrobe images to MongoDB GridFS (images bucket).
  * Skips files already in GridFS, so re-runs are safe.
  */
 export async function seedImages() {
   if (!mongoose.connection?.db) return;
-  if (!existsSync(outfitsDir)) return;
 
   const bucket = getGridFSBucket();
   const db = mongoose.connection.db;
-  const files = readdirSync(outfitsDir).filter((f) =>
-    /\.(png|jpg|jpeg|webp)$/i.test(f)
-  );
+
+  const dirsToSeed = [
+    { dir: outfitsDir, category: "outfits" },
+    { dir: wardrobeDir, category: "wardrobe" },
+  ];
 
   let uploaded = 0;
   let skipped = 0;
 
-  for (const filename of files) {
-    try {
-      const existing = await db
-        .collection("images.files")
-        .findOne({ filename });
-      if (existing) {
-        skipped++;
-        continue;
-      }
+  for (const { dir, category } of dirsToSeed) {
+    if (!existsSync(dir)) continue;
+    const files = readdirSync(dir).filter((f) =>
+      /\.(png|jpg|jpeg|webp)$/i.test(f)
+    );
 
-      const ext = filename.split(".").pop().toLowerCase();
-      const contentType = ext === "png" ? "image/png" : "image/jpeg";
-      const filePath = join(outfitsDir, filename);
+    for (const filename of files) {
+      try {
+        const existing = await db
+          .collection("images.files")
+          .findOne({ filename });
+        if (existing) {
+          skipped++;
+          continue;
+        }
 
-      await new Promise((resolve, reject) => {
-        const readStream = createReadStream(filePath);
-        const uploadStream = bucket.openUploadStream(filename, {
-          contentType,
-          metadata: { category: "outfits", source: "local-seed" },
+        const ext = filename.split(".").pop().toLowerCase();
+        const contentType = ext === "png" ? "image/png" : "image/jpeg";
+        const filePath = join(dir, filename);
+
+        await new Promise((resolve, reject) => {
+          const readStream = createReadStream(filePath);
+          const uploadStream = bucket.openUploadStream(filename, {
+            contentType,
+            metadata: { category, source: "local-seed" },
+          });
+          readStream.pipe(uploadStream)
+            .on("finish", resolve)
+            .on("error", reject);
         });
-        readStream.pipe(uploadStream)
-          .on("finish", resolve)
-          .on("error", reject);
-      });
-      uploaded++;
-    } catch (err) {
-      console.warn(`GridFS upload skipped for ${filename}: ${err.message}`);
+        uploaded++;
+      } catch (err) {
+        console.warn(`GridFS upload skipped for ${filename}: ${err.message}`);
+      }
     }
   }
 
   if (uploaded > 0 || skipped > 0) {
     console.log(
-      `✓ GridFS outfit images: ${uploaded} uploaded, ${skipped} already existed.`
+      `✓ GridFS images: ${uploaded} uploaded, ${skipped} already existed.`
     );
   }
 }
@@ -99,7 +110,9 @@ export async function seedCatalog() {
       })),
     );
 
-    // 2. Seed dedicated Wardrobes collection
+    // 2. Seed dedicated Wardrobes collection - sync and upsert fresh items
+    const validWardrobeIds = wardrobe.map((item) => item.id);
+    await CatalogWardrobe.deleteMany({ id: { $nin: validWardrobeIds } });
     await CatalogWardrobe.bulkWrite(
       wardrobe.map((item) => ({
         replaceOne: {
@@ -123,7 +136,9 @@ export async function seedCatalog() {
       })),
     );
 
-    // 4. Seed dedicated Products collection
+    // 4. Seed dedicated Products collection - sync and upsert fresh products
+    const validProductIds = products.map((item) => item.id);
+    await Product.deleteMany({ id: { $nin: validProductIds } });
     await Product.bulkWrite(
       products.map((item) => ({
         replaceOne: {

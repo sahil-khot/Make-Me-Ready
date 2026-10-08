@@ -60,23 +60,27 @@ export default function Shopping() {
     }
     setTimeout(() => setToast(null), 2400);
   };
-  const na = products
-    .slice(0, 5)
-    .filter(
-      (p) =>
-        (g === "All" ||
-          p.g === g ||
-          (g === "Accessories" && p.cat === "Accessories")) &&
-        (!cat || p.cat === cat),
-    );
+
+  // Filtered products across categories
+  const filteredProducts = (products || []).filter(
+    (p) =>
+      (g === "All" ||
+        p.g === g ||
+        (g === "Accessories" && p.cat === "Accessories") ||
+        (g === "Jewelry" && p.cat === "Jewelry")) &&
+      (!cat || p.cat === cat),
+  );
+  const na = filteredProducts.slice(0, 15);
+  const trending = filteredProducts.length > 15 ? filteredProducts.slice(15) : (products || []).slice(10, 25);
   const total = cart.reduce((s, p) => s + p.price, 0);
+
   return (
     <div>
       <div className="relative overflow-hidden rounded-3xl border border-line min-h-[300px] flex items-center">
         <img
-          src={IMG["leather-jacket"]}
-          alt="Premium Leather Jacket"
-          className="absolute inset-0 w-full h-full object-cover object-center opacity-60"
+          src={IMG["hero-home"] || "/img/hero-luxury.jpg"}
+          alt="Premium Luxury Collection"
+          className="absolute inset-0 w-full h-full object-cover object-center opacity-70"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/80 to-transparent" />
         <div className="relative p-8 md:p-10">
@@ -182,7 +186,7 @@ export default function Shopping() {
         title="New Arrivals"
         right={
           <div className="flex items-center gap-2">
-            {["All", "Men", "Women", "Accessories"].map((x) => (
+            {["All", "Men", "Accessories", "Jewelry"].map((x) => (
               <button
                 key={x}
                 onClick={() => setG(x)}
@@ -205,7 +209,7 @@ export default function Shopping() {
       </Section>
       <Section title="Trending Now" icon="Flame">
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
-          {products.slice(5).map((p) => (
+          {trending.map((p) => (
             <P key={p.id} p={p} add={add} />
           ))}
         </div>
@@ -245,9 +249,9 @@ export default function Shopping() {
 
       <div className="grid md:grid-cols-3 gap-5 mt-12">
         {[
-          ["Flat 40% OFF", "On Premium Clothing", "white-shirt"],
-          ["Up to 30% OFF", "On Footwear", "classic-sneakers"],
-          ["Flat 25% OFF", "On Accessories", "chronograph"],
+          ["Flat 40% OFF", "On Premium Shirts", "w-shirt-1"],
+          ["Up to 30% OFF", "On Artisan Loafers", "w-other-2"],
+          ["Flat 25% OFF", "On Chronograph Watches", "w-acc-1"],
         ].map(([a, b, im], i) => (
           <div
             key={a}

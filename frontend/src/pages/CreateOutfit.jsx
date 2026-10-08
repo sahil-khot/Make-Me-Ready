@@ -36,8 +36,8 @@ export default function CreateOutfit() {
   const allWardrobe = useMemo(() => [...added, ...wardrobe], [added, wardrobe]);
 
   const [o, setO] = useState("casual");
-  const [c, setC] = useState("Tops");
-  const [sel, setSel] = useState(["white-shirt"]);
+  const [c, setC] = useState("Shirts");
+  const [sel, setSel] = useState(["w-shirt-1"]);
   const [seed, setSeed] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [ok, setOk] = useState(false);

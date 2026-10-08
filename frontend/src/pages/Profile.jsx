@@ -167,8 +167,8 @@ export default function Profile() {
     [Star, "4.8", "Style Score"],
   ];
 
-  const wsum = ["Tops", "Bottoms", "Outerwear", "Shoes", "Accessories"];
-  const wcount = [18, 12, 6, 8, 10];
+  const wsum = ["Shirts", "Pants", "Accessories", "Jewelry", "Others"];
+  const wcount = [5, 5, 5, 5, 5];
 
   // Safe recent activity – guard against looks not yet loaded
   const recentActivity = [

@@ -449,7 +449,7 @@ export default function Recommendations() {
         sub="Create completely new looks using staple items directly from your wardrobe."
       >
         <div className="flex flex-wrap items-center gap-3 text-acc">
-          {["white-shirt", "black-trousers", "white-sneakers", "watch"].map(
+          {["w-shirt-1", "w-pant-1", "w-other-2", "w-acc-1"].map(
             (x, i) => (
               <span key={x} className="flex items-center gap-3">
                 <div className="card w-28 overflow-hidden rounded-xl border border-line bg-card/70">

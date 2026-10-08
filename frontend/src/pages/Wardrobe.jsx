@@ -39,30 +39,27 @@ const PantsIcon = ({ size = 20, className = "" }) => (
 
 const CATEGORY_TABS = [
   { id: "All", label: "All", icon: LayoutGrid },
-  { id: "Tops", label: "Tops", icon: Shirt },
-  { id: "Bottoms", label: "Bottoms", icon: PantsIcon },
-  { id: "Outerwear", label: "Outerwear", icon: Layers },
-  { id: "Shoes", label: "Shoes", icon: Footprints },
+  { id: "Shirts", label: "Shirts", icon: Shirt },
+  { id: "Pants", label: "Pants", icon: PantsIcon },
   { id: "Accessories", label: "Accessories", icon: Watch },
   { id: "Jewelry", label: "Jewelry", icon: Gem },
   { id: "Others", label: "Others", icon: MoreHorizontal },
 ];
 
 const CATEGORY_META = {
-  Tops: { label: "Tops", icon: Shirt },
-  Bottoms: { label: "Bottoms", icon: PantsIcon },
-  Outerwear: { label: "Outerwear", icon: Layers },
-  Shoes: { label: "Shoes", icon: Footprints },
+  Shirts: { label: "Shirts", icon: Shirt },
+  Pants: { label: "Pants", icon: PantsIcon },
   Accessories: { label: "Accessories", icon: Watch },
   Jewelry: { label: "Jewelry", icon: Gem },
+  Others: { label: "Others", icon: MoreHorizontal },
 };
 
 export default function Wardrobe() {
   const { added = [], addItem, favs = [], catalog = {} } = useStore();
-  const { wardrobe = [], cats = [] } = catalog;
+  const { wardrobe = [], cats = ["Shirts", "Pants", "Accessories", "Jewelry", "Others"] } = catalog;
   const [tab, setTab] = useState("All");
   const [modalOpen, setModalOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", cat: "Tops", tag: "Casual" });
+  const [form, setForm] = useState({ name: "", cat: "Shirts", tag: "Casual" });
   const [image, setImage] = useState(null);
   const [error, setError] = useState("");
 
@@ -75,7 +72,7 @@ export default function Wardrobe() {
     try {
       await addItem(form, image);
       setModalOpen(false);
-      setForm({ name: "", cat: "Tops", tag: "Casual" });
+      setForm({ name: "", cat: "Shirts", tag: "Casual" });
       setImage(null);
     } catch (err) {
       setError(err.message);
@@ -83,8 +80,8 @@ export default function Wardrobe() {
   };
 
   const visibleCategories =
-    tab === "All" || tab === "Others"
-      ? ["Tops", "Bottoms", "Outerwear", "Shoes", "Accessories", "Jewelry"]
+    tab === "All"
+      ? ["Shirts", "Pants", "Accessories", "Jewelry", "Others"]
       : [tab];
 
   return (
@@ -113,7 +110,7 @@ export default function Wardrobe() {
                 <Shirt size={18} />
               </span>
               <div>
-                <div className="font-bold text-lg text-white leading-tight">48</div>
+                <div className="font-bold text-lg text-white leading-tight">{allItems.length}</div>
                 <div className="text-[11px] text-stone-400">Items</div>
               </div>
             </div>
@@ -123,7 +120,7 @@ export default function Wardrobe() {
                 <Package size={18} />
               </span>
               <div>
-                <div className="font-bold text-lg text-white leading-tight">8</div>
+                <div className="font-bold text-lg text-white leading-tight">5</div>
                 <div className="text-[11px] text-stone-400">Categories</div>
               </div>
             </div>
@@ -133,7 +130,7 @@ export default function Wardrobe() {
                 <Sparkles size={18} />
               </span>
               <div>
-                <div className="font-bold text-lg text-white leading-tight">12</div>
+                <div className="font-bold text-lg text-white leading-tight">{favs.length > 0 ? favs.length : 12}</div>
                 <div className="text-[11px] text-stone-400">Favorite Items</div>
               </div>
             </div>
