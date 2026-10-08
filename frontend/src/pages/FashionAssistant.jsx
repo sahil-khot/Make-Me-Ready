@@ -10,6 +10,7 @@ import {
   Palette,
   Layers,
   SlidersHorizontal,
+  Trash2,
 } from "lucide-react";
 import { useStore } from "../store.jsx";
 import { IMG } from "../data/constants.js";
@@ -108,6 +109,17 @@ const QUICK_PROMPTS = [
   "Give me color combination ideas",
   "Create a party look from my wardrobe",
 ];
+
+// ─── Welcome Message (for Reset / Clear Chat) ─────────────────────────────────
+function buildWelcomeMessage(userName = "Sahil") {
+  return [
+    {
+      id: `greeting-${Date.now()}`,
+      role: "assistant",
+      content: `Hi ${userName}! 👋\nI'm your Fashion Assistant, powered by Gemini.\nI can help you with outfit ideas, styling tips, color combinations, occasion-based looks, shopping suggestions and more.\nWhat would you like to explore today?`,
+    },
+  ];
+}
 
 // ─── Initial Demo Conversation (Matching Reference Design) ───────────────────
 function buildInitialMessages(userName = "Sahil") {
@@ -278,6 +290,55 @@ function HowItWorksModal({ onClose }) {
   );
 }
 
+// ─── Clear Conversation Confirmation Modal ──────────────────────────────────
+function ClearConfirmModal({ onConfirm, onClose }) {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-[#12100d] border border-amber-500/30 rounded-2xl p-6 sm:p-7 max-w-[420px] w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-4 text-red-400">
+          <Trash2 size={22} />
+        </div>
+        <h3 className="font-serif font-semibold text-xl text-white text-center mb-2">
+          Clear this conversation?
+        </h3>
+        <p className="text-sm text-stone-400 text-center leading-relaxed mb-6">
+          Clear this conversation? This action cannot be undone.
+        </p>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 h-11 rounded-xl border border-white/10 bg-white/[.04] hover:bg-white/[.08] text-stone-300 hover:text-white text-sm font-medium transition cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="flex-1 h-11 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-semibold text-sm transition shadow-lg shadow-red-500/20 active:scale-95 cursor-pointer"
+          >
+            Clear Chat
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Fashion Assistant Component ────────────────────────────────────────
 export default function FashionAssistant() {
   const { user } = useStore();
@@ -287,6 +348,7 @@ export default function FashionAssistant() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
   const bottomRef = useRef(null);
@@ -353,8 +415,10 @@ export default function FashionAssistant() {
     }
   };
 
-  const resetChat = () => {
-    setMessages(buildInitialMessages(firstName));
+  const confirmClearChat = () => {
+    setMessages(buildWelcomeMessage(firstName));
+    setInput("");
+    setShowClearConfirm(false);
   };
 
   return (
@@ -398,27 +462,32 @@ export default function FashionAssistant() {
 
         <div className="flex items-center gap-2.5">
           <button
-            onClick={resetChat}
-            title="Reset conversation"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-[#12110e]/70 text-stone-400 hover:text-white hover:border-white/20 text-xs font-medium transition"
+            type="button"
+            onClick={() => setShowClearConfirm(true)}
+            title="Clear Chat"
+            aria-label="Clear this conversation"
+            className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full border border-red-500/25 bg-red-500/[.06] hover:bg-red-500/15 hover:border-red-500/40 text-red-300 hover:text-red-200 text-xs sm:text-sm font-medium transition cursor-pointer shadow-sm"
           >
-            <RotateCcw size={13} />
-            <span className="hidden sm:inline">Reset</span>
+            <Trash2 size={13.5} className="text-red-400" />
+            <span>Clear Chat</span>
           </button>
           <button
             onClick={() => setShowInfo(true)}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-[#12110e]/70 text-stone-300 hover:text-white hover:border-amber-500/30 text-xs sm:text-sm font-medium transition shadow-sm"
+            className="flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-white/10 bg-[#12110e]/70 text-stone-300 hover:text-white hover:border-amber-500/30 text-xs sm:text-sm font-medium transition shadow-sm"
           >
             <Info size={14} className="text-amber-400/90" />
-            How it works?
+            <span className="hidden sm:inline">How it works?</span>
+            <span className="sm:hidden">Info</span>
           </button>
         </div>
       </div>
 
       {/* ── Main Two-Column Body ── */}
       <div className="flex gap-4 sm:gap-5 flex-1 min-h-0">
-        {/* Left Column: Chat Conversation Container */}
-        <div className="flex-1 flex flex-col min-w-0 bg-[#0e0d0b] border border-white/[.08] rounded-2xl lg:rounded-3xl p-4 sm:p-6 overflow-hidden shadow-2xl">
+        {/* Left Column: Chat Conversation Container + Centered Bounded Input Bar */}
+        <div className="flex-1 flex flex-col min-w-0 h-full">
+          {/* Chat Conversation Container */}
+          <div className="flex-1 flex flex-col min-w-0 bg-[#0e0d0b] border border-white/[.08] rounded-2xl lg:rounded-3xl p-4 sm:p-6 overflow-hidden shadow-2xl min-h-0">
           <div
             ref={chatScrollRef}
             className="flex-1 overflow-y-auto pr-1 sm:pr-2 space-y-6 min-h-0"
@@ -575,97 +644,106 @@ export default function FashionAssistant() {
           </div>
         </div>
 
-        {/* Right Column: "Try asking..." Sidebar */}
-        <aside className="w-[310px] xl:w-[350px] shrink-0 hidden lg:flex flex-col bg-[#0e0d0b] border border-white/[.08] rounded-2xl lg:rounded-3xl p-5 shadow-2xl">
-          {/* Sidebar Title */}
-          <div className="flex items-center gap-2.5 mb-4 shrink-0">
-            <span className="text-lg">💡</span>
-            <h2 className="text-base font-semibold text-white tracking-wide">
-              Try asking...
-            </h2>
-          </div>
-
-          {/* Quick Prompts List */}
+        {/* Centered Bottom Input Bar (bounded within main chat section, not stretching under sidebar) */}
+        <div className="w-full flex justify-center shrink-0 mt-3 sm:mt-3.5">
           <div
-            className="flex-1 overflow-y-auto space-y-2.5 pr-1 min-h-0"
-            style={{
-              scrollbarWidth: "thin",
-              scrollbarColor: "#26221d transparent",
-            }}
+            className={`w-full max-w-[860px] bg-[#12110e]/95 backdrop-blur-md rounded-2xl px-4 py-2.5 sm:px-5 sm:py-3 flex items-center gap-3 shadow-2xl transition-all duration-300 border ${
+              isFocused
+                ? "border-amber-500/70 shadow-[0_0_28px_rgba(245,158,11,0.22)] ring-1 ring-amber-500/30"
+                : "border-white/[.12] hover:border-white/20"
+            }`}
           >
-            {QUICK_PROMPTS.map((prompt) => (
-              <button
-                key={prompt}
-                type="button"
-                onClick={() => send(prompt)}
-                disabled={loading}
-                className="w-full flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border border-white/[.07] bg-[#161412] hover:bg-[#201d18] hover:border-amber-500/40 text-left transition duration-200 group disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
-              >
-                <span className="text-sm font-normal text-stone-200 group-hover:text-white transition leading-snug">
-                  {prompt}
-                </span>
-                <ArrowRight
-                  size={15}
-                  className="text-amber-500/70 group-hover:text-amber-400 group-hover:translate-x-0.5 transition shrink-0"
-                />
-              </button>
-            ))}
+            <button
+              type="button"
+              title="Upload or attach fashion image"
+              className="w-9 h-9 rounded-xl grid place-items-center text-stone-400 hover:text-amber-400 hover:bg-white/[.05] transition shrink-0 cursor-pointer"
+            >
+              <ImageIcon size={20} />
+            </button>
+
+            <textarea
+              ref={inputRef}
+              rows={1}
+              value={input}
+              autoFocus
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              onChange={(e) => {
+                setInput(e.target.value);
+                e.target.style.height = "auto";
+                e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  send();
+                }
+              }}
+              placeholder="Ask me anything about fashion..."
+              className="flex-1 bg-transparent text-[15px] text-white placeholder:text-stone-400 placeholder:font-normal outline-none resize-none leading-relaxed overflow-hidden py-1.5 px-2"
+              style={{ minHeight: "36px", maxHeight: "120px" }}
+            />
+
+            <button
+              type="button"
+              onClick={() => send()}
+              disabled={!input.trim() || loading}
+              className="w-10 h-10 rounded-xl bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-black font-semibold flex items-center justify-center shrink-0 hover:brightness-110 transition disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_2px_14px_rgba(245,158,11,0.3)] active:scale-95 cursor-pointer"
+              title="Send message"
+            >
+              <Send size={16} className="translate-x-[0.5px]" />
+            </button>
           </div>
-        </aside>
+        </div>
       </div>
 
-      {/* ── Polished & Modern Bottom Input Bar ── */}
-      <div
-        className={`shrink-0 mt-4 bg-[#12110e]/95 backdrop-blur-md rounded-2xl px-4 py-2.5 sm:px-5 sm:py-3 flex items-center gap-3 shadow-2xl transition-all duration-300 border ${
-          isFocused
-            ? "border-amber-500/70 shadow-[0_0_28px_rgba(245,158,11,0.22)] ring-1 ring-amber-500/30"
-            : "border-white/[.12] hover:border-white/20"
-        }`}
-      >
-        <button
-          type="button"
-          title="Upload or attach fashion image"
-          className="w-9 h-9 rounded-xl grid place-items-center text-stone-400 hover:text-amber-400 hover:bg-white/[.05] transition shrink-0 cursor-pointer"
-        >
-          <ImageIcon size={20} />
-        </button>
+      {/* Right Column: "Try asking..." Sidebar */}
+      <aside className="w-[310px] xl:w-[350px] shrink-0 hidden lg:flex flex-col bg-[#0e0d0b] border border-white/[.08] rounded-2xl lg:rounded-3xl p-5 shadow-2xl">
+        {/* Sidebar Title */}
+        <div className="flex items-center gap-2.5 mb-4 shrink-0">
+          <span className="text-lg">💡</span>
+          <h2 className="text-base font-semibold text-white tracking-wide">
+            Try asking...
+          </h2>
+        </div>
 
-        <textarea
-          ref={inputRef}
-          rows={1}
-          value={input}
-          autoFocus
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          onChange={(e) => {
-            setInput(e.target.value);
-            e.target.style.height = "auto";
-            e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+        {/* Quick Prompts List */}
+        <div
+          className="flex-1 overflow-y-auto space-y-2.5 pr-1 min-h-0"
+          style={{
+            scrollbarWidth: "thin",
+            scrollbarColor: "#26221d transparent",
           }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              send();
-            }
-          }}
-          placeholder="Ask me anything about fashion..."
-          className="flex-1 bg-transparent text-[15px] text-white placeholder:text-stone-400 placeholder:font-normal outline-none resize-none leading-relaxed overflow-hidden py-1.5 px-2"
-          style={{ minHeight: "36px", maxHeight: "120px" }}
-        />
-
-        <button
-          type="button"
-          onClick={() => send()}
-          disabled={!input.trim() || loading}
-          className="w-10 h-10 rounded-xl bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-black font-semibold flex items-center justify-center shrink-0 hover:brightness-110 transition disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_2px_14px_rgba(245,158,11,0.3)] active:scale-95 cursor-pointer"
-          title="Send message"
         >
-          <Send size={16} className="translate-x-[0.5px]" />
-        </button>
-      </div>
+          {QUICK_PROMPTS.map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              onClick={() => send(prompt)}
+              disabled={loading}
+              className="w-full flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border border-white/[.07] bg-[#161412] hover:bg-[#201d18] hover:border-amber-500/40 text-left transition duration-200 group disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+            >
+              <span className="text-sm font-normal text-stone-200 group-hover:text-white transition leading-snug">
+                {prompt}
+              </span>
+              <ArrowRight
+                size={15}
+                className="text-amber-500/70 group-hover:text-amber-400 group-hover:translate-x-0.5 transition shrink-0"
+              />
+            </button>
+          ))}
+        </div>
+      </aside>
+    </div>
 
-      {/* ── Modal ── */}
-      {showInfo && <HowItWorksModal onClose={() => setShowInfo(false)} />}
+    {/* ── Modals ── */}
+    {showInfo && <HowItWorksModal onClose={() => setShowInfo(false)} />}
+    {showClearConfirm && (
+      <ClearConfirmModal
+        onConfirm={confirmClearChat}
+        onClose={() => setShowClearConfirm(false)}
+      />
+    )}
     </div>
   );
 }

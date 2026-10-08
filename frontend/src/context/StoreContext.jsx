@@ -57,11 +57,34 @@ export function Store({ children }) {
   const [sidebarPos, setSidebarPos] = useState(
     () => localStorage.getItem("mmr_sidebar_pos") || "left",
   );
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    const saved = Number(localStorage.getItem("mmr_sidebar_width"));
+    return Number.isFinite(saved) && saved >= 220 && saved <= 480 ? saved : 270;
+  });
+  const [sidebarPinned, setSidebarPinned] = useState(() => {
+    const saved = localStorage.getItem("mmr_sidebar_pinned");
+    return saved === null ? true : saved !== "false";
+  });
+  const [isResizing, setIsResizing] = useState(false);
 
   const toggleSidebarPos = () => {
     setSidebarPos((prev) => {
       const next = prev === "left" ? "right" : "left";
       localStorage.setItem("mmr_sidebar_pos", next);
+      return next;
+    });
+  };
+
+  const updateSidebarWidth = (width) => {
+    const clamped = Math.max(220, Math.min(480, Math.round(width)));
+    setSidebarWidth(clamped);
+    localStorage.setItem("mmr_sidebar_width", String(clamped));
+  };
+
+  const toggleSidebarPinned = () => {
+    setSidebarPinned((prev) => {
+      const next = !prev;
+      localStorage.setItem("mmr_sidebar_pinned", String(next));
       return next;
     });
   };
@@ -383,6 +406,13 @@ export function Store({ children }) {
         sidebarPos,
         setSidebarPos,
         toggleSidebarPos,
+        sidebarWidth,
+        setSidebarWidth: updateSidebarWidth,
+        sidebarPinned,
+        setSidebarPinned,
+        toggleSidebarPinned,
+        isResizing,
+        setIsResizing,
       }}
     >
       {children}

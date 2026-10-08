@@ -1,25 +1,92 @@
+import { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { LogOut, ArrowLeftRight } from "lucide-react";
+import { LogOut, ArrowLeftRight, Pin, PinOff } from "lucide-react";
 import { Logo } from "../common/Logo.jsx";
 import { Icon } from "../common/Icon.jsx";
 import { useStore } from "../../context/StoreContext.jsx";
 import { nav } from "../../data.js";
 
 export function Sidebar({ open, close }) {
-  const { logout, sidebarPos = "left", toggleSidebarPos } = useStore();
+  const {
+    logout,
+    sidebarPos = "left",
+    toggleSidebarPos,
+    sidebarWidth = 270,
+    setSidebarWidth,
+    sidebarPinned = true,
+    toggleSidebarPinned,
+    isResizing,
+    setIsResizing,
+  } = useStore();
+
   const navigate = useNavigate();
   const isRight = sidebarPos === "right";
 
+  // Clean up body styles if unmounted during dragging
+  useEffect(() => {
+    return () => {
+      document.body.style.removeProperty("cursor");
+      document.body.style.removeProperty("user-select");
+    };
+  }, []);
+
+  // Handle pointer down on resize handle
+  const handlePointerDown = (e) => {
+    if (e.button !== 0) return; // Primary button only
+    e.preventDefault();
+    e.stopPropagation();
+
+    setIsResizing(true);
+    const startX = e.clientX;
+    const startWidth = sidebarWidth;
+
+    const onPointerMove = (moveEvt) => {
+      moveEvt.preventDefault();
+      const deltaX = moveEvt.clientX - startX;
+      const nextWidth = isRight ? startWidth - deltaX : startWidth + deltaX;
+      setSidebarWidth(nextWidth);
+    };
+
+    const onPointerUp = () => {
+      setIsResizing(false);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      document.body.style.removeProperty("cursor");
+      document.body.style.removeProperty("user-select");
+    };
+
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+  };
+
   return (
     <>
+      {/* Mobile backdrop overlay - closed on mobile tap */}
       <div
         onClick={close}
-        className={`fixed inset-0 z-30 bg-black/60 lg:hidden ${open ? "" : "hidden"}`}
+        className={`fixed inset-0 z-30 bg-black/60 lg:hidden ${
+          open ? "" : "hidden"
+        }`}
       />
+
       <aside
-        className={`fixed z-40 inset-y-0 ${
-          isRight ? "right-0 border-l" : "left-0 border-r"
-        } w-[270px] bg-[#090908] border-white/[.08] flex flex-col transition-all duration-300 ease-out ${
+        className={`fixed z-40 ${
+          sidebarPinned
+            ? `inset-y-0 ${
+                isRight ? "right-0 border-l" : "left-0 border-r"
+              } bg-[#090908] border-white/[.08]`
+            : `inset-y-0 lg:inset-y-3 ${
+                isRight
+                  ? "right-0 lg:right-3 lg:border"
+                  : "left-0 lg:left-3 lg:border"
+              } bg-[#090908]/95 lg:bg-[#0e0d0b]/95 backdrop-blur-xl border-white/[.08] lg:border-amber-500/30 lg:rounded-2xl lg:shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_25px_rgba(245,158,11,0.08)]`
+        } flex flex-col ${
+          isResizing
+            ? "!transition-none"
+            : "transition-all duration-300 ease-out"
+        } ${
           open
             ? "translate-x-0"
             : isRight
@@ -27,22 +94,49 @@ export function Sidebar({ open, close }) {
               : "-translate-x-full lg:translate-x-0"
         }`}
         style={{
+          width: `min(${sidebarWidth}px, 90vw)`,
           backgroundImage:
             "radial-gradient(420px 320px at 0% 100%, rgba(216, 137, 36, 0.22), transparent)",
         }}
       >
-        {/* Header with Logo and Shift Button */}
-        <div className="h-[72px] px-5 flex items-center justify-between border-b border-white/[.08]">
+        {/* Header with Logo, Pin and Shift Buttons */}
+        <div className="h-[72px] px-4 sm:px-5 flex items-center justify-between border-b border-white/[.08] gap-2 shrink-0">
           <Logo size={32} />
-          <button
-            type="button"
-            onClick={toggleSidebarPos}
-            title={isRight ? "Move sidebar to left" : "Move sidebar to right"}
-            aria-label="Toggle sidebar position"
-            className="w-8 h-8 rounded-xl grid place-items-center text-stone-400 hover:text-acc hover:bg-white/[.06] transition border border-white/[.08] hover:border-acc/40 text-sm font-semibold cursor-pointer select-none"
-          >
-            ↔
-          </button>
+          <div className="flex items-center gap-1.5 shrink-0">
+            {/* Pin / Unpin button */}
+            <button
+              type="button"
+              onClick={toggleSidebarPinned}
+              title={
+                sidebarPinned
+                  ? "Unpin sidebar (make detachable / floating)"
+                  : "Pin sidebar (dock to edge)"
+              }
+              aria-label={sidebarPinned ? "Unpin sidebar" : "Pin sidebar"}
+              className={`w-8 h-8 rounded-xl grid place-items-center transition border text-sm font-semibold cursor-pointer select-none ${
+                sidebarPinned
+                  ? "text-amber-400 bg-amber-500/10 border-amber-500/30 hover:bg-amber-500/20"
+                  : "text-stone-400 hover:text-white bg-white/[.04] border-white/[.08] hover:border-white/20"
+              }`}
+            >
+              {sidebarPinned ? (
+                <Pin size={15} className="rotate-45" />
+              ) : (
+                <PinOff size={15} />
+              )}
+            </button>
+
+            {/* Position toggle button */}
+            <button
+              type="button"
+              onClick={toggleSidebarPos}
+              title={isRight ? "Move sidebar to left" : "Move sidebar to right"}
+              aria-label="Toggle sidebar position"
+              className="w-8 h-8 rounded-xl grid place-items-center text-stone-400 hover:text-amber-400 hover:bg-white/[.06] transition border border-white/[.08] hover:border-amber-500/40 text-sm font-semibold cursor-pointer select-none"
+            >
+              <ArrowLeftRight size={14} />
+            </button>
+          </div>
         </div>
 
         {/* Navigation Items */}
@@ -74,19 +168,46 @@ export function Sidebar({ open, close }) {
           ))}
         </nav>
 
-        {/* Clean Footer - No promo cards or "Explore Now" text */}
-        <div className="p-3 border-t border-white/[.08] mt-auto">
+        {/* Clean Footer - Logout button */}
+        <div className="p-3 border-t border-white/[.08] mt-auto shrink-0">
           <button
             type="button"
             onClick={() => {
               logout();
               navigate("/login");
             }}
-            className="flex items-center gap-3 px-4 h-11 text-[14px] text-stone-400 hover:text-white hover:bg-white/[.04] rounded-xl w-full text-left transition"
+            className="flex items-center gap-3 px-4 h-11 text-[14px] text-stone-400 hover:text-white hover:bg-white/[.04] rounded-xl w-full text-left transition cursor-pointer"
           >
             <LogOut size={17} />
             <span>Logout</span>
           </button>
+        </div>
+
+        {/* Resizable edge handle (VS Code / ChatGPT style) */}
+        <div
+          onPointerDown={handlePointerDown}
+          title="Drag to resize sidebar width"
+          aria-label="Resize sidebar"
+          className={`absolute top-0 bottom-0 w-3 cursor-col-resize z-50 select-none hidden lg:flex items-center justify-center group ${
+            isRight ? "left-0 -translate-x-1.5" : "right-0 translate-x-1.5"
+          }`}
+        >
+          {/* Hairline highlight */}
+          <div
+            className={`w-[2px] h-full transition-colors duration-150 ${
+              isResizing
+                ? "bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+                : "bg-transparent group-hover:bg-amber-500/60"
+            }`}
+          />
+          {/* Subtle center grip pill */}
+          <div
+            className={`absolute top-1/2 -translate-y-1/2 w-1.5 h-8 rounded-full pointer-events-none transition-all duration-150 ${
+              isResizing
+                ? "bg-amber-400 opacity-100 scale-110 shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+                : "bg-white/20 group-hover:bg-amber-400 group-hover:opacity-100 opacity-0"
+            }`}
+          />
         </div>
       </aside>
     </>
