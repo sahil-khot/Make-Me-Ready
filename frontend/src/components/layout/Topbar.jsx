@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, Search, Bell, ChevronDown } from "lucide-react";
+import { Menu, Search, Bell, ChevronDown, ShoppingBag } from "lucide-react";
 import { useStore } from "../../context/StoreContext.jsx";
 import { occasions } from "../../data.js";
 import { IMG } from "../../data/constants.js";
 
 export function Topbar({ menu }) {
-  const { user, logout } = useStore();
+  const { user, logout, cart = [] } = useStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
@@ -71,7 +71,22 @@ export function Topbar({ menu }) {
         )}
       </div>
 
-      <div className="ml-auto flex items-center gap-4">
+      <div className="ml-auto flex items-center gap-3">
+        <button
+          type="button"
+          aria-label="Shopping Cart"
+          onClick={() => navigate("/shopping")}
+          title={`Cart (${cart.length} items)`}
+          className="relative grid place-items-center w-10 h-10 rounded-full border border-line bg-card text-mute hover:text-white hover:border-amber-500/50 transition cursor-pointer"
+        >
+          <ShoppingBag size={17} />
+          {cart.length > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-amber-500 text-black font-bold text-[10px] flex items-center justify-center shadow-md animate-up">
+              {cart.length}
+            </span>
+          )}
+        </button>
+
         <button
           type="button"
           aria-label="Notifications"

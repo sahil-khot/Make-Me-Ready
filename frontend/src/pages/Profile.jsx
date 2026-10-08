@@ -187,7 +187,11 @@ const Row = ({ label, value, isOptional = false }) => (
       )}
     </span>
     <span className="flex-1 text-right sm:text-left text-white/90 font-medium">
-      {value || <span className="text-stone-600 font-normal">Not set</span>}
+      {value ? (
+        value
+      ) : (
+        <span className="text-stone-500 font-normal italic">Not provided</span>
+      )}
     </span>
   </div>
 );
@@ -219,69 +223,131 @@ const BODY_TYPES = ["Slim", "Athletic", "Average", "Muscular", "Plus Size"];
 const SHIRT_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
 const PANTS_SIZES = ["28", "30", "32", "34", "36", "38", "40"];
 const SHOE_SIZES = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11", "UK 12"];
+const FIT_PREFERENCES = ["Slim Fit", "Regular Tailored", "Relaxed / Oversized"];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Profile Completion Helper (Calculates percentage & lists missing items)
+// Profile Completion Helper (Calculates percentage dynamically based on all meaningful saved fields)
 // ─────────────────────────────────────────────────────────────────────────────
-function calculateProfileCompletion(user) {
+function calculateProfileCompletion(user, added = []) {
   if (!user) return { percentage: 0, missing: [], completed: [], isComplete: false };
 
   const criteria = [
+    // 1. Personal Information (7 fields)
+    {
+      id: "name",
+      label: "Full Name",
+      tab: "Personal Information",
+      weight: 6.25,
+      isDone: Boolean(user.name && String(user.name).trim().length > 0),
+    },
+    {
+      id: "email",
+      label: "Email Address",
+      tab: "Personal Information",
+      weight: 6.25,
+      isDone: Boolean(user.email && String(user.email).trim().length > 0),
+    },
+    {
+      id: "gender",
+      label: "Gender",
+      tab: "Personal Information",
+      weight: 6.25,
+      isDone: Boolean(user.gender && String(user.gender).trim().length > 0 && user.gender !== "Prefer not to say"),
+    },
+    {
+      id: "phone",
+      label: "Phone Number",
+      tab: "Personal Information",
+      weight: 6.25,
+      isDone: Boolean(user.phone && String(user.phone).trim().length >= 10),
+    },
+    {
+      id: "dob",
+      label: "Date of Birth",
+      tab: "Personal Information",
+      weight: 6.25,
+      isDone: Boolean(user.dob && String(user.dob).trim().length > 0),
+    },
+    {
+      id: "city",
+      label: "City / Location",
+      tab: "Personal Information",
+      weight: 6.25,
+      isDone: Boolean((user.city || user.location) && String(user.city || user.location).trim().length > 0),
+    },
     {
       id: "avatar",
       label: "Profile Picture",
       tab: "Personal Information",
-      weight: 12.5,
+      weight: 6.25,
       isDone: Boolean(user.avatar && String(user.avatar).trim().length > 0),
     },
+
+    // 2. Measurements & Sizes (6 fields)
     {
       id: "height",
       label: "Height",
-      tab: "Personal Information",
-      weight: 12.5,
+      tab: "Measurements & Sizes",
+      weight: 6.25,
       isDone: Boolean(user.height && String(user.height).trim().length > 0),
+    },
+    {
+      id: "weight",
+      label: "Weight",
+      tab: "Measurements & Sizes",
+      weight: 6.25,
+      isDone: Boolean(user.weight && String(user.weight).trim().length > 0),
     },
     {
       id: "body",
       label: "Body Type",
-      tab: "Personal Information",
-      weight: 12.5,
+      tab: "Measurements & Sizes",
+      weight: 6.25,
       isDone: Boolean(user.body && String(user.body).trim().length > 0),
     },
     {
       id: "shirtSize",
-      label: "Shirt Size",
+      label: "Shirt / Top Size",
       tab: "Measurements & Sizes",
-      weight: 12.5,
+      weight: 6.25,
       isDone: Boolean(user.shirtSize && String(user.shirtSize).trim().length > 0),
     },
     {
       id: "pantsSize",
       label: "Pants Size",
       tab: "Measurements & Sizes",
-      weight: 12.5,
+      weight: 6.25,
       isDone: Boolean(user.pantsSize && String(user.pantsSize).trim().length > 0),
     },
     {
       id: "shoeSize",
       label: "Shoe Size",
       tab: "Measurements & Sizes",
-      weight: 12.5,
+      weight: 6.25,
       isDone: Boolean(user.shoeSize && String(user.shoeSize).trim().length > 0),
+    },
+
+    // 3. Style Preferences (3 fields)
+    {
+      id: "styles",
+      label: "Preferred Styles",
+      tab: "Style Preferences",
+      weight: 6.25,
+      isDone: Array.isArray(user.styles) && user.styles.length > 0,
     },
     {
       id: "colors",
       label: "Favourite Colors",
       tab: "Style Preferences",
-      weight: 12.5,
+      weight: 6.25,
       isDone: Array.isArray(user.colors) && user.colors.length > 0,
     },
     {
-      id: "styles",
-      label: "Preferred Styles",
+      id: "brands",
+      label: "Favourite Brands",
       tab: "Style Preferences",
-      weight: 12.5,
-      isDone: Array.isArray(user.styles) && user.styles.length > 0,
+      weight: 6.25,
+      isDone: Array.isArray(user.brands) && user.brands.length > 0,
     },
   ];
 
@@ -308,18 +374,81 @@ function calculateProfileCompletion(user) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Style Calibration Score (Calculated dynamically from user's actual preferences)
+// ─────────────────────────────────────────────────────────────────────────────
+function calculateStyleCalibrationScore(user, added = []) {
+  if (!user) return "0.0";
+
+  let score = 0;
+
+  // 1. Style Preferences Depth (up to 1.0)
+  const stylesCount = Array.isArray(user.styles) ? user.styles.length : 0;
+  if (stylesCount >= 3) score += 1.0;
+  else if (stylesCount === 2) score += 0.8;
+  else if (stylesCount === 1) score += 0.5;
+
+  // 2. Color Palette Depth (up to 0.8)
+  const colorsCount = Array.isArray(user.colors) ? user.colors.length : 0;
+  if (colorsCount >= 3) score += 0.8;
+  else if (colorsCount === 2) score += 0.6;
+  else if (colorsCount === 1) score += 0.4;
+
+  // 3. Favourite Brands Alignment (up to 0.8)
+  const brandsCount = Array.isArray(user.brands) ? user.brands.length : 0;
+  if (brandsCount >= 3) score += 0.8;
+  else if (brandsCount === 2) score += 0.6;
+  else if (brandsCount === 1) score += 0.4;
+
+  // 4. Fit & Sizing Precision (up to 1.0)
+  let fitScore = 0;
+  if (user.shirtSize) fitScore += 0.25;
+  if (user.pantsSize) fitScore += 0.25;
+  if (user.shoeSize) fitScore += 0.25;
+  if (user.body || user.height) fitScore += 0.25;
+  score += fitScore;
+
+  // 5. Wardrobe Inventory (up to 0.8)
+  const wardrobeCount = Array.isArray(added) ? added.length : 0;
+  if (wardrobeCount >= 5) score += 0.8;
+  else if (wardrobeCount >= 2) score += 0.5;
+  else if (wardrobeCount >= 1) score += 0.3;
+
+  // 6. Occasions & Notes (up to 0.6)
+  if (Array.isArray(user.occasions) && user.occasions.length > 0) score += 0.3;
+  if (user.fashionPreferences && String(user.fashionPreferences).trim().length > 0) score += 0.3;
+
+  return Math.min(5.0, score).toFixed(1);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // MAIN PROFILE COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 export default function Profile() {
-  const { user, saved = [], updateProfile, changePassword, logout, catalog } = useStore();
+  const { user, saved = [], updateProfile, changePassword, logout, catalog, added = [] } = useStore();
   const { looks = [], colors = defaultColorList, wardrobe = [] } = catalog || {};
   const navigate = useNavigate();
 
   // Navigation tab
   const [tab, setTab] = useState("Overview");
 
-  // Profile completion metrics
-  const completion = useMemo(() => calculateProfileCompletion(user), [user]);
+  // Dynamic Profile completion metrics based on real user & wardrobe data
+  const completion = useMemo(() => calculateProfileCompletion(user, added), [user, added]);
+
+  // Dynamic Style Calibration Score based on user's real preferences
+  const styleScore = useMemo(() => calculateStyleCalibrationScore(user, added), [user, added]);
+
+  // Real Custom Looks / Outfits Created from localStorage
+  const customLooks = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("mmr_custom_looks") || "[]");
+    } catch {
+      return [];
+    }
+  }, []);
+
+  const outfitsCreatedCount = customLooks.length;
+  const savedLooksCount = saved.length;
+  const favouriteBrandsCount = Array.isArray(user?.brands) ? user.brands.length : 0;
 
   // Global success toast message
   const [toastMessage, setToastMessage] = useState("");
@@ -364,6 +493,7 @@ export default function Profile() {
   const [shirtSize, setShirtSize] = useState(user?.shirtSize || "");
   const [pantsSize, setPantsSize] = useState(user?.pantsSize || "");
   const [shoeSize, setShoeSize] = useState(user?.shoeSize || "");
+  const [fitPreference, setFitPreference] = useState(user?.fitPreference || "");
   const [otherMeasurements, setOtherMeasurements] = useState(user?.otherMeasurements || "");
   const [measurementsSaving, setMeasurementsSaving] = useState(false);
   const [measurementsError, setMeasurementsError] = useState("");
@@ -414,6 +544,7 @@ export default function Profile() {
       if (user.shirtSize) setShirtSize(user.shirtSize);
       if (user.pantsSize) setPantsSize(user.pantsSize);
       if (user.shoeSize) setShoeSize(user.shoeSize);
+      if (user.fitPreference) setFitPreference(user.fitPreference);
       if (user.otherMeasurements) setOtherMeasurements(user.otherMeasurements);
       if (Array.isArray(user.addresses)) setAddresses(user.addresses);
     }
@@ -484,6 +615,7 @@ export default function Profile() {
         shirtSize,
         pantsSize,
         shoeSize,
+        fitPreference,
         otherMeasurements: otherMeasurements.trim(),
       });
       triggerSuccessToast("✓ Your profile is updated successfully.");
@@ -649,15 +781,67 @@ export default function Profile() {
     }
   };
 
-  // Wardrobe 6-category summary counts
-  const wardrobeSummary = [
-    { cat: "Shirts", count: 5, img: IMG["w-shirt-1"] || "/wardrobe/shirt 1.png" },
-    { cat: "Pants", count: 5, img: IMG["w-pant-1"] || "/wardrobe/pant 1.png" },
-    { cat: "Shoes", count: 5, img: IMG["w-shoe-1"] || "/wardrobe/shoe 1.png" },
-    { cat: "Accessories", count: 5, img: IMG["w-acc-1"] || "/wardrobe/a1.png" },
-    { cat: "Jewelry", count: 5, img: IMG["w-jewel-1"] || "/wardrobe/j1.png" },
-    { cat: "Others", count: 5, img: IMG["w-other-1"] || "/wardrobe/other 1.png" },
-  ];
+  // Dynamic Wardrobe category summary counts from actual added wardrobe pieces
+  const wardrobeSummary = useMemo(() => {
+    const isFem = user?.gender === "Female" || user?.profile?.gender === "Female";
+    const baseCats = isFem
+      ? [
+          { cat: "Dress", img: "/wardrobe/d1.png" },
+          { cat: "Top", img: "/wardrobe/shirt 1.png" },
+          { cat: "Pants", img: "/wardrobe/pant 1.png" },
+          { cat: "Footwear", img: "/wardrobe/shoe 1.png" },
+          { cat: "Jewelry", img: "/wardrobe/j1.png" },
+          { cat: "Accessories", img: "/wardrobe/a1.png" },
+        ]
+      : [
+          { cat: "Shirts", img: "/wardrobe/shirt 1.png" },
+          { cat: "Pants", img: "/wardrobe/pant 1.png" },
+          { cat: "Shoes", img: "/wardrobe/shoe 1.png" },
+          { cat: "Accessories", img: "/wardrobe/a1.png" },
+          { cat: "Jewelry", img: "/wardrobe/j1.png" },
+          { cat: "Other", img: "/wardrobe/shirt 2.png" },
+        ];
+
+    return baseCats.map((item) => {
+      const count = (added || []).filter((w) => {
+        const itemCat = (w.cat || w.category || "").toLowerCase();
+        const target = item.cat.toLowerCase();
+        return itemCat.includes(target) || target.includes(itemCat);
+      }).length;
+      return {
+        ...item,
+        count,
+      };
+    });
+  }, [user, added]);
+
+  // Dynamic Recent Styling Activities from real created outfits and added items
+  const recentActivities = useMemo(() => {
+    const list = [];
+    if (Array.isArray(customLooks)) {
+      customLooks.slice(0, 3).forEach((l) => {
+        list.push({
+          id: l.id,
+          title: l.title || "Custom Styled Outfit",
+          sub: `${l.occ || l.style || "AI Outfit"} · Created`,
+          time: l.savedAt ? new Date(l.savedAt).toLocaleDateString() : "Recently",
+          img: l.img || "/img/hero-wardrobe-luxury.jpg",
+        });
+      });
+    }
+    if (Array.isArray(added)) {
+      added.slice(0, 3).forEach((w) => {
+        list.push({
+          id: w.id,
+          title: w.name || "Wardrobe Piece",
+          sub: `${w.cat || "Clothing"} · Added to closet`,
+          time: w.addedAt ? new Date(w.addedAt).toLocaleDateString() : "Recently",
+          img: w.img || "/img/hero-wardrobe-luxury.jpg",
+        });
+      });
+    }
+    return list.slice(0, 4);
+  }, [customLooks, added]);
 
   return (
     <div className="space-y-7 animate-up">
@@ -789,7 +973,7 @@ export default function Profile() {
             </span>
             <div>
               <div className="font-serif text-xl sm:text-2xl font-semibold text-white">
-                {saved.length}
+                {savedLooksCount}
               </div>
               <div className="text-xs text-mute">Looks Saved</div>
             </div>
@@ -800,7 +984,7 @@ export default function Profile() {
             </span>
             <div>
               <div className="font-serif text-xl sm:text-2xl font-semibold text-white">
-                12
+                {outfitsCreatedCount}
               </div>
               <div className="text-xs text-mute">Outfits Created</div>
             </div>
@@ -811,7 +995,7 @@ export default function Profile() {
             </span>
             <div>
               <div className="font-serif text-xl sm:text-2xl font-semibold text-white">
-                {selectedBrands.length > 0 ? selectedBrands.length : 8}
+                {favouriteBrandsCount}
               </div>
               <div className="text-xs text-mute">Favourite Brands</div>
             </div>
@@ -822,7 +1006,7 @@ export default function Profile() {
             </span>
             <div>
               <div className="font-serif text-xl sm:text-2xl font-semibold text-white">
-                {completion.isComplete ? "5.0" : "4.8"}
+                {styleScore}
               </div>
               <div className="text-xs text-mute">Style Calibration Score</div>
             </div>
@@ -862,7 +1046,7 @@ export default function Profile() {
                         key={m.id}
                         type="button"
                         onClick={() => setTab(m.tab)}
-                        className="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 transition cursor-pointer"
+                        className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 transition cursor-pointer"
                       >
                         + {m.label}
                       </button>
@@ -911,7 +1095,7 @@ export default function Profile() {
                     <Check size={12} className="stroke-[3]" /> AI Recommendations Active
                   </span>
                   <span className="text-xs px-3 py-1 rounded-full bg-white/5 border border-line text-stone-300">
-                    Sizes: {shirtSize || "M"} Shirt · {pantsSize || "32"} Pants · {shoeSize || "UK 9"} Shoe
+                    Sizes: {shirtSize ? `Size ${shirtSize} Shirt` : "Not provided"} · {pantsSize ? `Waist ${pantsSize} Pants` : "Not provided"} · {shoeSize ? `${shoeSize} Shoe` : "Not provided"}
                   </span>
                 </div>
               </div>
@@ -987,11 +1171,8 @@ export default function Profile() {
               <Row label="Shirt / T-Shirt" value={shirtSize ? `Size ${shirtSize}` : undefined} />
               <Row label="Pants / Trousers" value={pantsSize ? `Waist ${pantsSize}` : undefined} />
               <Row label="Shoe Size" value={shoeSize ? shoeSize : undefined} />
+              <Row label="Fit Preference" value={fitPreference || user?.fitPreference} isOptional />
               <Row label="Other Notes" value={otherMeasurements} isOptional />
-              <div className="mt-4 p-3 rounded-xl bg-white/[.02] border border-line flex items-center justify-between text-xs text-mute">
-                <span>Fit Preference</span>
-                <span className="text-acc font-medium">Regular Tailored</span>
-              </div>
             </Card>
 
             {/* 3. Style Preferences Card */}
@@ -1007,7 +1188,7 @@ export default function Profile() {
                     {selectedStyles.length > 0 ? (
                       selectedStyles.map((s) => <Tag key={s} text={s} />)
                     ) : (
-                      <span className="text-xs text-stone-500">No styles selected yet</span>
+                      <span className="text-xs text-stone-500 italic">Not provided</span>
                     )}
                   </div>
                 </div>
@@ -1025,7 +1206,7 @@ export default function Profile() {
                         />
                       ))
                     ) : (
-                      <span className="text-xs text-stone-500">No colors selected yet</span>
+                      <span className="text-xs text-stone-500 italic">Not provided</span>
                     )}
                   </div>
                 </div>
@@ -1036,7 +1217,7 @@ export default function Profile() {
                     {selectedBrands.length > 0 ? (
                       selectedBrands.map((b) => <Tag key={b} text={b} />)
                     ) : (
-                      <span className="text-xs text-stone-500">No brands specified</span>
+                      <span className="text-xs text-stone-500 italic">Not provided</span>
                     )}
                   </div>
                 </div>
@@ -1044,10 +1225,10 @@ export default function Profile() {
             </Card>
           </div>
 
-          {/* Wardrobe Summary Section across 6 categories (Requirement) */}
+          {/* Wardrobe Summary Section across categories (Requirement) */}
           <Section
             title="My Wardrobe Summary"
-            sub="30 luxury pieces across 6 dedicated categories"
+            sub={`${(added || []).length} luxury pieces in your personal closet`}
             to="/wardrobe"
           >
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
@@ -1085,46 +1266,37 @@ export default function Profile() {
                 </Link>
               }
             >
-              <div className="space-y-3">
-                {[
-                  {
-                    title: "Office Power Suit",
-                    sub: "Generated tailored look",
-                    time: "2 days ago",
-                    img: "/img/outfits/outfit-8.png",
-                  },
-                  {
-                    title: "Italian Derby Leather Shoes",
-                    sub: "Wardrobe addition",
-                    time: "3 days ago",
-                    img: "/wardrobe/shoe 1.png",
-                  },
-                  {
-                    title: "Camel Blazer Smart Casual",
-                    sub: "Saved to looks",
-                    time: "5 days ago",
-                    img: "/img/outfits/outfit-1.png",
-                  },
-                ].map((act, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-3.5 p-2 rounded-xl hover:bg-white/[.02] transition border-b border-line last:border-0"
-                  >
-                    <img
-                      src={act.img}
-                      alt=""
-                      className="w-12 h-12 rounded-xl object-cover shrink-0 border border-line"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-white truncate">
-                        {act.title}
+              {recentActivities.length > 0 ? (
+                <div className="space-y-3">
+                  {recentActivities.map((act) => (
+                    <div
+                      key={act.id}
+                      className="flex items-center gap-3.5 p-2 rounded-xl hover:bg-white/[.02] transition border-b border-line last:border-0"
+                    >
+                      <img
+                        src={act.img}
+                        alt=""
+                        className="w-12 h-12 rounded-xl object-cover shrink-0 border border-line"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-white truncate">
+                          {act.title}
+                        </div>
+                        <div className="text-xs text-stone-400 truncate">{act.sub}</div>
                       </div>
-                      <div className="text-xs text-stone-400 truncate">{act.sub}</div>
+                      <span className="text-xs text-stone-500 shrink-0">{act.time}</span>
                     </div>
-                    <span className="text-xs text-stone-500 shrink-0">{act.time}</span>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center text-xs text-stone-400 space-y-2">
+                  <Sparkles size={24} className="mx-auto text-amber-500/30" />
+                  <p className="font-medium text-stone-300">No recent styling activity</p>
+                  <p className="text-stone-500 max-w-xs mx-auto">
+                    Generate an outfit in Create Outfit or add pieces to your wardrobe to see your activity timeline.
+                  </p>
+                </div>
+              )}
             </Card>
 
             <Card
@@ -1752,6 +1924,30 @@ export default function Profile() {
               </div>
             </div>
 
+            {/* Fit Preference */}
+            <div>
+              <span className="block mb-2 text-white font-semibold text-sm flex items-center justify-between">
+                <span>Fit Preference</span>
+                <span className="text-xs text-acc">Selected: {fitPreference || "Not provided"}</span>
+              </span>
+              <div className="grid grid-cols-3 gap-2">
+                {FIT_PREFERENCES.map((fp) => (
+                  <button
+                    type="button"
+                    key={fp}
+                    onClick={() => setFitPreference(fitPreference === fp ? "" : fp)}
+                    className={`h-11 rounded-xl text-xs font-semibold border transition ${
+                      fitPreference === fp
+                        ? "bg-acc text-black border-acc shadow-md shadow-amber-500/20"
+                        : "bg-white/[.02] border-line text-stone-300 hover:text-white"
+                    }`}
+                  >
+                    {fp}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Other useful measurements (Optional) */}
             <div>
               <span className="block mb-1.5 text-white font-semibold text-sm flex items-center justify-between">
@@ -1796,7 +1992,7 @@ export default function Profile() {
                 Wardrobe Categories
               </h2>
               <p className="text-xs text-stone-400 mt-1">
-                Your luxury items organized across all 6 core categories.
+                Your luxury items organized across your personal closet ({added.length} {added.length === 1 ? "item" : "items"} total).
               </p>
             </div>
             <Link to="/wardrobe" className="btn-p h-10 px-5 text-xs font-semibold text-black">

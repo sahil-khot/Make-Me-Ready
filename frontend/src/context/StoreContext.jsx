@@ -11,6 +11,12 @@ import {
   shopCats,
   styles,
   wardrobe,
+  womenCats,
+  menCats,
+  womenProducts,
+  menProducts,
+  normalizeCategory,
+  isFemaleUser,
 } from "../data.js";
 
 const StoreContext = createContext();
@@ -270,14 +276,132 @@ export function Store({ children }) {
   };
 
   const addCart = async (product) => {
-    const result = await apiRequest("/api/cart", {
-      method: "POST",
-      body: { id: product.id },
-      auth: true,
+    if (!product) return;
+    const prodId = product.id || product.productId;
+
+    setCart((prev) => {
+      // Prevent duplicate entries
+      if (prev.some((item) => (item.id || item.productId) === prodId)) {
+        return prev;
+      }
+      return [
+        {
+          id: prodId,
+          productId: prodId,
+          name: product.name,
+          price: product.price,
+          cat: product.cat || product.category || "General",
+          img: product.img || product.image || "/img/hero-wardrobe-luxury.jpg",
+          brand: product.brand || "",
+          gender: product.gender || (product.g === "Women" ? "Female" : "Male"),
+        },
+        ...prev,
+      ];
     });
-    if (result?.cart) {
-      setCart(result.cart);
+
+    if (token) {
+      try {
+        const result = await apiRequest("/api/cart", {
+          method: "POST",
+          body: { id: prodId },
+          auth: true,
+        });
+        if (result?.cart) {
+          setCart(result.cart);
+        }
+      } catch (err) {
+        console.warn("Cart synced locally:", err.message);
+      }
     }
+  };
+
+  const removeFromCart = async (productId) => {
+    setCart((prev) =>
+      prev.filter((item) => (item.id || item.productId) !== productId)
+    );
+  };
+
+  const isInCart = (productId) => {
+    if (!productId) return false;
+    return cart.some((item) => (item.id || item.productId) === productId);
+  };
+
+  const clearCart = () => {
+    setCart([]);
+    localStorage.setItem("mmr_cart", JSON.stringify([]));
+  };
+
+  const addToWardrobe = async (product) => {
+    if (!product) return;
+    const prodId = product.id || product.productId;
+
+    // Prevent duplicate additions
+    if (added.some((item) => (item.id || item.productId) === prodId)) {
+      return;
+    }
+
+    const isFem = isFemaleUser(user);
+    const itemCat = normalizeCategory(
+      product.cat || product.category,
+      product.gender || (isFem ? "Female" : "Male")
+    );
+
+    const newItem = {
+      id: prodId,
+      productId: prodId,
+      name: product.name,
+      cat: itemCat,
+      category: itemCat,
+      tag: product.tag || "Casual",
+      brand: product.brand || "",
+      color: product.color || "",
+      size: product.size || "",
+      img: product.img || product.image || "/img/hero-wardrobe-luxury.jpg",
+      image: product.img || product.image || "/img/hero-wardrobe-luxury.jpg",
+      price: product.price,
+      gender: product.gender || (product.g === "Women" ? "Female" : "Male"),
+      addedAt: new Date().toISOString(),
+    };
+
+    setAdded((prev) => [newItem, ...prev]);
+
+    // Remove from removedIds if previously deleted
+    setRemovedIds((prev) => prev.filter((id) => id !== prodId));
+
+    if (token) {
+      try {
+        const body = new FormData();
+        body.append("name", newItem.name);
+        body.append("cat", newItem.cat);
+        body.append("tag", newItem.tag);
+        body.append("brand", newItem.brand);
+        body.append("price", String(newItem.price || 0));
+        body.append("imageFile", newItem.img);
+
+        await apiRequest("/api/wardrobe", {
+          method: "POST",
+          body,
+          auth: true,
+        });
+      } catch (err) {
+        console.warn("Wardrobe item saved locally:", err.message);
+      }
+    }
+  };
+
+  const isInWardrobe = (productId) => {
+    if (!productId) return false;
+    return added.some((item) => (item.id || item.productId) === productId);
+  };
+
+  const isSaved = (productId) => {
+    if (!productId) return false;
+    return (
+      saved.includes(productId) ||
+      favs.includes(productId) ||
+      saved.includes(`p-${productId}`) ||
+      favs.includes(`p-${productId}`)
+    );
   };
 
   const addItem = async (item, image) => {
@@ -372,6 +496,8 @@ export function Store({ children }) {
   };
 
   const fallbackUser = user || { name: "Your Style", email: "" };
+  const isFemale = isFemaleUser(fallbackUser);
+  const userGender = isFemale ? "Female" : (fallbackUser?.gender || fallbackUser?.profile?.gender || "Male");
 
   const filteredCatalog = {
     ...catalog,
@@ -396,10 +522,16 @@ export function Store({ children }) {
         toggleFav: toggleRemote("favs", "/api/favorites", "favorites"),
         saved,
         toggleSave: toggleRemote("saved", "/api/saved-looks", "savedLooks"),
+        isSaved,
         cart,
         addCart,
+        removeFromCart,
+        isInCart,
+        clearCart,
         added: filteredAdded,
         addItem,
+        addToWardrobe,
+        isInWardrobe,
         removeItem,
         removedIds,
         catalog: filteredCatalog,
@@ -413,6 +545,13 @@ export function Store({ children }) {
         toggleSidebarPinned,
         isResizing,
         setIsResizing,
+        isFemale,
+        userGender,
+        womenCats,
+        menCats,
+        womenProducts,
+        menProducts,
+        products,
       }}
     >
       {children}

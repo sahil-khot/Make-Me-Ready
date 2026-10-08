@@ -16,11 +16,11 @@ export const WardrobeCard = ({ w, on, onClick, onRemove }) => {
       }`}
     >
       <img
-        src={w.img || IMG["white-shirt"]}
+        src={w.img || w.image || IMG["white-shirt"] || "/img/hero-wardrobe-luxury.jpg"}
         alt={w.name}
         onError={(e) => {
           e.currentTarget.onerror = null;
-          e.currentTarget.src = `/img/${w.id}.jpg`;
+          e.currentTarget.src = "/img/hero-wardrobe-luxury.jpg";
         }}
         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
       />

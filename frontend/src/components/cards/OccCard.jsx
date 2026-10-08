@@ -3,11 +3,21 @@ import { ArrowRight, Check } from "lucide-react";
 
 export function OccCard({ o, onClick, on, small }) {
   const navigate = useNavigate();
+  const title = o.name || o.title;
+  const image = o.image || o.img;
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(o);
+    } else {
+      navigate("/create-outfit", { state: { occasion: o.id, occasionName: title } });
+    }
+  };
 
   return (
     <button
       type="button"
-      onClick={() => (onClick ? onClick(o) : navigate("/create-outfit"))}
+      onClick={handleClick}
       className={`group tile relative overflow-hidden rounded-2xl border text-left aspect-[4/5.2] transition duration-200 hover:-translate-y-1 ${
         on
           ? "border-acc shadow-[0_0_24px_rgba(255,159,47,.25)]"
@@ -15,8 +25,8 @@ export function OccCard({ o, onClick, on, small }) {
       }`}
     >
       <img
-        src={o.img}
-        alt={o.title}
+        src={image}
+        alt={title}
         onError={(e) => {
           e.currentTarget.onerror = null;
           e.currentTarget.src = `/img/${o.id}.jpg`;

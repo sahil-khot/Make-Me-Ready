@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Star,
   ShoppingBag,
@@ -8,192 +9,540 @@ import {
   Headphones,
   ChevronRight,
   Sparkles,
+  Check,
+  Heart,
+  Eye,
+  X,
+  Trash2,
+  ArrowRight,
+  Shirt,
+  Footprints,
+  Watch,
+  Gem,
+  MoreHorizontal,
 } from "lucide-react";
-import { Section, Heart, Modal } from "../ui.jsx";
+import { Section, Modal } from "../ui.jsx";
 import { useStore } from "../store.jsx";
 import { IMG, getImg } from "../data/constants.js";
+import {
+  womenCats,
+  menCats,
+  womenShopCats,
+  menShopCats,
+  normalizeCategory,
+  isFemaleUser,
+} from "../data.js";
 
-const P = ({ p, add, i }) => (
-  <div className="card overflow-hidden hover:-translate-y-1 animate-up">
-    <div className="group tile relative aspect-[4/3.2] overflow-hidden">
-      <img src={p.img} alt={p.name} className="w-full h-full object-cover" />
-      <Heart id={"p-" + p.id} cls="absolute top-2 right-2" />
-    </div>
-    <div className="p-3">
-      <div className="font-serif font-semibold text-sm">{p.name}</div>
-      <div className="text-sm font-medium">
-        ₹{p.price.toLocaleString("en-IN")}
+// Product Card with Image, Category, Name, Price, Add to Cart, Add to Wardrobe, and Save
+const ProductCard = ({
+  p,
+  onAddToCart,
+  onAddToWardrobe,
+  inCart,
+  inWardrobe,
+  saved,
+  onToggleSave,
+  onQuickView,
+}) => (
+  <div
+    onClick={() => onQuickView(p)}
+    className="group card overflow-hidden hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between border-white/[.08] hover:border-amber-500/40 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] cursor-pointer bg-[#131313] rounded-2xl"
+  >
+    <div className="relative aspect-[4/3.8] overflow-hidden bg-black/40">
+      <img
+        src={p.img || p.image || "/img/hero-wardrobe-luxury.jpg"}
+        alt={p.name}
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = "/img/hero-wardrobe-luxury.jpg";
+        }}
+        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+
+      {/* Category Badge & Gender Tag */}
+      <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+        <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-md text-amber-400 border border-amber-500/30">
+          {p.cat || p.category}
+        </span>
       </div>
-      <div className="text-xs text-mute flex items-center gap-1 mb-3">
-        <Star size={12} className="fill-acc text-acc" />
-        {p.rating} ({p.reviews})
-      </div>
-      <button onClick={() => add(p)} className="btn-p h-9 w-full text-xs">
-        <ShoppingBag size={13} />
-        Add to Cart
+
+      {/* Save Button */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleSave(p);
+        }}
+        aria-label="Save item"
+        className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md grid place-items-center hover:scale-110 transition border border-white/10"
+      >
+        <Heart
+          size={14}
+          className={saved ? "fill-[#ef4444] text-[#ef4444]" : "text-white/80 hover:text-white"}
+        />
       </button>
+
+      {/* Quick view hint on bottom right of image */}
+      <div className="absolute bottom-2 right-2 text-[10px] font-medium text-stone-300 bg-black/75 px-2 py-0.5 rounded-md backdrop-blur-sm opacity-0 group-hover:opacity-100 transition flex items-center gap-1">
+        <Eye size={10} />
+        <span>Quick View</span>
+      </div>
+    </div>
+
+    <div className="p-3.5 flex flex-col flex-1 justify-between gap-3">
+      <div>
+        <div className="text-[11px] text-stone-400 uppercase tracking-wider font-semibold">
+          {p.brand || "Exclusive"}
+        </div>
+        <div
+          className="font-serif font-semibold text-sm text-white line-clamp-1 mt-0.5"
+          title={p.name}
+        >
+          {p.name}
+        </div>
+        <div className="flex items-center justify-between mt-1">
+          <div className="text-sm font-bold text-amber-400">
+            ₹{p.price?.toLocaleString("en-IN")}
+          </div>
+          <div className="text-[11px] text-stone-400 flex items-center gap-1">
+            <Star size={11} className="fill-amber-400 text-amber-400" />
+            <span>{p.rating || "4.8"}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons: Add to Cart & Add to Wardrobe */}
+      <div className="grid grid-cols-2 gap-2 pt-1">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddToCart(p);
+          }}
+          className={`h-8 px-2 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            inCart
+              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+              : "bg-white/[.08] hover:bg-white/[.15] text-white border border-white/10"
+          }`}
+        >
+          {inCart ? (
+            <>
+              <Check size={12} className="stroke-[3]" />
+              <span>Added to Cart</span>
+            </>
+          ) : (
+            <>
+              <ShoppingBag size={12} />
+              <span>Add to Cart</span>
+            </>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddToWardrobe(p);
+          }}
+          className={`h-8 px-2 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+            inWardrobe
+              ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
+              : "bg-gradient-to-r from-[#f59e0b] to-[#d97706] hover:brightness-110 text-black shadow-sm shadow-amber-500/20"
+          }`}
+        >
+          {inWardrobe ? (
+            <>
+              <Check size={12} className="stroke-[3]" />
+              <span>In Wardrobe</span>
+            </>
+          ) : (
+            <>
+              <Sparkles size={12} />
+              <span>Add to Wardrobe</span>
+            </>
+          )}
+        </button>
+      </div>
     </div>
   </div>
 );
+
 export default function Shopping() {
-  const { addCart, cart, catalog, user } = useStore();
-  const { products, shopCats, brands } = catalog;
-  const [g, setG] = useState("All");
+  const navigate = useNavigate();
+  const {
+    addCart,
+    removeFromCart,
+    isInCart,
+    cart = [],
+    addToWardrobe,
+    isInWardrobe,
+    toggleSave,
+    isSaved,
+    catalog = {},
+    user,
+    isFemale,
+    womenProducts = [],
+    menProducts = [],
+  } = useStore();
+
+  const { brands = ["Gucci", "Prada", "Armani", "Zara", "Burberry", "Ralph Lauren"] } = catalog;
+
+  // Gender filter preference: defaults to user gender preference
+  const [genderFilter, setGenderFilter] = useState(() => (isFemale ? "Women" : "Men"));
+  const [selectedCat, setSelectedCat] = useState("All");
   const [toast, setToast] = useState(null);
-  const [cartOpen, setCO] = useState(false);
-  const [cat, setCat] = useState(null);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [quickProduct, setQuickProduct] = useState(null);
 
-  // Gender detection for smart ordering
-  const userGender = user?.profile?.gender || "";
-  const isFemale = userGender.toLowerCase() === "female" || userGender.toLowerCase() === "f";
-
-  // Get 22 women looks for the featured showcase strip
-  const womenOutfitStrip = (catalog?.looks || []).filter(
-    (l) => l.gender === "Women" || l.id?.includes("-w")
-  );
-  const add = async (p) => {
-    try {
-      await addCart(p);
-      setToast(`${p.name} added to cart`);
-    } catch (err) {
-      setToast(err.message);
-    }
-    setTimeout(() => setToast(null), 2400);
+  const triggerToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2800);
   };
 
-  // Filtered products across categories
-  const filteredProducts = (products || []).filter(
-    (p) =>
-      (g === "All" ||
-        p.g === g ||
-        p.cat === g) &&
-      (!cat || p.cat === cat),
-  );
-  const na = filteredProducts.slice(0, 15);
-  const trending = filteredProducts.length > 15 ? filteredProducts.slice(15) : (products || []).slice(10, 25);
-  const total = cart.reduce((s, p) => s + p.price, 0);
+  const handleAddToCart = async (p) => {
+    try {
+      await addCart(p);
+      triggerToast(`✓ "${p.name}" added to cart`);
+    } catch (err) {
+      triggerToast(err.message || "Could not add to cart");
+    }
+  };
+
+  const handleAddToWardrobe = async (p) => {
+    try {
+      await addToWardrobe(p);
+      triggerToast(`✓ "${p.name}" added to your wardrobe!`);
+    } catch (err) {
+      triggerToast(err.message || "Could not add to wardrobe");
+    }
+  };
+
+  const handleToggleSave = async (p) => {
+    try {
+      await toggleSave(p.id);
+      const currentlySaved = isSaved(p.id);
+      triggerToast(
+        currentlySaved
+          ? `Removed "${p.name}" from saved items`
+          : `✓ "${p.name}" saved to your favorites!`
+      );
+    } catch (err) {
+      triggerToast(err.message || "Could not save item");
+    }
+  };
+
+  // Categories based on active gender filter
+  const activeCategories = useMemo(() => {
+    if (genderFilter === "Women") {
+      return ["All", ...womenCats];
+    }
+    if (genderFilter === "Men") {
+      return ["All", ...menCats];
+    }
+    return ["All", ...new Set([...womenCats, ...menCats])];
+  }, [genderFilter]);
+
+  // Visual Category Tiles based on active gender filter
+  const categoryTiles = useMemo(() => {
+    if (genderFilter === "Women") {
+      return womenShopCats;
+    }
+    if (genderFilter === "Men") {
+      return menShopCats;
+    }
+    return [...womenShopCats.slice(0, 4), ...menShopCats.slice(0, 3)];
+  }, [genderFilter]);
+
+  // Active product dataset prioritized by gender
+  const activeProducts = useMemo(() => {
+    if (genderFilter === "Women") {
+      return womenProducts;
+    }
+    if (genderFilter === "Men") {
+      return menProducts;
+    }
+    // "All" - Women products first if female user, else Men products first
+    return isFemale
+      ? [...womenProducts, ...menProducts]
+      : [...menProducts, ...womenProducts];
+  }, [genderFilter, isFemale, womenProducts, menProducts]);
+
+  // Filtered by selected category
+  const filteredProducts = useMemo(() => {
+    if (!selectedCat || selectedCat === "All") {
+      return activeProducts;
+    }
+    return activeProducts.filter((p) => {
+      const normalized = normalizeCategory(p.cat || p.category, p.gender);
+      return normalized.toLowerCase() === selectedCat.toLowerCase();
+    });
+  }, [activeProducts, selectedCat]);
+
+  // Featured looks strip for inspiration
+  const outfitStrip = useMemo(() => {
+    const list = catalog?.looks || [];
+    if (genderFilter === "Women") {
+      return list.filter((l) => l.gender === "Women" || l.id?.includes("-w"));
+    }
+    if (genderFilter === "Men") {
+      return list.filter((l) => l.gender === "Men" || !l.id?.includes("-w"));
+    }
+    return list;
+  }, [catalog?.looks, genderFilter]);
+
+  const totalCartPrice = useMemo(() => {
+    return cart.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+  }, [cart]);
 
   return (
-    <div>
-      <div className="relative overflow-hidden rounded-3xl border border-line min-h-[300px] flex items-center">
+    <div className="space-y-10">
+      {/* ── Global Toast Notification ── */}
+      {toast && (
+        <div
+          role="status"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl bg-[#0a1a12] border-2 border-emerald-500/80 text-white shadow-[0_12px_45px_rgba(16,185,129,0.45)] backdrop-blur-md animate-up text-sm font-semibold max-w-md"
+        >
+          <div className="w-5 h-5 rounded-full bg-emerald-500 text-black grid place-items-center font-bold text-xs shrink-0">
+            ✓
+          </div>
+          <span className="text-emerald-300">{toast}</span>
+          <button
+            type="button"
+            onClick={() => setToast(null)}
+            className="text-stone-400 hover:text-white"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* ── Hero Banner ── */}
+      <div className="relative overflow-hidden rounded-3xl border border-line min-h-[320px] md:min-h-[360px] flex items-center">
         <img
           src={IMG["hero-home"] || "/img/hero-luxury.jpg"}
           alt="Premium Luxury Collection"
           className="absolute inset-0 w-full h-full object-cover object-center opacity-70"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/80 to-transparent" />
-        <div className="relative p-8 md:p-10">
-          <div className="text-xs tracking-[.25em] text-acc mb-3">
-            PREMIUM COLLECTION
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 md:via-black/60 to-transparent" />
+        <div className="relative p-6 md:p-10 z-10 max-w-xl">
+          <div className="text-xs tracking-[.25em] text-acc font-bold uppercase mb-3">
+            {genderFilter === "Women"
+              ? "WOMEN'S LUXURY COLLECTION"
+              : genderFilter === "Men"
+              ? "MEN'S SIGNATURE COLLECTION"
+              : "EXCLUSIVE DESIGNER CATALOG"}
           </div>
-          <h1 className="h1">
-            Upgrade Your <span className="text-acc block">Wardrobe</span>
+          <h1 className="font-serif font-bold text-4xl sm:text-5xl text-white leading-tight">
+            Curated <span className="text-acc">Shopping</span>
           </h1>
-          <p className="text-mute mt-3 mb-6 max-w-sm">
-            Discover curated fashion, footwear, and luxury accessories for every
-            occasion.
+          <p className="text-stone-300 mt-3 mb-6 text-sm md:text-base leading-relaxed">
+            Explore ready-to-wear pieces, footwear, jewelry and accessories. Add them directly
+            to your personal wardrobe or cart.
           </p>
-          <button
-            onClick={() =>
-              document
-                .getElementById("arrivals")
-                .scrollIntoView({ behavior: "smooth" })
-            }
-            className="btn-p h-12"
-          >
-            Shop Now →
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() =>
+                document.getElementById("catalog-grid")?.scrollIntoView({ behavior: "smooth" })
+              }
+              className="btn-p h-11 px-6 text-black font-semibold text-sm shadow-[0_0_24px_rgba(245,158,11,0.35)]"
+            >
+              Browse Catalog ↓
+            </button>
+            <button
+              type="button"
+              onClick={() => setCartOpen(true)}
+              className="btn-s h-11 px-5 text-sm bg-black/60 border-white/20 text-white hover:border-amber-500/50 flex items-center gap-2"
+            >
+              <ShoppingBag size={16} />
+              <span>Cart ({cart.length})</span>
+            </button>
+          </div>
         </div>
+
+        {/* Floating Cart Button Top-Right on Banner */}
         <button
-          onClick={() => setCO(true)}
-          className="absolute top-5 right-5 btn-s h-10 bg-black/50 text-sm"
+          type="button"
+          onClick={() => setCartOpen(true)}
+          className="hidden md:flex absolute top-6 right-6 z-10 items-center gap-2.5 px-4 py-2.5 rounded-full bg-black/75 backdrop-blur-md border border-white/15 text-white hover:border-amber-500/60 transition shadow-lg"
         >
-          <ShoppingBag size={15} />
-          Cart ({cart.length})
+          <ShoppingBag size={16} className="text-amber-400" />
+          <span className="text-xs font-semibold">Shopping Cart</span>
+          <span className="px-2 py-0.5 rounded-full bg-amber-500 text-black font-bold text-[11px]">
+            {cart.length}
+          </span>
         </button>
       </div>
-      <Section
-        title="Shop by Category"
-        right={
-          cat ? (
+
+      {/* ── Gender Filter Selector & Status ── */}
+      <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-[#141414] border border-white/[.08]">
+        <div className="flex items-center gap-2">
+          <span className="text-xs uppercase font-bold tracking-wider text-stone-400">
+            Catalog:
+          </span>
+          <div className="flex items-center gap-1.5 bg-black/60 p-1 rounded-xl border border-white/10">
             <button
-              onClick={() => setCat(null)}
-              className="text-xs text-acc hover:underline flex items-center gap-1"
+              type="button"
+              onClick={() => {
+                setGenderFilter("Women");
+                setSelectedCat("All");
+              }}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
+                genderFilter === "Women"
+                  ? "bg-amber-500 text-black shadow-sm"
+                  : "text-stone-400 hover:text-white"
+              }`}
             >
-              Clear filter ({cat}) ×
+              Women’s Catalog ({womenProducts.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setGenderFilter("Men");
+                setSelectedCat("All");
+              }}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
+                genderFilter === "Men"
+                  ? "bg-amber-500 text-black shadow-sm"
+                  : "text-stone-400 hover:text-white"
+              }`}
+            >
+              Men’s Catalog ({menProducts.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setGenderFilter("All");
+                setSelectedCat("All");
+              }}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
+                genderFilter === "All"
+                  ? "bg-amber-500 text-black shadow-sm"
+                  : "text-stone-400 hover:text-white"
+              }`}
+            >
+              All Products ({womenProducts.length + menProducts.length})
+            </button>
+          </div>
+        </div>
+
+        <div className="text-xs text-stone-400 flex items-center gap-2">
+          <span>Personalized for:</span>
+          <span className="font-semibold text-white px-2 py-0.5 rounded-md bg-white/5 border border-white/10">
+            {isFemale ? "Female Style Profile" : "Male Style Profile"}
+          </span>
+        </div>
+      </div>
+
+      {/* ── Shop by Category Visual Tiles ── */}
+      <Section
+        title={`Shop by Category (${categoryTiles.length})`}
+        sub="Browse pieces curated across distinct fashion categories"
+        right={
+          selectedCat !== "All" ? (
+            <button
+              type="button"
+              onClick={() => setSelectedCat("All")}
+              className="text-xs text-amber-400 hover:underline flex items-center gap-1 font-semibold"
+            >
+              Clear filter ({selectedCat}) ×
             </button>
           ) : null
         }
       >
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-          {shopCats.map(([n, im]) => (
-            <button
-              key={n}
-              onClick={() => setCat(cat === n ? null : n)}
-              className={`group tile relative aspect-[3/3.8] rounded-2xl overflow-hidden border transition-all duration-300 ${
-                cat === n
-                  ? "border-acc ring-2 ring-acc/40 scale-[1.02] shadow-[0_0_20px_rgba(245,158,11,0.3)]"
-                  : "border-line hover:border-acc/40"
-              }`}
-            >
-              <img
-                src={IMG[im] || getImg(im)}
-                alt={n}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
-              <div className="absolute bottom-2.5 left-2.5 right-2.5 text-left">
-                <span className={`block text-xs font-semibold ${cat === n ? "text-acc" : "text-white"}`}>
-                  {n}
-                </span>
-                <span className="text-[10px] text-mute">
-                  {(products || []).filter((p) => p.cat === n).length} Items
-                </span>
-              </div>
-            </button>
-          ))}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
+          {categoryTiles.map(([catName, imgPath]) => {
+            const isSelected = selectedCat.toLowerCase() === catName.toLowerCase();
+            const itemCount = activeProducts.filter(
+              (p) =>
+                normalizeCategory(p.cat || p.category, p.gender).toLowerCase() ===
+                catName.toLowerCase()
+            ).length;
+
+            return (
+              <button
+                key={catName}
+                type="button"
+                onClick={() => setSelectedCat(isSelected ? "All" : catName)}
+                className={`group tile relative aspect-[3/3.8] rounded-2xl overflow-hidden border transition-all duration-300 text-left ${
+                  isSelected
+                    ? "border-amber-500 ring-2 ring-amber-500/40 scale-[1.02] shadow-[0_0_20px_rgba(245,158,11,0.3)]"
+                    : "border-white/[.08] hover:border-amber-500/40"
+                }`}
+              >
+                <img
+                  src={IMG[imgPath] || imgPath || "/img/hero-wardrobe-luxury.jpg"}
+                  alt={catName}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/img/hero-wardrobe-luxury.jpg";
+                  }}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+                <div className="absolute bottom-2.5 left-2.5 right-2.5">
+                  <span
+                    className={`block text-xs font-semibold ${
+                      isSelected ? "text-amber-400" : "text-white"
+                    }`}
+                  >
+                    {catName}
+                  </span>
+                  <span className="text-[10px] text-stone-400">{itemCount} Items</span>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </Section>
-      <Section title="Top Brands">
-        <div className="flex gap-3 overflow-x-auto">
+
+      {/* ── Top Designer Brands ── */}
+      <Section title="Featured Designer Brands">
+        <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-none">
           {brands.map((b) => (
             <div
               key={b}
-              className="card shrink-0 w-32 h-14 grid place-items-center font-serif font-bold tracking-wide hover:border-acc/50"
+              className="card shrink-0 px-6 h-14 grid place-items-center font-serif font-bold tracking-wide hover:border-amber-500/50 transition cursor-default bg-[#141414]"
             >
               {b}
             </div>
           ))}
-          <ChevronRight className="self-center text-acc" />
+          <div className="grid place-items-center px-3 text-amber-400 shrink-0">
+            <ChevronRight />
+          </div>
         </div>
       </Section>
-      <div id="arrivals" />
 
-      {/* ── Gender-Smart Women Outfit Showcase (top for female users) ── */}
-      {womenOutfitStrip.length > 0 && isFemale && (
+      {/* ── Featured Outfits Strip (for styling inspiration) ── */}
+      {outfitStrip.length > 0 && (
         <Section
-          title="✨ Featured Women's Outfit Looks"
-          sub={`${womenOutfitStrip.length} curated looks from dresses to ethnic wear — click to explore`}
-          icon="Sparkles"
+          title="✨ Styled Outfits & Looks"
+          sub="Pair individual wardrobe items together to recreate these complete looks"
         >
           <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-none">
-            {womenOutfitStrip.map((l) => (
+            {outfitStrip.slice(0, 15).map((l) => (
               <div
                 key={l.id}
-                className="shrink-0 w-44 group relative rounded-2xl overflow-hidden border border-line hover:border-acc/60 hover:-translate-y-1 transition-all shadow-lg bg-black/60 cursor-pointer"
+                className="shrink-0 w-44 group relative rounded-2xl overflow-hidden border border-white/[.08] hover:border-amber-500/60 hover:-translate-y-1 transition-all shadow-lg bg-black/60 cursor-pointer"
               >
                 <div className="aspect-[3/4] overflow-hidden">
                   <img
                     src={l.img}
                     alt={l.title}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "/img/hero-wardrobe-luxury.jpg";
+                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => { e.target.onerror = null; e.target.src = IMG["hero-wardrobe"]; }}
                   />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 p-3 w-full">
-                  <p className="text-[11px] font-semibold text-white line-clamp-2 leading-tight">{l.title}</p>
-                  <p className="text-[10px] text-acc mt-0.5 capitalize">{l.occ}</p>
+                  <p className="text-[11px] font-semibold text-white line-clamp-2 leading-tight">
+                    {l.title}
+                  </p>
+                  <p className="text-[10px] text-amber-400 mt-0.5 capitalize">{l.occ}</p>
                 </div>
               </div>
             ))}
@@ -201,157 +550,365 @@ export default function Shopping() {
         </Section>
       )}
 
-
+      {/* ── Main Product Catalog Grid ── */}
+      <div id="catalog-grid" />
       <Section
-        title="New Arrivals"
+        title="Products Catalog"
+        sub={`Showing ${filteredProducts.length} ${
+          genderFilter === "Women" ? "women's" : genderFilter === "Men" ? "men's" : ""
+        } items${selectedCat !== "All" ? ` in ${selectedCat}` : ""}`}
         right={
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
-            {["All", "Shirts", "Pants", "Shoes", "Accessories", "Jewelry", "Others"].map((x) => (
-              <button
-                key={x}
-                onClick={() => setG(x)}
-                className={`h-8 px-4 rounded-full text-xs shrink-0 transition ${g === x ? "bg-acc text-black font-semibold shadow-sm" : "bg-card2 text-mute hover:text-white"}`}
-              >
-                {x}
-              </button>
-            ))}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full scrollbar-none">
+            {activeCategories.map((c) => {
+              const isSelected = selectedCat.toLowerCase() === c.toLowerCase();
+              return (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setSelectedCat(c)}
+                  className={`h-8 px-3.5 rounded-full text-xs font-semibold shrink-0 transition ${
+                    isSelected
+                      ? "bg-amber-500 text-black shadow-md shadow-amber-500/20"
+                      : "bg-[#181818] border border-white/10 text-stone-300 hover:text-white hover:border-white/20"
+                  }`}
+                >
+                  {c}
+                </button>
+              );
+            })}
           </div>
         }
       >
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
-          {na.map((p) => (
-            <P key={p.id} p={p} add={add} />
-          ))}
-        </div>
-        {!na.length && (
-          <p className="text-mute text-sm">No products match this filter.</p>
-        )}
-      </Section>
-      <Section title="Trending Now" icon="Flame">
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
-          {trending.map((p) => (
-            <P key={p.id} p={p} add={add} />
-          ))}
-        </div>
-      </Section>
-
-      {/* ── Gender-Smart Women Outfit Showcase (bottom for male / guest users) ── */}
-      {womenOutfitStrip.length > 0 && !isFemale && (
-        <Section
-          title="✨ Featured Women's Outfit Looks"
-          sub={`${womenOutfitStrip.length} curated looks from dresses to ethnic wear — scroll to explore`}
-          icon="Sparkles"
-        >
-          <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-none">
-            {womenOutfitStrip.map((l) => (
-              <div
-                key={l.id}
-                className="shrink-0 w-44 group relative rounded-2xl overflow-hidden border border-line hover:border-acc/60 hover:-translate-y-1 transition-all shadow-lg bg-black/60 cursor-pointer"
-              >
-                <div className="aspect-[3/4] overflow-hidden">
-                  <img
-                    src={l.img}
-                    alt={l.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => { e.target.onerror = null; e.target.src = IMG["hero-wardrobe"]; }}
-                  />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
-                <div className="absolute bottom-0 p-3 w-full">
-                  <p className="text-[11px] font-semibold text-white line-clamp-2 leading-tight">{l.title}</p>
-                  <p className="text-[10px] text-acc mt-0.5 capitalize">{l.occ}</p>
-                </div>
-              </div>
+        {filteredProducts.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+            {filteredProducts.map((p) => (
+              <ProductCard
+                key={p.id}
+                p={p}
+                onAddToCart={handleAddToCart}
+                onAddToWardrobe={handleAddToWardrobe}
+                inCart={isInCart(p.id)}
+                inWardrobe={isInWardrobe(p.id)}
+                saved={isSaved(p.id)}
+                onToggleSave={handleToggleSave}
+                onQuickView={setQuickProduct}
+              />
             ))}
           </div>
-        </Section>
-      )}
+        ) : (
+          <div className="card p-12 text-center border-dashed border-white/10 my-4">
+            <p className="text-stone-400 text-sm mb-4">
+              No products found in category "{selectedCat}".
+            </p>
+            <button
+              type="button"
+              onClick={() => setSelectedCat("All")}
+              className="btn-p h-10 px-5 text-xs text-black font-semibold"
+            >
+              Reset Category Filter
+            </button>
+          </div>
+        )}
+      </Section>
 
-      <div className="grid md:grid-cols-3 gap-5 mt-12">
+      {/* ── Promotional Luxury Banners ── */}
+      <div className="grid md:grid-cols-3 gap-5 mt-10">
         {[
-          ["Flat 40% OFF", "On Premium Shirts", "w-shirt-1"],
-          ["Up to 30% OFF", "On Artisan Loafers", "w-other-2"],
-          ["Flat 25% OFF", "On Chronograph Watches", "w-acc-1"],
-        ].map(([a, b, im], i) => (
+          ["Flat 40% OFF", "On Designer Dresses & Tops", "w-dress-1", "Women"],
+          ["Up to 30% OFF", "On Handcrafted Footwear", "w-footwear-1", "Women"],
+          ["Flat 25% OFF", "On Luxury Jewelry & Accs", "w-jewel-1", "Women"],
+        ].map(([title, desc, imKey, targetGender], i) => (
           <div
-            key={a}
-            className="relative overflow-hidden rounded-2xl border border-line p-6 min-h-[170px] bg-gradient-to-r from-acc/20 to-card"
+            key={title}
+            className="relative overflow-hidden rounded-2xl border border-white/[.08] p-6 min-h-[170px] bg-gradient-to-r from-amber-500/10 to-[#121212]"
           >
             <img
-              src={IMG[im] || getImg(im)}
+              src={IMG[imKey] || getImg(imKey) || "/img/hero-luxury.jpg"}
               alt=""
-              className="absolute right-0 inset-y-0 w-1/2 h-full object-cover opacity-70"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/img/hero-luxury.jpg";
+              }}
+              className="absolute right-0 inset-y-0 w-1/2 h-full object-cover opacity-60 pointer-events-none"
             />
-            <div className="relative">
-              <div
-                className={`font-serif text-2xl ${i == 2 ? "text-acc" : ""}`}
-              >
-                {a}
+            <div className="relative z-10">
+              <div className={`font-serif text-2xl font-bold ${i === 2 ? "text-amber-400" : "text-white"}`}>
+                {title}
               </div>
-              <div className="text-sm mb-4">{b}</div>
+              <div className="text-xs text-stone-300 mt-1 mb-4">{desc}</div>
               <button
-                onClick={() =>
-                  document
-                    .getElementById("arrivals")
-                    .scrollIntoView({ behavior: "smooth" })
-                }
-                className="btn-p h-9 text-xs"
+                type="button"
+                onClick={() => {
+                  setGenderFilter(targetGender);
+                  document.getElementById("catalog-grid")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="btn-p h-8 px-4 text-xs font-semibold text-black"
               >
-                Shop Now →
+                Shop Collection →
               </button>
             </div>
           </div>
         ))}
       </div>
-      <div className="card mt-8 p-6 grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
+
+      {/* ── Brand Trust Badges ── */}
+      <div className="card p-6 grid sm:grid-cols-2 xl:grid-cols-4 gap-6 bg-[#121212] border-white/[.08]">
         {[
-          [Truck, "Free Shipping", "On orders above ₹999"],
-          [ShieldCheck, "Easy Returns", "7-day return policy"],
-          [BadgeCheck, "100% Authentic", "Genuine branded products"],
-          [Headphones, "24/7 Support", "We’re here to help"],
-        ].map(([I, a, b]) => (
-          <div key={a} className="flex items-center gap-4">
-            <I className="text-acc" size={28} />
+          [Truck, "Free Express Shipping", "On all orders above ₹999"],
+          [ShieldCheck, "7-Day Easy Returns", "No-questions-asked refund policy"],
+          [BadgeCheck, "100% Authentic Products", "Sourced directly from verified ateliers"],
+          [Headphones, "Dedicated Concierge", "Styling support available 24/7"],
+        ].map(([IconComponent, title, subtitle]) => (
+          <div key={title} className="flex items-center gap-4">
+            <div className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 grid place-items-center shrink-0">
+              <IconComponent size={22} />
+            </div>
             <div className="text-sm">
-              <b className="block">{a}</b>
-              <span className="text-mute text-xs">{b}</span>
+              <b className="block text-white font-medium">{title}</b>
+              <span className="text-stone-400 text-xs">{subtitle}</span>
             </div>
           </div>
         ))}
       </div>
-      {toast && (
-        <div
-          role="status"
-          className="fixed bottom-6 right-6 z-50 card px-5 py-3 text-sm bg-[#111] border-acc/40 animate-up"
+
+      {/* ── Quick View / Product Detail Modal ── */}
+      {quickProduct && (
+        <Modal
+          open={Boolean(quickProduct)}
+          onClose={() => setQuickProduct(null)}
+          title={quickProduct.name}
         >
-          {toast}
-        </div>
+          <div className="grid sm:grid-cols-2 gap-6">
+            <div className="relative aspect-[3/3.8] rounded-2xl overflow-hidden bg-black/60 border border-white/10">
+              <img
+                src={quickProduct.img || quickProduct.image || "/img/hero-wardrobe-luxury.jpg"}
+                alt={quickProduct.name}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/img/hero-wardrobe-luxury.jpg";
+                }}
+                className="w-full h-full object-cover object-center"
+              />
+              <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-black/75 backdrop-blur-md text-amber-400 border border-amber-500/30">
+                {quickProduct.cat || quickProduct.category}
+              </span>
+            </div>
+
+            <div className="flex flex-col justify-between space-y-4">
+              <div>
+                <div className="text-xs uppercase font-bold tracking-wider text-amber-400">
+                  {quickProduct.brand || "Exclusive Brand"}
+                </div>
+                <h3 className="font-serif font-bold text-2xl text-white mt-1">
+                  {quickProduct.name}
+                </h3>
+
+                <div className="flex items-center gap-3 mt-2">
+                  <div className="text-2xl font-bold text-white">
+                    ₹{quickProduct.price?.toLocaleString("en-IN")}
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-stone-300 px-2 py-0.5 rounded-md bg-white/5 border border-white/10">
+                    <Star size={13} className="fill-amber-400 text-amber-400" />
+                    <span>{quickProduct.rating || "4.8"} (120+ reviews)</span>
+                  </div>
+                </div>
+
+                <p className="text-stone-300 text-xs sm:text-sm mt-3 leading-relaxed">
+                  Tailored with premium craftsmanship, designed to be effortlessly styled for
+                  everyday luxury and special occasions.
+                </p>
+
+                <div className="mt-4 pt-4 border-t border-white/10 space-y-2 text-xs text-stone-300">
+                  <div className="flex justify-between">
+                    <span className="text-stone-400">Category</span>
+                    <span className="font-medium text-white">{quickProduct.cat || quickProduct.category}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-stone-400">Gender Collection</span>
+                    <span className="font-medium text-white">
+                      {quickProduct.gender || (quickProduct.g === "Women" ? "Women" : "Men")}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-stone-400">Availability</span>
+                    <span className="font-medium text-emerald-400">In Stock · Ready to Ship</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons in Quick View */}
+              <div className="space-y-2 pt-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleAddToCart(quickProduct)}
+                    className={`h-11 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer ${
+                      isInCart(quickProduct.id)
+                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                        : "bg-white/10 hover:bg-white/15 text-white border border-white/15"
+                    }`}
+                  >
+                    {isInCart(quickProduct.id) ? (
+                      <>
+                        <Check size={14} className="stroke-[3]" />
+                        <span>Added to Cart</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag size={14} />
+                        <span>Add to Cart</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleAddToWardrobe(quickProduct)}
+                    className={`h-11 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer ${
+                      isInWardrobe(quickProduct.id)
+                        ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
+                        : "btn-p text-black"
+                    }`}
+                  >
+                    {isInWardrobe(quickProduct.id) ? (
+                      <>
+                        <Check size={14} className="stroke-[3]" />
+                        <span>In Wardrobe</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles size={14} />
+                        <span>Add to Wardrobe</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleToggleSave(quickProduct)}
+                  className="w-full h-10 rounded-xl text-xs font-semibold border border-white/15 text-stone-300 hover:text-white hover:border-amber-500/40 flex items-center justify-center gap-2 transition cursor-pointer"
+                >
+                  <Heart
+                    size={13}
+                    className={
+                      isSaved(quickProduct.id)
+                        ? "fill-[#ef4444] text-[#ef4444]"
+                        : "text-stone-400"
+                    }
+                  />
+                  <span>
+                    {isSaved(quickProduct.id) ? "Saved in Favorites" : "Save to Favorites"}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </Modal>
       )}
+
+      {/* ── Shopping Cart Modal ── */}
       <Modal
         open={cartOpen}
-        onClose={() => setCO(false)}
-        title={`Your Cart (${cart.length})`}
+        onClose={() => setCartOpen(false)}
+        title={`Your Shopping Cart (${cart.length})`}
       >
-        {cart.length ? (
-          <>
-            <div className="max-h-64 overflow-auto space-y-2 mb-4">
-              {cart.map((p, i) => (
-                <div key={i} className="flex justify-between text-sm">
-                  <span>{p.name}</span>
-                  <span>₹{p.price.toLocaleString("en-IN")}</span>
+        {cart.length > 0 ? (
+          <div className="space-y-4">
+            <div className="max-h-80 overflow-y-auto space-y-3 pr-1">
+              {cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-white/[.03] border border-white/[.08]"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <img
+                      src={item.img || item.image || "/img/hero-wardrobe-luxury.jpg"}
+                      alt={item.name}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/img/hero-wardrobe-luxury.jpg";
+                      }}
+                      className="w-14 h-14 rounded-xl object-cover shrink-0 border border-white/10"
+                    />
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold text-white truncate">
+                        {item.name}
+                      </div>
+                      <div className="text-xs text-stone-400 mt-0.5">
+                        Category: {item.cat || item.category || "General"}
+                      </div>
+                      <div className="text-xs font-bold text-amber-400 mt-1">
+                        ₹{item.price?.toLocaleString("en-IN")}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => removeFromCart(item.id)}
+                    aria-label="Remove item from cart"
+                    className="w-8 h-8 rounded-full bg-white/5 hover:bg-red-500/20 text-stone-400 hover:text-red-400 grid place-items-center transition shrink-0"
+                  >
+                    <Trash2 size={14} />
+                  </button>
                 </div>
               ))}
             </div>
-            <div className="flex justify-between font-medium mb-4">
-              <span>Total</span>
-              <span>₹{total.toLocaleString("en-IN")}</span>
+
+            <div className="pt-3 border-t border-white/10 space-y-2">
+              <div className="flex justify-between text-sm text-stone-400">
+                <span>Items ({cart.length})</span>
+                <span>₹{totalCartPrice.toLocaleString("en-IN")}</span>
+              </div>
+              <div className="flex justify-between text-sm text-stone-400">
+                <span>Shipping</span>
+                <span className="text-emerald-400">Free</span>
+              </div>
+              <div className="flex justify-between text-base font-bold text-white pt-2 border-t border-white/10">
+                <span>Total Amount</span>
+                <span className="text-amber-400">₹{totalCartPrice.toLocaleString("en-IN")}</span>
+              </div>
             </div>
-            <button onClick={() => setCO(false)} className="btn-p w-full">
-              Checkout
-            </button>
-          </>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setCartOpen(false)}
+                className="btn-s flex-1 h-11 text-xs"
+              >
+                Continue Shopping
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCartOpen(false);
+                  navigate("/payment");
+                }}
+                className="btn-p flex-1 h-11 text-xs text-black font-semibold shadow-md shadow-amber-500/20 flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span>Order Now</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
+          </div>
         ) : (
-          <p className="text-mute text-sm">Your cart is empty.</p>
+          <div className="py-10 text-center space-y-3">
+            <div className="w-14 h-14 rounded-2xl bg-white/5 text-stone-400 grid place-items-center mx-auto">
+              <ShoppingBag size={24} />
+            </div>
+            <h4 className="font-serif font-bold text-lg text-white">Your cart is empty.</h4>
+            <p className="text-stone-400 text-xs max-w-xs mx-auto leading-relaxed">
+              Add pieces from the collection to build your order.
+            </p>
+            <button
+              type="button"
+              onClick={() => setCartOpen(false)}
+              className="btn-p h-10 px-5 text-xs text-black font-semibold mt-2"
+            >
+              Start Shopping
+            </button>
+          </div>
         )}
       </Modal>
     </div>

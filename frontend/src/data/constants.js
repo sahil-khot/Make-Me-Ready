@@ -50,6 +50,43 @@ export const IMG = {
   'w-other-4': '/wardrobe/other 4.png',
   'w-other-5': '/wardrobe/other 5.png',
 
+  // ── 35 Women's Wardrobe Luxury Pieces (from public/wardrobe) ───────────────
+  'women-dress-1': '/wardrobe/dress 1.png',
+  'women-dress-2': '/wardrobe/dress 2.png',
+  'women-dress-3': '/wardrobe/dress 3.png',
+  'women-dress-4': '/wardrobe/dress 4.png',
+  'women-dress-5': '/wardrobe/dress 5.png',
+  'women-top-1':   '/wardrobe/top 1.png',
+  'women-top-2':   '/wardrobe/top 2.png',
+  'women-top-3':   '/wardrobe/top 3.png',
+  'women-top-4':   '/wardrobe/top 4.png',
+  'women-top-5':   '/wardrobe/top 5.png',
+  'women-pant-1':  '/wardrobe/panty 1.png',
+  'women-pant-2':  '/wardrobe/panty 2.png',
+  'women-pant-3':  '/wardrobe/panty 3.png',
+  'women-pant-4':  '/wardrobe/panty 4.png',
+  'women-pant-5':  '/wardrobe/panty 5.png',
+  'women-shoe-1':  '/wardrobe/footware 1.png',
+  'women-shoe-2':  '/wardrobe/footware 2.png',
+  'women-shoe-3':  '/wardrobe/footware 3.png',
+  'women-shoe-4':  '/wardrobe/footware 4.png',
+  'women-shoe-5':  '/wardrobe/footware 5.png',
+  'women-jewel-1': '/wardrobe/jewel 1.png',
+  'women-jewel-2': '/wardrobe/jewel 2.png',
+  'women-jewel-3': '/wardrobe/jewel 3.png',
+  'women-jewel-4': '/wardrobe/jewel 4.png',
+  'women-jewel-5': '/wardrobe/jewel 5.png',
+  'women-acc-1':   '/wardrobe/access 1.png',
+  'women-acc-2':   '/wardrobe/access 2.png',
+  'women-acc-3':   '/wardrobe/access 3.png',
+  'women-acc-4':   '/wardrobe/access 4.png',
+  'women-acc-5':   '/wardrobe/access 5.png',
+  'women-other-1': '/wardrobe/other 1.png',
+  'women-other-2': '/wardrobe/other 2.png',
+  'women-other-3': '/wardrobe/other 3.png',
+  'women-other-4': '/wardrobe/other 4.png',
+  'women-other-5': '/wardrobe/other 5.png',
+
   // ── Backward-compatible Aliases ───────────────────────────────────────────
   'white-shirt':      '/wardrobe/shirt 1.png',
   'black-polo':       '/wardrobe/shirt 2.png',
@@ -125,29 +162,232 @@ const I = (id) => getImg(id);
 
 export const occ = (id, t, s, g) => ({ id, title: t, sub: s, group: g, img: I(id) });
 
-export const occasions = [
-  occ('wedding',     'Wedding',            'Elegant & Traditional',   'Popular'),
-  occ('college',     'College',            'Casual & Comfortable',    'Popular'),
-  occ('office',      'Office',             'Formal & Professional',    'Popular'),
-  occ('date',        'Date',               'Stylish & Trendy',         'Popular'),
-  occ('party',       'Party',              'Bold & Confident',         'Popular'),
-  occ('travel',      'Travel',             'Comfy & Functional',       'Popular'),
-  occ('casual',      'Casual Day',         'Comfortable & Effortless', 'Personal'),
-  occ('gym',         'Workout / Gym',      'Sporty & Functional',      'Personal'),
-  occ('brunch',      'Brunch',             'Chic & Relaxed',           'Personal'),
-  occ('family',      'Family Function',    'Traditional & Classy',     'Personal'),
-  occ('beach',       'Beach Vacation',     'Breezy & Stylish',         'Travel'),
-  occ('mountain',    'Mountain Trip',      'Warm & Comfortable',       'Travel'),
-  occ('city',        'City Travel',        'Trendy & Versatile',       'Travel'),
-  occ('international','International Travel','Stylish & Global',       'Travel'),
-  occ('summer',      'Summer',             'Light & Breathable',       'Seasonal'),
-  occ('monsoon',     'Monsoon',            'Practical & Stylish',      'Seasonal'),
-  occ('winter',      'Winter',             'Warm & Layered',           'Seasonal'),
-  occ('festive',     'Festive (Diwali)',   'Traditional & Elegant',    'Seasonal'),
-  occ('interview',   'Interview',          'Formal & Minimal',         'Special'),
-  occ('concert',     'Concert',            'Edgy & Modern',            'Special'),
-  occ('religious',   'Religious Visit',    'Traditional & Modest',     'Special'),
+/**
+ * 20 Curated Occasions classified into:
+ * - Personal (4): Birthday, Date Night, Family Gathering, Casual Outing
+ * - Professional (4): Job Interview, Office / Work, Formal Event, Business / Networking
+ * - Social (4): Party, Concert / Night Out, Wedding, Engagement
+ * - Travel (4): Travel / Vacation, Beach / Resort, Outdoor / Adventure, Shopping / City Outing
+ * - Seasonal (4): Summer, Monsoon, Winter, Festive / Diwali
+ * - Traditional: Wedding, Festive / Diwali, Engagement, Family Gathering
+ */
+export const occasionList = [
+  // ── PERSONAL (4) ────────────────────────────────────────────────────────────
+  {
+    id: "birthday",
+    name: "Birthday",
+    title: "Birthday",
+    image: "/Occasions/Birthday.png",
+    img: "/Occasions/Birthday.png",
+    category: "personal",
+    group: "Personal",
+    sub: "Celebration & Style",
+  },
+  {
+    id: "date-night",
+    name: "Date Night",
+    title: "Date Night",
+    image: "/Occasions/Date night.png",
+    img: "/Occasions/Date night.png",
+    category: "personal",
+    group: "Personal",
+    sub: "Chic & Romantic",
+  },
+  {
+    id: "family-gathering",
+    name: "Family Gathering",
+    title: "Family Gathering",
+    image: "/Occasions/Family Gathering.png",
+    img: "/Occasions/Family Gathering.png",
+    category: "personal",
+    group: "Personal",
+    isTraditional: true,
+    sub: "Warm & Traditional",
+  },
+  {
+    id: "casual-outing",
+    name: "Casual Outing",
+    title: "Casual Outing",
+    image: "/Occasions/Casual Outing.png",
+    img: "/Occasions/Casual Outing.png",
+    category: "personal",
+    group: "Personal",
+    sub: "Relaxed & Effortless",
+  },
+
+  // ── PROFESSIONAL (4) ────────────────────────────────────────────────────────
+  {
+    id: "job-interview",
+    name: "Job Interview",
+    title: "Job Interview",
+    image: "/Occasions/Job Interview.png",
+    img: "/Occasions/Job Interview.png",
+    category: "professional",
+    group: "Professional",
+    sub: "Sharp & Confident",
+  },
+  {
+    id: "office-work",
+    name: "Office / Work",
+    title: "Office / Work",
+    image: "/Occasions/Office.png",
+    img: "/Occasions/Office.png",
+    category: "professional",
+    group: "Professional",
+    sub: "Formal & Smart Casual",
+  },
+  {
+    id: "formal-event",
+    name: "Formal Event",
+    title: "Formal Event",
+    image: "/Occasions/Formal Event.png",
+    img: "/Occasions/Formal Event.png",
+    category: "professional",
+    group: "Professional",
+    sub: "Black Tie & Elegant",
+  },
+  {
+    id: "business-networking",
+    name: "Business / Networking",
+    title: "Business / Networking",
+    image: "/Occasions/Business Event.png",
+    img: "/Occasions/Business Event.png",
+    category: "professional",
+    group: "Professional",
+    sub: "Polished & Executive",
+  },
+
+  // ── SOCIAL (4) ──────────────────────────────────────────────────────────────
+  {
+    id: "party",
+    name: "Party",
+    title: "Party",
+    image: "/Occasions/Party.png",
+    img: "/Occasions/Party.png",
+    category: "social",
+    group: "Social",
+    sub: "Glamorous & Festive",
+  },
+  {
+    id: "concert-night-out",
+    name: "Concert / Night Out",
+    title: "Concert / Night Out",
+    image: "/Occasions/Night Out.png",
+    img: "/Occasions/Night Out.png",
+    category: "social",
+    group: "Social",
+    sub: "Trendy & Edgy",
+  },
+  {
+    id: "wedding",
+    name: "Wedding",
+    title: "Wedding",
+    image: "/Occasions/Wedding.png",
+    img: "/Occasions/Wedding.png",
+    category: "social",
+    group: "Social",
+    isTraditional: true,
+    sub: "Grand & Traditional",
+  },
+  {
+    id: "engagement",
+    name: "Engagement",
+    title: "Engagement",
+    image: "/Occasions/Engagement.png",
+    img: "/Occasions/Engagement.png",
+    category: "social",
+    group: "Social",
+    isTraditional: true,
+    sub: "Celebratory & Regal",
+  },
+
+  // ── TRAVEL (4) ──────────────────────────────────────────────────────────────
+  {
+    id: "travel-vacation",
+    name: "Travel / Vacation",
+    title: "Travel / Vacation",
+    image: "/Occasions/Travel.png",
+    img: "/Occasions/Travel.png",
+    category: "travel",
+    group: "Travel",
+    sub: "Comfort & Exploration",
+  },
+  {
+    id: "beach-resort",
+    name: "Beach / Resort",
+    title: "Beach / Resort",
+    image: "/Occasions/Beach.png",
+    img: "/Occasions/Beach.png",
+    category: "travel",
+    group: "Travel",
+    sub: "Breezy & Coastal",
+  },
+  {
+    id: "outdoor-adventure",
+    name: "Outdoor / Adventure",
+    title: "Outdoor / Adventure",
+    image: "/Occasions/Adventure.png",
+    img: "/Occasions/Adventure.png",
+    category: "travel",
+    group: "Travel",
+    sub: "Rugged & Functional",
+  },
+  {
+    id: "shopping-city-outing",
+    name: "Shopping / City Outing",
+    title: "Shopping / City Outing",
+    image: "/Occasions/Shopping.png",
+    img: "/Occasions/Shopping.png",
+    category: "travel",
+    group: "Travel",
+    sub: "Urban & Streetwear",
+  },
+
+  // ── SEASONAL (4) ────────────────────────────────────────────────────────────
+  {
+    id: "summer",
+    name: "Summer",
+    title: "Summer",
+    image: "/Occasions/Summer.png",
+    img: "/Occasions/Summer.png",
+    category: "seasonal",
+    group: "Seasonal",
+    sub: "Light & Breathable",
+  },
+  {
+    id: "monsoon",
+    name: "Monsoon",
+    title: "Monsoon",
+    image: "/Occasions/Monsoon.png",
+    img: "/Occasions/Monsoon.png",
+    category: "seasonal",
+    group: "Seasonal",
+    sub: "Fresh & Weather-Ready",
+  },
+  {
+    id: "winter",
+    name: "Winter",
+    title: "Winter",
+    image: "/Occasions/Winter.png",
+    img: "/Occasions/Winter.png",
+    category: "seasonal",
+    group: "Seasonal",
+    sub: "Warm & Layered",
+  },
+  {
+    id: "festive-diwali",
+    name: "Festive / Diwali",
+    title: "Festive / Diwali",
+    image: "/Occasions/Festive.png",
+    img: "/Occasions/Festive.png",
+    category: "seasonal",
+    group: "Seasonal",
+    isTraditional: true,
+    sub: "Ethnic & Vibrant",
+  },
 ];
+
+export const occasions = occasionList;
 
 const w = (cat, list, defaultTag = 'Casual') =>
   list.map(([id, name, t]) => ({ id, name, cat, tag: t || defaultTag, img: I(id) }));
@@ -269,15 +509,81 @@ export const looks = [
 
 export const lookTabs = ['All Looks', 'Casual', 'Formal', 'Party', 'Traditional', 'Travel', 'Seasonal'];
 
-const P = (id, name, price, r, n, cat, g, brand) => ({
-  id, name, price, rating: r, reviews: n, cat, g, brand: brand || '',
-  img: I(id),
+const P = (id, name, price, r, n, cat, g, brand, customImg) => ({
+  id,
+  name,
+  price,
+  rating: r,
+  reviews: n,
+  cat,
+  category: cat,
+  g,
+  gender: g === 'Women' ? 'Female' : 'Male',
+  brand: brand || '',
+  img: customImg || I(id),
+  image: customImg || I(id),
+  available: true,
 });
+
+/**
+ * 35 Women's / Girls' Shopping & Wardrobe Products
+ * Organized across 7 categories using existing assets in public/wardrobe/
+ */
+export const womenProducts = [
+  // ── 5 Dresses ──────────────────────────────────────────────
+  P('women-dress-1', 'Ethereal Floral Silk Maxi Dress',   3499, 4.9, '1.4k', 'Dresses',     'Women', 'ZARA',          '/wardrobe/dress 1.png'),
+  P('women-dress-2', 'Velvet Evening Cocktail Dress',     4299, 4.8, '920',  'Dresses',     'Women', 'Mango',         '/wardrobe/dress 2.png'),
+  P('women-dress-3', 'Pastel Tiered Ruffle Sundress',     2799, 4.7, '1.1k', 'Dresses',     'Women', 'H&M',           '/wardrobe/dress 3.png'),
+  P('women-dress-4', 'Sculpted Satin Slip Midi Dress',    3899, 4.9, '850',  'Dresses',     'Women', 'Massimo Dutti', '/wardrobe/dress 4.png'),
+  P('women-dress-5', 'Embroidered Festive Anarkali Gown', 5499, 4.8, '670',  'Dresses',     'Women', 'FabIndia',      '/wardrobe/dress 5.png'),
+
+  // ── 5 Tops ─────────────────────────────────────────────────
+  P('women-top-1',   'Ribbed Knit High-Neck Crop Top',    1499, 4.7, '1.2k', 'Tops',        'Women', 'ZARA',          '/wardrobe/top 1.png'),
+  P('women-top-2',   'Organza Puff-Sleeve Peplum Blouse', 2199, 4.8, '880',  'Tops',        'Women', 'Mango',         '/wardrobe/top 2.png'),
+  P('women-top-3',   'Breezy Linen Oversized Shirt Top',  1899, 4.6, '950',  'Tops',        'Women', 'H&M',           '/wardrobe/top 3.png'),
+  P('women-top-4',   'Classic Satin Button-Down Shirt',   2499, 4.9, '1.0k', 'Tops',        'Women', 'Massimo Dutti', '/wardrobe/top 4.png'),
+  P('women-top-5',   'Embroidered Boho Tunic Top',        1999, 4.7, '760',  'Tops',        'Women', 'FabIndia',      '/wardrobe/top 5.png'),
+
+  // ── 5 Pants ────────────────────────────────────────────────
+  P('women-pant-1',  'High-Waist Tailored Wide-Leg Pants',2999, 4.8, '1.3k', 'Pants',       'Women', 'ZARA',          '/wardrobe/panty 1.png'),
+  P('women-pant-2',  'Flared Pleated Linen Palazzo Pants',2299, 4.7, '910',  'Pants',       'Women', 'Mango',         '/wardrobe/panty 2.png'),
+  P('women-pant-3',  'Straight-Fit Vintage Denim Jeans',  3199, 4.9, '1.5k', 'Pants',       'Women', 'Levi\'s',       '/wardrobe/panty 3.png'),
+  P('women-pant-4',  'Slim Cigarette Ankle Pants',        2699, 4.6, '840',  'Pants',       'Women', 'H&M',           '/wardrobe/panty 4.png'),
+  P('women-pant-5',  'Relaxed Paperbag Waist Culottes',   2499, 4.8, '690',  'Pants',       'Women', 'Massimo Dutti', '/wardrobe/panty 5.png'),
+
+  // ── 5 Footwear ─────────────────────────────────────────────
+  P('women-shoe-1',  'Strappy Stiletto Evening Heels',    4499, 4.8, '890',  'Footwear',    'Women', 'Steve Madden',  '/wardrobe/footware 1.png'),
+  P('women-shoe-2',  'Classic Court Platform Block Heels',3799, 4.7, '780',  'Footwear',    'Women', 'Aldo',          '/wardrobe/footware 2.png'),
+  P('women-shoe-3',  'Minimalist Leather Mules & Slides', 2999, 4.6, '1.1k', 'Footwear',    'Women', 'ZARA',          '/wardrobe/footware 3.png'),
+  P('women-shoe-4',  'Chunky Sole Designer Sneakers',     4999, 4.9, '1.4k', 'Footwear',    'Women', 'PUMA',          '/wardrobe/footware 4.png'),
+  P('women-shoe-5',  'Artisan Handcrafted Ethnic Juttis', 2499, 4.8, '630',  'Footwear',    'Women', 'FabIndia',      '/wardrobe/footware 5.png'),
+
+  // ── 5 Jewelry ──────────────────────────────────────────────
+  P('women-jewel-1', '18K Gold Plated Layered Pendant',   3499, 4.9, '1.2k', 'Jewelry',     'Women', 'Tanishq',       '/wardrobe/jewel 1.png'),
+  P('women-jewel-2', 'Kundan Polki Choker Necklace',      6999, 4.8, '520',  'Jewelry',     'Women', 'CaratLane',     '/wardrobe/jewel 2.png'),
+  P('women-jewel-3', 'Diamond Studded Drop Earrings',     4299, 4.9, '940',  'Jewelry',     'Women', 'Malabar',       '/wardrobe/jewel 3.png'),
+  P('women-jewel-4', 'Zircon Tennis Bracelet',            2999, 4.8, '780',  'Jewelry',     'Women', 'Swarovski',     '/wardrobe/jewel 4.png'),
+  P('women-jewel-5', 'Statement Pearl Cocktail Ring',     1999, 4.7, '610',  'Jewelry',     'Women', 'Tanishq',       '/wardrobe/jewel 5.png'),
+
+  // ── 5 Accessories ──────────────────────────────────────────
+  P('women-acc-1',   'Structured Leather Crossbody Bag',  5499, 4.9, '1.3k', 'Accessories', 'Women', 'Coach',         '/wardrobe/access 1.png'),
+  P('women-acc-2',   'Designer Cat-Eye UV Sunglasses',    3999, 4.8, '1.0k', 'Accessories', 'Women', 'Ray-Ban',       '/wardrobe/access 2.png'),
+  P('women-acc-3',   'Rose Gold Mesh Luxury Watch',       8999, 4.9, '890',  'Accessories', 'Women', 'TITAN',         '/wardrobe/access 3.png'),
+  P('women-acc-4',   'Printed Pure Mulberry Silk Scarf',  2499, 4.7, '540',  'Accessories', 'Women', 'Massimo Dutti', '/wardrobe/access 4.png'),
+  P('women-acc-5',   'Reversible Italian Leather Belt',   1899, 4.6, '710',  'Accessories', 'Women', 'Tommy Hilfiger', '/wardrobe/access 5.png'),
+
+  // ── 5 Other ────────────────────────────────────────────────
+  P('women-other-1', 'Signature Floral Luxury Eau De Parfum',4999, 4.9, '1.5k','Other',     'Women', 'Dior',          '/wardrobe/other 1.png'),
+  P('women-other-2', 'Handwoven Straw Beach Tote & Hat',  2299, 4.7, '620',  'Other',       'Women', 'Mango',         '/wardrobe/other 2.png'),
+  P('women-other-3', 'Thermal Fleece Touchscreen Gloves', 1499, 4.6, '490',  'Other',       'Women', 'Uniqlo',        '/wardrobe/other 3.png'),
+  P('women-other-4', 'Velvet Jewellery Travel Organizer', 1799, 4.8, '740',  'Other',       'Women', 'FOSSIL',        '/wardrobe/other 4.png'),
+  P('women-other-5', 'Compact Quilted Vanity Case',       2799, 4.8, '880',  'Other',       'Women', 'ZARA',          '/wardrobe/other 5.png'),
+];
 
 /**
  * 30 Men's Shopping Products matching the 30 wardrobe luxury images without repeating
  */
-export const products = [
+export const menProducts = [
   // 5 Shirts (Men)
   P('w-shirt-1', 'Classic Tailored White Shirt',      2999, 4.8, '1.2k', 'Shirts',      'Men', 'ZARA'),
   P('w-shirt-2', 'Charcoal Luxury Linen Shirt',       3499, 4.7, '980',  'Shirts',      'Men', 'Massimo Dutti'),
@@ -321,7 +627,38 @@ export const products = [
   P('w-other-5', 'Executive Leather Travel Folio',     3299, 4.6, '390', 'Others',      'Men', 'Montblanc'),
 ];
 
-export const shopCats = [
+export const products = [...womenProducts, ...menProducts];
+
+export const womenCats = [
+  'Dresses',
+  'Tops',
+  'Pants',
+  'Footwear',
+  'Jewelry',
+  'Accessories',
+  'Other',
+];
+
+export const menCats = [
+  'Shirts',
+  'Pants',
+  'Shoes',
+  'Accessories',
+  'Jewelry',
+  'Others',
+];
+
+export const womenShopCats = [
+  ['Dresses',     '/wardrobe/dress 1.png'],
+  ['Tops',        '/wardrobe/top 1.png'],
+  ['Pants',       '/wardrobe/panty 1.png'],
+  ['Footwear',    '/wardrobe/footware 1.png'],
+  ['Jewelry',     '/wardrobe/jewel 1.png'],
+  ['Accessories', '/wardrobe/access 1.png'],
+  ['Other',       '/wardrobe/other 1.png'],
+];
+
+export const menShopCats = [
   ['Shirts',      'w-shirt-1'],
   ['Pants',       'w-pant-1'],
   ['Shoes',       'w-shoe-1'],
@@ -329,6 +666,48 @@ export const shopCats = [
   ['Jewelry',     'w-jewel-1'],
   ['Others',      'w-other-1'],
 ];
+
+export const shopCats = womenShopCats;
+
+/**
+ * Normalizes any category string into the standardized category name
+ */
+export const normalizeCategory = (category, gender = 'Female') => {
+  if (!category) return gender === 'Female' ? 'Other' : 'Others';
+  const c = String(category).toLowerCase().trim();
+  if (c.includes('dress')) return 'Dresses';
+  if (c.includes('top')) return 'Tops';
+  if (c.includes('shirt') || c.includes('blouse') || c.includes('tunic')) {
+    return gender === 'Female' ? 'Tops' : 'Shirts';
+  }
+  if (c.includes('pant') || c.includes('trouser') || c.includes('jean') || c.includes('cargo') || c.includes('chino') || c.includes('palazzo') || c.includes('culotte')) {
+    return 'Pants';
+  }
+  if (c.includes('foot') || c.includes('shoe') || c.includes('heel') || c.includes('boot') || c.includes('mule') || c.includes('sneaker') || c.includes('juttis') || c.includes('slide')) {
+    return gender === 'Female' ? 'Footwear' : 'Shoes';
+  }
+  if (c.includes('jewel') || c.includes('ring') || c.includes('chain') || c.includes('pendant') || c.includes('earring') || c.includes('bracelet') || c.includes('necklace') || c.includes('choker')) {
+    return 'Jewelry';
+  }
+  if (c.includes('access') || c.includes('belt') || c.includes('watch') || c.includes('sunglass') || c.includes('wallet') || c.includes('cap') || c.includes('bag') || c.includes('scarf')) {
+    return 'Accessories';
+  }
+  return gender === 'Female' ? 'Other' : 'Others';
+};
+
+/**
+ * Returns true if the user's profile or account indicates female / woman / girl
+ */
+export const isFemaleUser = (user) => {
+  const g = String(user?.gender || user?.profile?.gender || '').toLowerCase().trim();
+  return (
+    g === 'female' ||
+    g === 'woman' ||
+    g === 'girl' ||
+    g === 'women' ||
+    g === 'f'
+  );
+};
 
 export const brands = ['ZARA', 'H&M', 'NIKE', 'adidas', 'PUMA', 'FOSSIL', 'TITAN', 'Levi\'s', 'Ray-Ban', 'Tommy Hilfiger'];
 

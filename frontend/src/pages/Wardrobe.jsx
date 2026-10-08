@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import {
   Plus,
   Upload,
@@ -21,6 +22,7 @@ import { Modal } from "../ui.jsx";
 import { WardrobeCard } from "../components/cards/WardrobeCard.jsx";
 import { useStore } from "../store.jsx";
 import { IMG } from "../data/constants.js";
+import { womenCats, menCats, normalizeCategory } from "../data.js";
 
 export { WardrobeCard, WardrobeCard as WCard };
 
@@ -41,7 +43,18 @@ const PantsIcon = ({ size = 20, className = "" }) => (
   </svg>
 );
 
-const CATEGORY_TABS = [
+const WOMEN_CATEGORY_TABS = [
+  { id: "All", label: "All", icon: LayoutGrid },
+  { id: "Dresses", label: "Dresses", icon: Sparkles },
+  { id: "Tops", label: "Tops", icon: Shirt },
+  { id: "Pants", label: "Pants", icon: PantsIcon },
+  { id: "Footwear", label: "Footwear", icon: Footprints },
+  { id: "Jewelry", label: "Jewelry", icon: Gem },
+  { id: "Accessories", label: "Accessories", icon: Watch },
+  { id: "Other", label: "Other", icon: MoreHorizontal },
+];
+
+const MEN_CATEGORY_TABS = [
   { id: "All", label: "All", icon: LayoutGrid },
   { id: "Shirts", label: "Shirts", icon: Shirt },
   { id: "Pants", label: "Pants", icon: PantsIcon },
@@ -52,11 +65,15 @@ const CATEGORY_TABS = [
 ];
 
 const CATEGORY_META = {
+  Dresses: { label: "Dresses", icon: Sparkles },
+  Tops: { label: "Tops", icon: Shirt },
   Shirts: { label: "Shirts", icon: Shirt },
   Pants: { label: "Pants", icon: PantsIcon },
+  Footwear: { label: "Footwear", icon: Footprints },
   Shoes: { label: "Shoes", icon: Footprints },
-  Accessories: { label: "Accessories", icon: Watch },
   Jewelry: { label: "Jewelry", icon: Gem },
+  Accessories: { label: "Accessories", icon: Watch },
+  Other: { label: "Other", icon: MoreHorizontal },
   Others: { label: "Others", icon: MoreHorizontal },
 };
 
@@ -66,13 +83,12 @@ export default function Wardrobe() {
     addItem,
     removeItem,
     favs = [],
+    isFemale,
     catalog = {},
   } = useStore();
 
-  const {
-    wardrobe = [],
-    cats = ["Shirts", "Pants", "Shoes", "Accessories", "Jewelry", "Others"],
-  } = catalog;
+  const categoryTabs = isFemale ? WOMEN_CATEGORY_TABS : MEN_CATEGORY_TABS;
+  const availableCats = isFemale ? womenCats : menCats;
 
   const [tab, setTab] = useState("All");
 
@@ -80,7 +96,7 @@ export default function Wardrobe() {
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState({
     name: "",
-    cat: "Shirts",
+    cat: isFemale ? "Dresses" : "Shirts",
     brand: "",
     color: "",
     size: "",
@@ -103,8 +119,17 @@ export default function Wardrobe() {
     setTimeout(() => setToastMsg(""), 3200);
   };
 
-  // Combine items and calculate active counts
-  const allItems = useMemo(() => [...added, ...wardrobe], [added, wardrobe]);
+  // Only explicitly added items belong in the user's personal wardrobe!
+  const allItems = useMemo(() => added || [], [added]);
+
+  // Helper to match category regardless of casing or gender-specific naming variations
+  const matchesCategory = (item, catKey) => {
+    const itemCat = normalizeCategory(
+      item.cat || item.category,
+      item.gender || (isFemale ? "Female" : "Male")
+    );
+    return itemCat.toLowerCase() === catKey.toLowerCase();
+  };
 
   // Handle image selection with preview
   const handleImageChange = (e) => {
@@ -142,7 +167,7 @@ export default function Wardrobe() {
       setModalOpen(false);
       setForm({
         name: "",
-        cat: "Shirts",
+        cat: isFemale ? "Dresses" : "Shirts",
         brand: "",
         color: "",
         size: "",
@@ -174,16 +199,25 @@ export default function Wardrobe() {
     }
   };
 
-  const visibleCategories =
-    tab === "All"
-      ? ["Shirts", "Pants", "Shoes", "Accessories", "Jewelry", "Others"]
-      : [tab];
+  const visibleCategories = useMemo(() => {
+    if (tab === "All") {
+      return availableCats;
+    }
+    return [tab];
+  }, [tab, availableCats]);
 
   // Calculate active categories that have at least 1 item
   const activeCategoriesCount = useMemo(() => {
-    const uniqueCats = new Set(allItems.map((w) => w.cat));
-    return uniqueCats.size || 6;
-  }, [allItems]);
+    const uniqueCats = new Set(
+      allItems.map((w) =>
+        normalizeCategory(
+          w.cat || w.category,
+          w.gender || (isFemale ? "Female" : "Male")
+        )
+      )
+    );
+    return uniqueCats.size;
+  }, [allItems, isFemale]);
 
   return (
     <div className="space-y-9 relative">
@@ -256,7 +290,7 @@ export default function Wardrobe() {
               </span>
               <div>
                 <div className="font-bold text-lg text-white leading-tight">
-                  {favs.length > 0 ? favs.length : 12}
+                  {favs.length}
                 </div>
                 <div className="text-[11px] text-stone-400">Favorite Items</div>
               </div>
@@ -278,6 +312,7 @@ export default function Wardrobe() {
           onClick={() => {
             setError("");
             setImageError(false);
+            setForm((f) => ({ ...f, cat: availableCats[0] || (isFemale ? "Dresses" : "Shirts") }));
             setModalOpen(true);
           }}
           className="absolute right-6 md:right-10 bottom-6 md:bottom-10 z-10 h-11 px-6 rounded-full bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-black font-semibold text-sm shadow-[0_0_24px_rgba(245,158,11,0.35)] flex items-center gap-2 hover:brightness-110 transition cursor-pointer"
@@ -287,113 +322,160 @@ export default function Wardrobe() {
         </button>
       </div>
 
-      {/* ── Category Filter Bar ── */}
-      <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none">
-        {CATEGORY_TABS.map((item) => {
-          const IconComponent = item.icon;
-          const isActive = tab === item.id;
-          const count =
-            item.id === "All"
-              ? allItems.length
-              : allItems.filter((w) => w.cat === item.id).length;
-
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setTab(item.id)}
-              className={`min-w-[84px] h-[72px] px-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-all duration-200 shrink-0 ${
-                isActive
-                  ? "bg-gradient-to-b from-[#2e1d11] to-[#1c120a] border border-amber-600/60 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.22)]"
-                  : "bg-[#131313] border border-white/[.08] text-stone-400 hover:text-white hover:border-white/20"
-              }`}
+      {/* ── Initial Empty State vs Categorized Collection ── */}
+      {allItems.length === 0 ? (
+        <div className="card p-12 md:p-16 text-center flex flex-col items-center justify-center my-6 border-dashed border-white/10 bg-[#121212]/70 backdrop-blur-sm rounded-3xl">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 grid place-items-center mb-4 shadow-[0_0_24px_rgba(245,158,11,0.15)]">
+            <Package size={28} />
+          </div>
+          <h3 className="font-serif font-bold text-2xl md:text-3xl text-white mb-2">
+            No items in your wardrobe yet.
+          </h3>
+          <p className="text-stone-400 text-sm md:text-base max-w-md mx-auto mb-7 leading-relaxed">
+            Add pieces from Shopping to start building your wardrobe.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              to="/shopping"
+              className="h-11 px-6 rounded-full bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-black font-semibold text-sm shadow-[0_0_24px_rgba(245,158,11,0.3)] flex items-center gap-2 hover:brightness-110 transition cursor-pointer"
             >
-              <IconComponent size={20} />
-              <div className="flex items-center gap-1">
-                <span className="text-xs font-medium leading-none">{item.label}</span>
-                <span className="text-[10px] text-stone-500 leading-none">({count})</span>
-              </div>
+              <span>Explore Shopping</span>
+              <ArrowRight size={16} />
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                setError("");
+                setImageError(false);
+                setForm((f) => ({ ...f, cat: availableCats[0] || (isFemale ? "Dresses" : "Shirts") }));
+                setModalOpen(true);
+              }}
+              className="h-11 px-6 rounded-full bg-white/5 border border-white/15 text-stone-300 font-semibold text-sm hover:border-amber-500/50 hover:text-white flex items-center gap-2 transition cursor-pointer"
+            >
+              <Plus size={16} />
+              <span>Add Custom Item</span>
             </button>
-          );
-        })}
-      </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* ── Category Filter Bar ── */}
+          <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none">
+            {categoryTabs.map((item) => {
+              const IconComponent = item.icon;
+              const isActive = tab === item.id;
+              const count =
+                item.id === "All"
+                  ? allItems.length
+                  : allItems.filter((w) => matchesCategory(w, item.id)).length;
 
-      {/* ── Category Rows / Items ── */}
-      <div className="space-y-10">
-        {visibleCategories.map((catKey) => {
-          const meta = CATEGORY_META[catKey] || { label: catKey, icon: Shirt };
-          const CatIcon = meta.icon;
-          const items = allItems.filter((w) => w.cat === catKey);
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setTab(item.id)}
+                  className={`min-w-[84px] h-[72px] px-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-all duration-200 shrink-0 ${
+                    isActive
+                      ? "bg-gradient-to-b from-[#2e1d11] to-[#1c120a] border border-amber-600/60 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.22)]"
+                      : "bg-[#131313] border border-white/[.08] text-stone-400 hover:text-white hover:border-white/20"
+                  }`}
+                >
+                  <IconComponent size={20} />
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs font-medium leading-none">{item.label}</span>
+                    <span className="text-[10px] text-stone-500 leading-none">({count})</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
 
-          return (
-            <section key={catKey}>
-              {/* Category Header */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-amber-500">
-                    <CatIcon size={22} />
-                  </span>
-                  <h2 className="font-serif font-semibold text-2xl text-white tracking-wide">
-                    {meta.label}
-                  </h2>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-white/5 border border-line text-stone-400">
-                    {items.length} {items.length === 1 ? "item" : "items"}
-                  </span>
-                </div>
+          {/* ── Category Rows / Items ── */}
+          <div className="space-y-10">
+            {visibleCategories.map((catKey) => {
+              const meta = CATEGORY_META[catKey] || { label: catKey, icon: Shirt };
+              const CatIcon = meta.icon;
+              const items = allItems.filter((w) => matchesCategory(w, catKey));
 
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setForm((f) => ({ ...f, cat: catKey }));
-                      setModalOpen(true);
-                    }}
-                    className="text-xs font-semibold text-acc hover:underline flex items-center gap-1"
-                  >
-                    + Add to {meta.label}
-                  </button>
-                  {tab === "All" && (
-                    <button
-                      type="button"
-                      onClick={() => setTab(catKey)}
-                      className="text-sm font-medium text-stone-400 hover:text-white transition flex items-center gap-1 cursor-pointer"
-                    >
-                      View Only <ArrowRight size={14} />
-                    </button>
+              return (
+                <section key={catKey}>
+                  {/* Category Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-amber-500">
+                        <CatIcon size={22} />
+                      </span>
+                      <h2 className="font-serif font-semibold text-2xl text-white tracking-wide">
+                        {meta.label}
+                      </h2>
+                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-white/5 border border-line text-stone-400">
+                        {items.length} {items.length === 1 ? "item" : "items"}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setForm((f) => ({ ...f, cat: catKey }));
+                          setModalOpen(true);
+                        }}
+                        className="text-xs font-semibold text-acc hover:underline flex items-center gap-1"
+                      >
+                        + Add to {meta.label}
+                      </button>
+                      {tab === "All" && (
+                        <button
+                          type="button"
+                          onClick={() => setTab(catKey)}
+                          className="text-sm font-medium text-stone-400 hover:text-white transition flex items-center gap-1 cursor-pointer"
+                        >
+                          View Only <ArrowRight size={14} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Items Grid */}
+                  {items.length > 0 ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4">
+                      {items.map((w) => (
+                        <WardrobeCard
+                          key={w.id}
+                          w={w}
+                          onRemove={(item) => setConfirmDelete(item)}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="card p-8 text-center text-sm text-stone-400 border-dashed border-white/10">
+                      <p className="mb-3">No items in {meta.label} yet.</p>
+                      <div className="flex items-center justify-center gap-3">
+                        <Link
+                          to="/shopping"
+                          className="btn-s h-9 px-4 text-xs border-acc/40 text-acc hover:border-acc inline-flex items-center gap-1.5"
+                        >
+                          Shop {meta.label} <ArrowRight size={13} />
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setForm((f) => ({ ...f, cat: catKey }));
+                            setModalOpen(true);
+                          }}
+                          className="btn-s h-9 px-4 text-xs border-white/20 text-stone-300 hover:border-white/40"
+                        >
+                          + Add Custom {meta.label}
+                        </button>
+                      </div>
+                    </div>
                   )}
-                </div>
-              </div>
-
-              {/* Items Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4">
-                {items.map((w) => (
-                  <WardrobeCard
-                    key={w.id}
-                    w={w}
-                    onRemove={(item) => setConfirmDelete(item)}
-                  />
-                ))}
-              </div>
-
-              {items.length === 0 && (
-                <div className="card p-8 text-center text-sm text-stone-400 border-dashed border-white/10">
-                  <p className="mb-3">No items in {meta.label} yet.</p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setForm((f) => ({ ...f, cat: catKey }));
-                      setModalOpen(true);
-                    }}
-                    className="btn-s h-9 px-4 text-xs border-acc/40 text-acc hover:border-acc"
-                  >
-                    + Add New {meta.label}
-                  </button>
-                </div>
-              )}
-            </section>
-          );
-        })}
-      </div>
+                </section>
+              );
+            })}
+          </div>
+        </>
+      )}
 
       {/* ── Fully Functional Add New Item Modal ── */}
       <Modal
@@ -417,7 +499,7 @@ export default function Wardrobe() {
                 value={form.cat}
                 onChange={(e) => setForm({ ...form, cat: e.target.value })}
               >
-                {cats.map((c) => (
+                {availableCats.map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
