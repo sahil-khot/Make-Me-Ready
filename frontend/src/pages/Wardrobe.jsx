@@ -41,6 +41,7 @@ const CATEGORY_TABS = [
   { id: "All", label: "All", icon: LayoutGrid },
   { id: "Shirts", label: "Shirts", icon: Shirt },
   { id: "Pants", label: "Pants", icon: PantsIcon },
+  { id: "Shoes", label: "Shoes", icon: Footprints },
   { id: "Accessories", label: "Accessories", icon: Watch },
   { id: "Jewelry", label: "Jewelry", icon: Gem },
   { id: "Others", label: "Others", icon: MoreHorizontal },
@@ -49,6 +50,7 @@ const CATEGORY_TABS = [
 const CATEGORY_META = {
   Shirts: { label: "Shirts", icon: Shirt },
   Pants: { label: "Pants", icon: PantsIcon },
+  Shoes: { label: "Shoes", icon: Footprints },
   Accessories: { label: "Accessories", icon: Watch },
   Jewelry: { label: "Jewelry", icon: Gem },
   Others: { label: "Others", icon: MoreHorizontal },
@@ -56,7 +58,7 @@ const CATEGORY_META = {
 
 export default function Wardrobe() {
   const { added = [], addItem, favs = [], catalog = {} } = useStore();
-  const { wardrobe = [], cats = ["Shirts", "Pants", "Accessories", "Jewelry", "Others"] } = catalog;
+  const { wardrobe = [], cats = ["Shirts", "Pants", "Shoes", "Accessories", "Jewelry", "Others"] } = catalog;
   const [tab, setTab] = useState("All");
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState({ name: "", cat: "Shirts", tag: "Casual" });
@@ -81,7 +83,7 @@ export default function Wardrobe() {
 
   const visibleCategories =
     tab === "All"
-      ? ["Shirts", "Pants", "Accessories", "Jewelry", "Others"]
+      ? ["Shirts", "Pants", "Shoes", "Accessories", "Jewelry", "Others"]
       : [tab];
 
   return (
@@ -120,7 +122,7 @@ export default function Wardrobe() {
                 <Package size={18} />
               </span>
               <div>
-                <div className="font-bold text-lg text-white leading-tight">5</div>
+                <div className="font-bold text-lg text-white leading-tight">6</div>
                 <div className="text-[11px] text-stone-400">Categories</div>
               </div>
             </div>

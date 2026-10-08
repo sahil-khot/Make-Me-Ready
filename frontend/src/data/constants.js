@@ -7,7 +7,7 @@ const U = (id, w = 1080, h = 1350) =>
 
 /** Master image map — every key maps to a luxury image */
 export const IMG = {
-  // ── 25 Men's Wardrobe Luxury Pieces (from public/wardrobe) ─────────────────
+  // ── 30 Men's Wardrobe Luxury Pieces (from public/wardrobe) ─────────────────
   // 5 Shirts
   'w-shirt-1': '/wardrobe/shirt 1.png',
   'w-shirt-2': '/wardrobe/shirt 2.png',
@@ -21,6 +21,13 @@ export const IMG = {
   'w-pant-3': '/wardrobe/pant 3.png',
   'w-pant-4': '/wardrobe/pant 4.png',
   'w-pant-5': '/wardrobe/pant 5.png',
+
+  // 5 Shoes
+  'w-shoe-1': '/wardrobe/shoe 1.png',
+  'w-shoe-2': '/wardrobe/shoe 2.png',
+  'w-shoe-3': '/wardrobe/shoe 3.png',
+  'w-shoe-4': '/wardrobe/shoe 4.png',
+  'w-shoe-5': '/wardrobe/shoe 5.png',
 
   // 5 Accessories
   'w-acc-1': '/wardrobe/a1.png',
@@ -43,7 +50,7 @@ export const IMG = {
   'w-other-4': '/wardrobe/other 4.png',
   'w-other-5': '/wardrobe/other 5.png',
 
-  // ── Backward-compatible Aliases (mapped to new luxury images) ───────────────
+  // ── Backward-compatible Aliases ───────────────────────────────────────────
   'white-shirt':      '/wardrobe/shirt 1.png',
   'black-polo':       '/wardrobe/shirt 2.png',
   'green-shirt':      '/wardrobe/shirt 3.png',
@@ -64,11 +71,11 @@ export const IMG = {
   'bracelet':         '/wardrobe/j3.png',
   'earrings':         '/wardrobe/j4.png',
   'pendant':          '/wardrobe/j5.png',
-  'white-sneakers':   '/wardrobe/other 2.png',
-  'black-sneakers':   '/wardrobe/other 2.png',
-  'formal-shoes':     '/wardrobe/other 2.png',
-  'sports-shoes':     '/wardrobe/other 2.png',
-  'chelsea-boots':    '/wardrobe/other 2.png',
+  'white-sneakers':   '/wardrobe/shoe 3.png',
+  'black-sneakers':   '/wardrobe/shoe 1.png',
+  'formal-shoes':     '/wardrobe/shoe 2.png',
+  'sports-shoes':     '/wardrobe/shoe 3.png',
+  'chelsea-boots':    '/wardrobe/shoe 4.png',
   'denim-jacket':     '/wardrobe/shirt 3.png',
   'black-blazer':     '/wardrobe/shirt 4.png',
   'leather-jacket':   '/wardrobe/shirt 2.png',
@@ -82,21 +89,21 @@ export const IMG = {
   'date':           '/img/occ-date.jpg',
   'party':          '/img/occ-party.jpg',
   'travel':         '/img/occ-travel.jpg',
-  'casual':         U('photo-1516826957135-700dedea698c', 1080, 1350),  // Ultra HD luxury Italian street casual
-  'gym':            U('photo-1517838277536-f5f99be501cd', 1080, 1350),  // Ultra HD luxury fitness/gym
-  'brunch':         U('photo-1554118811-1e0d58224f24', 1080, 1350),  // Aesthetic luxury cafe brunch
-  'family':         U('photo-1511895426328-dc8714191300', 1080, 1350),  // Rich elegant celebration
-  'beach':          U('photo-1507525428034-b723cf961d3e', 1080, 1350),  // High-res luxury tropical resort
-  'mountain':       U('photo-1464822759023-fed622ff2c3b', 1080, 1350),  // Cinematic alpine mountain landscape
-  'city':           U('photo-1477959858617-67f85cf4f1df', 1080, 1350),  // Metropolitan skyline
-  'international':  U('photo-1500835556837-99ac94a94552', 1080, 1350),  // High-res international travel
-  'summer':         U('photo-1523381294911-8d3cead13475', 1080, 1350),  // Crisp sunlit summer aesthetic
-  'monsoon':        U('photo-1515694346937-94d85e41e6f0', 1080, 1350),  // London luxury wet-weather trench
-  'winter':         U('photo-1483985988355-763728e1935b', 1080, 1350),  // High-fashion winter coat
-  'festive':        U('photo-1514222709107-a180c68d72b4', 1080, 1350),  // Rich festive celebration
-  'interview':      U('photo-1507679799987-c73779587ccf', 1080, 1350),  // Bespoke tailored suit
-  'concert':        U('photo-1470225620780-dba8ba36b745', 1080, 1350),  // High-energy vibrant concert
-  'religious':      U('photo-1519817650390-64a93db51149', 1080, 1350),  // Serene traditional architecture
+  'casual':         U('photo-1516826957135-700dedea698c', 1080, 1350),
+  'gym':            U('photo-1517838277536-f5f99be501cd', 1080, 1350),
+  'brunch':         U('photo-1554118811-1e0d58224f24', 1080, 1350),
+  'family':         U('photo-1511895426328-dc8714191300', 1080, 1350),
+  'beach':          U('photo-1507525428034-b723cf961d3e', 1080, 1350),
+  'mountain':       U('photo-1464822759023-fed622ff2c3b', 1080, 1350),
+  'city':           U('photo-1477959858617-67f85cf4f1df', 1080, 1350),
+  'international':  U('photo-1500835556837-99ac94a94552', 1080, 1350),
+  'summer':         U('photo-1523381294911-8d3cead13475', 1080, 1350),
+  'monsoon':        U('photo-1515694346937-94d85e41e6f0', 1080, 1350),
+  'winter':         U('photo-1483985988355-763728e1935b', 1080, 1350),
+  'festive':        U('photo-1514222709107-a180c68d72b4', 1080, 1350),
+  'interview':      U('photo-1507679799987-c73779587ccf', 1080, 1350),
+  'concert':        U('photo-1470225620780-dba8ba36b745', 1080, 1350),
+  'religious':      U('photo-1519817650390-64a93db51149', 1080, 1350),
 
   // ── UI Hero / Auth Images ─────────────────────────────────────────────────
   'hero-home':      '/img/hero-luxury.jpg',
@@ -146,13 +153,13 @@ const w = (cat, list, defaultTag = 'Casual') =>
   list.map(([id, name, t]) => ({ id, name, cat, tag: t || defaultTag, img: I(id) }));
 
 /**
- * Curated 25 Men's Wardrobe Items across exactly 5 categories:
+ * Curated 30 Men's Wardrobe Items across 6 categories:
  * - Shirts (5)
  * - Pants (5)
+ * - Shoes (5)
  * - Accessories (5)
  * - Jewelry (5)
  * - Others (5)
- * Outerwear is completely removed.
  */
 export const wardrobe = [
   ...w('Shirts', [
@@ -168,6 +175,13 @@ export const wardrobe = [
     ['w-pant-3', 'Tailored Charcoal Wool Trousers', 'Formal'],
     ['w-pant-4', 'Relaxed Cotton Tapered Pants', 'Casual'],
     ['w-pant-5', 'Modern Minimalist Cargo Pants', 'Casual'],
+  ]),
+  ...w('Shoes', [
+    ['w-shoe-1', 'Italian Derby Leather Shoes', 'Formal'],
+    ['w-shoe-2', 'Monk Strap Brogues', 'Formal'],
+    ['w-shoe-3', 'Classic White Court Sneakers', 'Casual'],
+    ['w-shoe-4', 'Hand-Stitched Suede Chelsea Boots', 'Casual'],
+    ['w-shoe-5', 'Artisan Velvet Evening Slippers', 'Party'],
   ]),
   ...w('Accessories', [
     ['w-acc-1', 'Luxe Chronograph Steel Watch', 'Accessory'],
@@ -192,7 +206,7 @@ export const wardrobe = [
   ]),
 ];
 
-export const cats = ['Shirts', 'Pants', 'Accessories', 'Jewelry', 'Others'];
+export const cats = ['Shirts', 'Pants', 'Shoes', 'Accessories', 'Jewelry', 'Others'];
 
 const L = (id, title, occName, tags, items, customImg, gender = 'Men', matchScore = 95) => ({
   id,
@@ -207,26 +221,26 @@ const L = (id, title, occName, tags, items, customImg, gender = 'Men', matchScor
 
 export const looks = [
   // ── 20 AI Generated Master Looks (Men) ──
-  L('outfit-1',  'Camel Blazer Smart Casual',        'casual',  ['Casual', 'Smart', 'Autumn'],           ['w-shirt-1', 'w-pant-2', 'w-acc-1', 'w-other-2'],                '/img/outfits/outfit-1.png',  'Men', 95),
-  L('outfit-2',  'Romantic Candlelight Dinner',      'date',    ['Date', 'Evening', 'Minimal'],          ['w-shirt-1', 'w-pant-1', 'w-acc-1', 'w-jewel-1'],                '/img/outfits/outfit-2.png',  'Men', 88),
-  L('outfit-3',  'Urban Cafe Stroll',                'casual',  ['Casual', 'Street', 'Coffee'],          ['w-shirt-2', 'w-pant-4', 'w-acc-3', 'w-acc-1'],                  '/img/outfits/outfit-3.png',  'Men', 90),
-  L('outfit-4',  'Ivory Chikankari Festive Kurta',   'festive', ['Festive', 'Traditional', 'Diwali'],    ['w-shirt-1', 'w-pant-1', 'w-other-2', 'w-jewel-3'],               '/img/outfits/outfit-4.png',  'Men', 93),
-  L('outfit-5',  'Gym Pro All-Black Performance',    'gym',     ['Sporty', 'Workout', 'Athletic'],       ['w-shirt-5', 'w-pant-5', 'w-acc-1', 'w-acc-5'],                  '/img/outfits/outfit-5.png',  'Men', 94),
-  L('outfit-6',  'Airport Ready Jetsetter',          'travel',  ['Travel', 'Airport', 'Streetwear'],     ['w-shirt-3', 'w-pant-4', 'w-acc-3', 'w-other-1'],                '/img/outfits/outfit-6.png',  'Men', 91),
-  L('outfit-7',  'Nightclub Lounge Athleisure',      'gym',     ['Athletic', 'Fitness', 'Modern'],       ['w-shirt-2', 'w-pant-5', 'w-acc-1', 'w-jewel-1'],                '/img/outfits/outfit-7.jpg',  'Men', 98),
-  L('outfit-8',  'Executive Power Suit',             'office',  ['Formal', 'Office', 'Corporate'],       ['w-shirt-1', 'w-pant-3', 'w-acc-1', 'w-acc-2', 'w-other-2'],      '/img/outfits/outfit-8.png',  'Men', 92),
-  L('outfit-9',  'Mediterranean Beach Resort',       'beach',   ['Summer', 'Beach', 'Resort'],           ['w-shirt-5', 'w-pant-4', 'w-acc-3', 'w-acc-1'],                  '/img/outfits/outfit-9.png',  'Men', 93),
-  L('outfit-10', 'Urban Crossbody Athleisure',       'casual',  ['Streetwear', 'Casual', 'Sporty'],       ['w-shirt-2', 'w-pant-5', 'w-acc-1', 'w-acc-5'],                  '/img/outfits/outfit-10.jpg', 'Men', 98),
-  L('outfit-11', 'Imperial Ivory Groom Sherwani',     'wedding', ['Wedding', 'Royal', 'Traditional'],     ['w-shirt-1', 'w-pant-1', 'w-jewel-1', 'w-other-2'],              '/img/outfits/outfit-11.png', 'Men', 95),
-  L('outfit-12', 'Emerald 3-Piece Tuxedo',           'wedding', ['Wedding', 'Reception', 'Luxury'],      ['w-shirt-4', 'w-pant-1', 'w-acc-1', 'w-other-2'],                '/img/outfits/outfit-12.png', 'Men', 93),
-  L('outfit-13', 'Sage Green Festive Kurta Ensemble', 'festive', ['Festive', 'Traditional', 'Silk'],      ['w-shirt-4', 'w-pant-2', 'w-jewel-3', 'w-other-2'],              '/img/outfits/outfit-13.png', 'Men', 94),
-  L('outfit-14', 'Gallery Art Curator Chic',         'office',  ['Office', 'Smart Casual', 'Creative'],   ['w-shirt-3', 'w-pant-1', 'w-acc-3', 'w-other-5'],                '/img/outfits/outfit-14.jpg', 'Men', 98),
-  L('outfit-15', 'Royal Black & Gold Indo-Western',  'wedding', ['Wedding', 'Sangeet', 'Royal'],         ['w-shirt-4', 'w-pant-3', 'w-jewel-1', 'w-other-2'],              '/img/outfits/outfit-15.png', 'Men', 96),
-  L('outfit-16', 'Dusty Rose Pastel Sherwani',       'wedding', ['Wedding', 'Pastel', 'Celebration'],    ['w-shirt-1', 'w-pant-2', 'w-jewel-2', 'w-other-2'],              '/img/outfits/outfit-16.png', 'Men', 92),
-  L('outfit-17', 'Midnight Navy Satin Shawl Tuxedo', 'party',   ['Party', 'Black Tie', 'Gala'],          ['w-shirt-3', 'w-pant-1', 'w-acc-1', 'w-jewel-2'],                '/img/outfits/outfit-17.png', 'Men', 97),
-  L('outfit-18', 'Olive Utility Overshirt & Cargos', 'casual',  ['Streetwear', 'Casual', 'Everyday'],    ['w-shirt-5', 'w-pant-5', 'w-acc-1', 'w-other-1'],                '/img/outfits/outfit-18.png', 'Men', 95),
-  L('outfit-19', 'Mocha Linen Minimalist Cafe',      'date',    ['Casual', 'Date', 'Minimal'],           ['w-shirt-2', 'w-pant-2', 'w-acc-1', 'w-other-2'],                '/img/outfits/outfit-19.png', 'Men', 93),
-  L('outfit-20', 'Autumn Quarter-Zip Knitwear',      'winter',  ['Autumn', 'Casual', 'Campus'],          ['w-shirt-3', 'w-pant-4', 'w-other-3', 'w-acc-1'],                '/img/outfits/outfit-20.png', 'Men', 94),
+  L('outfit-1',  'Camel Blazer Smart Casual',        'casual',  ['Casual', 'Smart', 'Autumn'],           ['w-shirt-1', 'w-pant-2', 'w-acc-1', 'w-shoe-3'],                  '/img/outfits/outfit-1.png',  'Men', 95),
+  L('outfit-2',  'Romantic Candlelight Dinner',      'date',    ['Date', 'Evening', 'Minimal'],          ['w-shirt-1', 'w-pant-1', 'w-acc-1', 'w-shoe-1'],                  '/img/outfits/outfit-2.png',  'Men', 88),
+  L('outfit-3',  'Urban Cafe Stroll',                'casual',  ['Casual', 'Street', 'Coffee'],          ['w-shirt-2', 'w-pant-4', 'w-acc-3', 'w-shoe-3'],                  '/img/outfits/outfit-3.png',  'Men', 90),
+  L('outfit-4',  'Ivory Chikankari Festive Kurta',   'festive', ['Festive', 'Traditional', 'Diwali'],    ['w-shirt-1', 'w-pant-1', 'w-shoe-1', 'w-jewel-3'],                 '/img/outfits/outfit-4.png',  'Men', 93),
+  L('outfit-5',  'Gym Pro All-Black Performance',    'gym',     ['Sporty', 'Workout', 'Athletic'],       ['w-shirt-5', 'w-pant-5', 'w-acc-1', 'w-shoe-3'],                  '/img/outfits/outfit-5.png',  'Men', 94),
+  L('outfit-6',  'Airport Ready Jetsetter',          'travel',  ['Travel', 'Airport', 'Streetwear'],     ['w-shirt-3', 'w-pant-4', 'w-acc-3', 'w-shoe-3', 'w-other-1'],     '/img/outfits/outfit-6.png',  'Men', 91),
+  L('outfit-7',  'Nightclub Lounge Athleisure',      'gym',     ['Athletic', 'Fitness', 'Modern'],       ['w-shirt-2', 'w-pant-5', 'w-acc-1', 'w-shoe-3'],                  '/img/outfits/outfit-7.jpg',  'Men', 98),
+  L('outfit-8',  'Executive Power Suit',             'office',  ['Formal', 'Office', 'Corporate'],       ['w-shirt-1', 'w-pant-3', 'w-shoe-1', 'w-acc-1', 'w-acc-2'],       '/img/outfits/outfit-8.png',  'Men', 92),
+  L('outfit-9',  'Mediterranean Beach Resort',       'beach',   ['Summer', 'Beach', 'Resort'],           ['w-shirt-5', 'w-pant-4', 'w-acc-3', 'w-shoe-3'],                  '/img/outfits/outfit-9.png',  'Men', 93),
+  L('outfit-10', 'Urban Crossbody Athleisure',       'casual',  ['Streetwear', 'Casual', 'Sporty'],       ['w-shirt-2', 'w-pant-5', 'w-shoe-3', 'w-acc-1'],                  '/img/outfits/outfit-10.jpg', 'Men', 98),
+  L('outfit-11', 'Imperial Ivory Groom Sherwani',     'wedding', ['Wedding', 'Royal', 'Traditional'],     ['w-shirt-1', 'w-pant-1', 'w-shoe-5', 'w-jewel-1'],                 '/img/outfits/outfit-11.png', 'Men', 95),
+  L('outfit-12', 'Emerald 3-Piece Tuxedo',           'wedding', ['Wedding', 'Reception', 'Luxury'],      ['w-shirt-4', 'w-pant-1', 'w-shoe-1', 'w-acc-1'],                  '/img/outfits/outfit-12.png', 'Men', 93),
+  L('outfit-13', 'Sage Green Festive Kurta Ensemble', 'festive', ['Festive', 'Traditional', 'Silk'],      ['w-shirt-4', 'w-pant-2', 'w-shoe-5', 'w-jewel-3'],                 '/img/outfits/outfit-13.png', 'Men', 94),
+  L('outfit-14', 'Gallery Art Curator Chic',         'office',  ['Office', 'Smart Casual', 'Creative'],   ['w-shirt-3', 'w-pant-1', 'w-shoe-4', 'w-acc-3'],                  '/img/outfits/outfit-14.jpg', 'Men', 98),
+  L('outfit-15', 'Royal Black & Gold Indo-Western',  'wedding', ['Wedding', 'Sangeet', 'Royal'],         ['w-shirt-4', 'w-pant-3', 'w-shoe-1', 'w-jewel-1'],                 '/img/outfits/outfit-15.png', 'Men', 96),
+  L('outfit-16', 'Dusty Rose Pastel Sherwani',       'wedding', ['Wedding', 'Pastel', 'Celebration'],    ['w-shirt-1', 'w-pant-2', 'w-shoe-5', 'w-jewel-2'],                 '/img/outfits/outfit-16.png', 'Men', 92),
+  L('outfit-17', 'Midnight Navy Satin Shawl Tuxedo', 'party',   ['Party', 'Black Tie', 'Gala'],          ['w-shirt-3', 'w-pant-1', 'w-shoe-1', 'w-acc-1', 'w-jewel-2'],     '/img/outfits/outfit-17.png', 'Men', 97),
+  L('outfit-18', 'Olive Utility Overshirt & Cargos', 'casual',  ['Streetwear', 'Casual', 'Everyday'],    ['w-shirt-5', 'w-pant-5', 'w-shoe-3', 'w-acc-1', 'w-other-1'],     '/img/outfits/outfit-18.png', 'Men', 95),
+  L('outfit-19', 'Mocha Linen Minimalist Cafe',      'date',    ['Casual', 'Date', 'Minimal'],           ['w-shirt-2', 'w-pant-2', 'w-shoe-4', 'w-acc-1'],                  '/img/outfits/outfit-19.png', 'Men', 93),
+  L('outfit-20', 'Autumn Quarter-Zip Knitwear',      'winter',  ['Autumn', 'Casual', 'Campus'],          ['w-shirt-3', 'w-pant-4', 'w-shoe-4', 'w-other-3', 'w-acc-1'],     '/img/outfits/outfit-20.png', 'Men', 94),
 
   // ── 22 Curated High-Fashion Women Looks (Local Outfit Images) ──
   L('outfit-w1',  'Glam Black Night-Out Mini',        'party',   ['Party', 'Evening', 'Glam'],            ['w-jewel-1', 'w-jewel-4', 'w-acc-1'],                             '/img/outfits/outfit-w1.png',  'Women', 97),
@@ -235,22 +249,22 @@ export const looks = [
   L('outfit-w4',  'Brown Ribbed Top & Jeans OOTD',   'casual',  ['Casual', 'Everyday', 'Street'],         ['w-acc-1', 'w-jewel-3'],                                          '/img/outfits/outfit-w4.png',  'Women', 94),
   L('outfit-w5',  'Blush Floral Lehenga Choli',       'wedding', ['Wedding', 'Traditional', 'Festive'],    ['w-jewel-4', 'w-jewel-2', 'w-jewel-1'],                           '/img/outfits/outfit-w5.png',  'Women', 98),
   L('outfit-w6',  'Emerald Royal Velvet Lehenga',     'wedding', ['Wedding', 'Traditional', 'Royal'],      ['w-jewel-1', 'w-jewel-4', 'w-jewel-3', 'w-jewel-2'],              '/img/outfits/outfit-w6.png',  'Women', 97),
-  L('outfit-w7',  'Modern Ivory Blazer & Slip Dress', 'office',  ['Formal', 'Chic', 'Corporate'],          ['w-shirt-1', 'w-acc-1', 'w-other-2'],                             '/img/outfits/outfit-w7.png',  'Women', 94),
+  L('outfit-w7',  'Modern Ivory Blazer & Slip Dress', 'office',  ['Formal', 'Chic', 'Corporate'],          ['w-shirt-1', 'w-acc-1', 'w-shoe-1'],                              '/img/outfits/outfit-w7.png',  'Women', 94),
   L('outfit-w8',  'Boho Sunset Resort Maxi Dress',    'beach',   ['Summer', 'Vacation', 'Resort'],         ['w-acc-3', 'w-jewel-1', 'w-acc-1'],                               '/img/outfits/outfit-w8.png',  'Women', 95),
-  L('outfit-w9',  'Varsity Streetwear Oversized Fit', 'casual',  ['Streetwear', 'Casual', 'Trendy'],       ['w-shirt-5', 'w-acc-5', 'w-acc-1'],                               '/img/outfits/outfit-w9.png',  'Women', 92),
-  L('outfit-w10', 'Satin Slip Date Night Gown',       'date',    ['Date', 'Glamour', 'Evening'],           ['w-jewel-1', 'w-jewel-4', 'w-jewel-2', 'w-other-2'],              '/img/outfits/outfit-w10.png', 'Women', 96),
-  L('outfit-w11', 'Cozy Cashmere Winter Layering',    'winter',  ['Winter', 'Warmth', 'Layered'],          ['w-shirt-4', 'w-pant-1', 'w-other-3'],                            '/img/outfits/outfit-w11.png', 'Women', 93),
+  L('outfit-w9',  'Varsity Streetwear Oversized Fit', 'casual',  ['Streetwear', 'Casual', 'Trendy'],       ['w-shirt-5', 'w-acc-5', 'w-shoe-3'],                              '/img/outfits/outfit-w9.png',  'Women', 92),
+  L('outfit-w10', 'Satin Slip Date Night Gown',       'date',    ['Date', 'Glamour', 'Evening'],           ['w-jewel-1', 'w-jewel-4', 'w-jewel-2', 'w-shoe-1'],               '/img/outfits/outfit-w10.png', 'Women', 96),
+  L('outfit-w11', 'Cozy Cashmere Winter Layering',    'winter',  ['Winter', 'Warmth', 'Layered'],          ['w-shirt-4', 'w-pant-1', 'w-shoe-4'],                             '/img/outfits/outfit-w11.png', 'Women', 93),
   L('outfit-w12', 'Festive Banarasi Silk Saree',      'festive', ['Festive', 'Traditional', 'Celebration'],['w-jewel-1', 'w-jewel-4', 'w-jewel-3', 'w-jewel-2'],              '/img/outfits/outfit-w12.png', 'Women', 97),
-  L('outfit-w13', 'High-Performance Activewear Set',  'gym',     ['Sporty', 'Workout', 'Athletic'],        ['w-acc-1', 'w-other-2'],                                          '/img/outfits/outfit-w13.png', 'Women', 98),
-  L('outfit-w14', 'Pastel Floral Summer Sundress',    'brunch',  ['Brunch', 'Casual', 'Summery'],          ['w-acc-3', 'w-jewel-1', 'w-other-2'],                             '/img/outfits/outfit-w14.png', 'Women', 93),
-  L('outfit-w15', 'Deep Green Anarkali Kurta Set',    'festive', ['Festive', 'Ethnic', 'Traditional'],     ['w-jewel-4', 'w-jewel-1', 'w-other-2'],                           '/img/outfits/outfit-w15.png', 'Women', 96),
-  L('outfit-w16', 'Chic Trench Coat Office Look',     'office',  ['Office', 'Formal', 'Smart'],            ['w-shirt-1', 'w-acc-1', 'w-other-2'],                             '/img/outfits/outfit-w16.png', 'Women', 94),
+  L('outfit-w13', 'High-Performance Activewear Set',  'gym',     ['Sporty', 'Workout', 'Athletic'],        ['w-acc-1', 'w-shoe-3'],                                           '/img/outfits/outfit-w13.png', 'Women', 98),
+  L('outfit-w14', 'Pastel Floral Summer Sundress',    'brunch',  ['Brunch', 'Casual', 'Summery'],          ['w-acc-3', 'w-jewel-1', 'w-shoe-3'],                              '/img/outfits/outfit-w14.png', 'Women', 93),
+  L('outfit-w15', 'Deep Green Anarkali Kurta Set',    'festive', ['Festive', 'Ethnic', 'Traditional'],     ['w-jewel-4', 'w-jewel-1', 'w-shoe-5'],                            '/img/outfits/outfit-w15.png', 'Women', 96),
+  L('outfit-w16', 'Chic Trench Coat Office Look',     'office',  ['Office', 'Formal', 'Smart'],            ['w-shirt-1', 'w-acc-1', 'w-shoe-1'],                              '/img/outfits/outfit-w16.png', 'Women', 94),
   L('outfit-w17', 'Sangeet Night Sequin Lehenga',     'party',   ['Party', 'Wedding', 'Sangeet', 'Glam'], ['w-jewel-4', 'w-jewel-2', 'w-jewel-3', 'w-jewel-1'],              '/img/outfits/outfit-w17.png', 'Women', 98),
   L('outfit-w18', 'Cream Minimalist Kurti Palazzo',   'casual',  ['Casual', 'Ethnic', 'Minimal'],          ['w-jewel-4', 'w-jewel-3'],                                        '/img/outfits/outfit-w18.png', 'Women', 91),
   L('outfit-w19', 'Luxe Airport Travel OOTD',         'travel',  ['Travel', 'Airport', 'Chic'],            ['w-acc-3', 'w-acc-1', 'w-other-1'],                               '/img/outfits/outfit-w19.png', 'Women', 92),
-  L('outfit-w20', 'Burgundy Velvet Evening Gown',     'party',   ['Party', 'Gala', 'Evening', 'Luxury'],  ['w-jewel-1', 'w-jewel-4', 'w-jewel-2', 'w-other-2'],              '/img/outfits/outfit-w20.png', 'Women', 97),
+  L('outfit-w20', 'Burgundy Velvet Evening Gown',     'party',   ['Party', 'Gala', 'Evening', 'Luxury'],  ['w-jewel-1', 'w-jewel-4', 'w-jewel-2', 'w-shoe-1'],               '/img/outfits/outfit-w20.png', 'Women', 97),
   L('outfit-w21', 'Rose Gold Bridal Lehenga',         'wedding', ['Wedding', 'Bridal', 'Royal', 'Luxury'],['w-jewel-1', 'w-jewel-4', 'w-jewel-3', 'w-jewel-2'],              '/img/outfits/outfit-w21.png', 'Women', 99),
-  L('outfit-w22', 'Smart Casual Denim Co-ord',        'casual',  ['Casual', 'Street', 'Denim'],            ['w-other-2', 'w-acc-1', 'w-acc-3'],                               '/img/outfits/outfit-w22.png', 'Women', 90),
+  L('outfit-w22', 'Smart Casual Denim Co-ord',        'casual',  ['Casual', 'Street', 'Denim'],            ['w-shoe-3', 'w-acc-1', 'w-acc-3'],                                '/img/outfits/outfit-w22.png', 'Women', 90),
 ];
 
 export const lookTabs = ['All Looks', 'Casual', 'Formal', 'Party', 'Traditional', 'Travel', 'Seasonal'];
@@ -261,7 +275,7 @@ const P = (id, name, price, r, n, cat, g, brand) => ({
 });
 
 /**
- * 25 Men's Shopping Products matching the 25 wardrobe luxury images without repeating
+ * 30 Men's Shopping Products matching the 30 wardrobe luxury images without repeating
  */
 export const products = [
   // 5 Shirts (Men)
@@ -277,6 +291,13 @@ export const products = [
   P('w-pant-3',  'Tailored Charcoal Wool Trousers',   3799, 4.8, '640',  'Pants',       'Men', 'Hugo Boss'),
   P('w-pant-4',  'Relaxed Cotton Tapered Pants',      2599, 4.5, '810',  'Pants',       'Men', 'Levi\'s'),
   P('w-pant-5',  'Modern Minimalist Cargo Pants',     2899, 4.7, '1.1k', 'Pants',       'Men', 'Calvin Klein'),
+
+  // 5 Shoes (Men)
+  P('w-shoe-1',  'Italian Derby Leather Shoes',       6999, 4.8, '840',  'Shoes',       'Men', 'Clarks'),
+  P('w-shoe-2',  'Monk Strap Brogues',                5499, 4.7, '620',  'Shoes',       'Men', 'Steve Madden'),
+  P('w-shoe-3',  'Classic White Court Sneakers',      4299, 4.9, '1.4k', 'Shoes',       'Men', 'NIKE'),
+  P('w-shoe-4',  'Hand-Stitched Suede Chelsea Boots', 7999, 4.8, '510',  'Shoes',       'Men', 'Massimo Dutti'),
+  P('w-shoe-5',  'Artisan Velvet Evening Slippers',   4999, 4.6, '380',  'Shoes',       'Men', 'ZARA'),
 
   // 5 Accessories (Men)
   P('w-acc-1',   'Luxe Chronograph Steel Watch',     12999, 4.9, '1.5k', 'Accessories', 'Men', 'TITAN'),
@@ -303,6 +324,7 @@ export const products = [
 export const shopCats = [
   ['Shirts',      'w-shirt-1'],
   ['Pants',       'w-pant-1'],
+  ['Shoes',       'w-shoe-1'],
   ['Accessories', 'w-acc-1'],
   ['Jewelry',     'w-jewel-1'],
   ['Others',      'w-other-1'],

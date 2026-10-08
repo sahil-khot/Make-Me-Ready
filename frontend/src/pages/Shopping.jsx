@@ -66,8 +66,7 @@ export default function Shopping() {
     (p) =>
       (g === "All" ||
         p.g === g ||
-        (g === "Accessories" && p.cat === "Accessories") ||
-        (g === "Jewelry" && p.cat === "Jewelry")) &&
+        p.cat === g) &&
       (!cat || p.cat === cat),
   );
   const na = filteredProducts.slice(0, 15);
@@ -91,7 +90,7 @@ export default function Shopping() {
             Upgrade Your <span className="text-acc block">Wardrobe</span>
           </h1>
           <p className="text-mute mt-3 mb-6 max-w-sm">
-            Discover curated fashion, accessories and footwear for every
+            Discover curated fashion, footwear, and luxury accessories for every
             occasion.
           </p>
           <button
@@ -113,23 +112,44 @@ export default function Shopping() {
           Cart ({cart.length})
         </button>
       </div>
-      <Section title="Shop by Category">
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
+      <Section
+        title="Shop by Category"
+        right={
+          cat ? (
+            <button
+              onClick={() => setCat(null)}
+              className="text-xs text-acc hover:underline flex items-center gap-1"
+            >
+              Clear filter ({cat}) ×
+            </button>
+          ) : null
+        }
+      >
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
           {shopCats.map(([n, im]) => (
             <button
               key={n}
               onClick={() => setCat(cat === n ? null : n)}
-              className={`group tile relative aspect-[3/4] rounded-xl overflow-hidden border ${cat === n ? "border-acc" : "border-line"}`}
+              className={`group tile relative aspect-[3/3.8] rounded-2xl overflow-hidden border transition-all duration-300 ${
+                cat === n
+                  ? "border-acc ring-2 ring-acc/40 scale-[1.02] shadow-[0_0_20px_rgba(245,158,11,0.3)]"
+                  : "border-line hover:border-acc/40"
+              }`}
             >
               <img
                 src={IMG[im] || getImg(im)}
                 alt={n}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent" />
-              <span className="absolute bottom-2 left-2 text-xs font-medium">
-                {n}
-              </span>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+              <div className="absolute bottom-2.5 left-2.5 right-2.5 text-left">
+                <span className={`block text-xs font-semibold ${cat === n ? "text-acc" : "text-white"}`}>
+                  {n}
+                </span>
+                <span className="text-[10px] text-mute">
+                  {(products || []).filter((p) => p.cat === n).length} Items
+                </span>
+              </div>
             </button>
           ))}
         </div>
@@ -185,12 +205,12 @@ export default function Shopping() {
       <Section
         title="New Arrivals"
         right={
-          <div className="flex items-center gap-2">
-            {["All", "Men", "Accessories", "Jewelry"].map((x) => (
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+            {["All", "Shirts", "Pants", "Shoes", "Accessories", "Jewelry", "Others"].map((x) => (
               <button
                 key={x}
                 onClick={() => setG(x)}
-                className={`h-8 px-4 rounded-full text-xs ${g === x ? "bg-acc text-black" : "bg-card2 text-mute"}`}
+                className={`h-8 px-4 rounded-full text-xs shrink-0 transition ${g === x ? "bg-acc text-black font-semibold shadow-sm" : "bg-card2 text-mute hover:text-white"}`}
               >
                 {x}
               </button>

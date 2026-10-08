@@ -277,6 +277,14 @@ export function Store({ children }) {
     throw new Error("Failed to add wardrobe item.");
   };
 
+  const changePassword = async ({ currentPassword, newPassword }) => {
+    return apiRequest("/api/change-password", {
+      method: "POST",
+      body: { currentPassword, newPassword },
+      auth: true,
+    });
+  };
+
   const fallbackUser = user || { name: "Your Style", email: "" };
 
   return (
@@ -290,6 +298,7 @@ export function Store({ children }) {
         register,
         logout,
         updateProfile,
+        changePassword,
         favs,
         toggleFav: toggleRemote("favs", "/api/favorites", "favorites"),
         saved,

@@ -239,16 +239,17 @@ function Login() {
 // ─────────────────────────────────────────────────────────────────────────────
 function Register() {
   const nv = useNavigate();
-  const { register, catalog } = useStore();
-  const { colors = [], styles = [] } = catalog || {};
+  const { register } = useStore();
 
   const [f, setF] = useState({
-    name: "", email: "", phone: "", pw: "",
-    gender: "Male", dob: "", height: "", weight: "", body: "",
+    name: "",
+    email: "",
+    phone: "",
+    pw: "",
+    gender: "Male",
+    dob: "",
   });
-  const [cl, setCl] = useState([]);
-  const [st, setSt] = useState(["Casual"]);
-  const [e, setE]   = useState({});
+  const [e, setE] = useState({});
   const [loading, setLoading] = useState(false);
 
   // Stable onChange handlers — avoids stale closure issues on fast typing
@@ -257,31 +258,29 @@ function Register() {
     [],
   );
 
-  const tg = (arr, setArr, val, max) =>
-    setArr(
-      arr.includes(val)
-        ? arr.filter((x) => x !== val)
-        : max && arr.length >= max
-          ? arr
-          : [...arr, val],
-    );
-
   const go = async (ev) => {
     ev.preventDefault();
     const x = {};
-    if (!f.name.trim())                          x.name   = "Full name is required";
-    if (!/^\S+@\S+\.\S+$/.test(f.email))        x.email  = "Enter a valid email";
-    if (f.phone.replace(/\D/g, "").length < 10) x.phone  = "Enter a 10-digit number";
-    if (f.pw.length < 8)                         x.pw     = "Minimum 8 characters";
-    if (!f.dob)                                  x.dob    = "Required";
-    if (!f.height)                               x.height = "Required";
+    if (!f.name.trim())                          x.name  = "Full name is required";
+    if (!/^\S+@\S+\.\S+$/.test(f.email))        x.email = "Enter a valid email address";
+    if (f.phone.replace(/\D/g, "").length < 10) x.phone = "Enter a valid 10-digit phone number";
+    if (f.pw.length < 8)                         x.pw    = "Password must be at least 8 characters";
+    if (!f.dob)                                  x.dob   = "Date of birth is required";
     setE(x);
+
     if (!Object.keys(x).length) {
       setLoading(true);
-      const { pw, ...profile } = f;
       try {
-        await register({ ...profile, password: pw, colors: cl, styles: st });
-        nv("/home");
+        await register({
+          name: f.name.trim(),
+          email: f.email.trim(),
+          phone: f.phone.trim(),
+          password: f.pw,
+          gender: f.gender,
+          dob: f.dob,
+        });
+        // Direct the user to complete their Style Profile
+        nv("/profile");
       } catch (err) {
         setE({ form: err.message });
       } finally {
@@ -291,192 +290,133 @@ function Register() {
   };
 
   return (
-    <form onSubmit={go} noValidate>
-      {/* Step indicator */}
-      <div className="flex items-start justify-between max-w-md mx-auto mb-2">
-        {["Basic Info", "Preferences", "Complete"].map((t, i) => (
-          <div key={t} className="flex flex-col items-center gap-2 text-xs w-20">
-            <span className={`grid place-items-center w-8 h-8 rounded-full border font-medium transition
-              ${i === 0 ? "bg-acc text-black border-acc shadow-[0_0_12px_rgba(255,159,47,.4)]" : "border-line2 text-mute"}`}>
-              {i + 1}
-            </span>
-            <span className={i === 0 ? "text-acc" : "text-mute"}>{t}</span>
-          </div>
-        ))}
+    <form onSubmit={go} noValidate className="space-y-5">
+      {/* Tab toggle */}
+      <div className="flex p-1 rounded-xl border border-line2 bg-white/[.02] mb-6">
+        <Link
+          to="/auth"
+          className="flex-1 py-2 text-center text-sm font-medium rounded-lg text-mute hover:text-white transition"
+        >
+          Sign In
+        </Link>
+        <div className="flex-1 py-2 text-center text-sm font-medium rounded-lg bg-acc text-black font-semibold shadow-md">
+          Create Account
+        </div>
       </div>
 
-      {/* ── Personal Information ── */}
-      <FormSection icon={User} title="Personal Information" />
-      <div className="space-y-4">
-        <FormField label="Full Name" err={e.name}>
+      <div className="mb-2">
+        <h2 className="font-serif font-bold text-2xl text-white">Create Your Account</h2>
+        <p className="text-xs text-stone-400 mt-1">
+          Sign up with your basic details. You can complete your measurements and style preferences anytime in your Profile.
+        </p>
+      </div>
+
+      {/* ── 1. Full Name ── */}
+      <FormField label="Full Name" err={e.name}>
+        <div className="relative">
+          <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-mute pointer-events-none" />
           <input
             id="reg-name"
-            className="inp"
+            className="inp pl-11"
             value={f.name}
             onChange={set("name")}
-            placeholder="e.g. Rahul Sharma"
+            placeholder="e.g. Sahil Khot"
             autoFocus
             autoComplete="name"
           />
-        </FormField>
+        </div>
+      </FormField>
 
-        <FormField label="Email Address" err={e.email}>
+      {/* ── 2. Email Address ── */}
+      <FormField label="Email Address" err={e.email}>
+        <div className="relative">
+          <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-mute pointer-events-none" />
           <input
             id="reg-email"
             type="email"
-            className="inp"
+            className="inp pl-11"
             value={f.email}
             onChange={set("email")}
             placeholder="you@example.com"
             autoComplete="email"
           />
-        </FormField>
+        </div>
+      </FormField>
 
-        <FormField label="Phone Number" err={e.phone}>
-          <div className="flex gap-3">
-            <span className="inp w-20 grid place-items-center text-mute shrink-0 text-sm">+91</span>
+      {/* ── 3. Phone Number ── */}
+      <FormField label="Phone Number" err={e.phone}>
+        <div className="flex gap-2.5">
+          <span className="inp w-16 grid place-items-center text-mute shrink-0 text-sm font-medium">+91</span>
+          <div className="relative flex-1">
+            <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-mute pointer-events-none" />
             <input
               id="reg-phone"
               type="tel"
-              className="inp flex-1"
+              className="inp pl-11 w-full"
               value={f.phone}
               onChange={set("phone")}
-              placeholder="10-digit mobile number"
+              placeholder="9876543210"
               autoComplete="tel"
             />
           </div>
-        </FormField>
+        </div>
+      </FormField>
 
-        <FormField label="Password" err={e.pw}>
-          <Pw id="reg-pw" ph="Create a strong password (min. 8 chars)" value={f.pw} onChange={set("pw")} />
-        </FormField>
-      </div>
+      {/* ── 4. Password ── */}
+      <FormField label="Password" err={e.pw}>
+        <Pw id="reg-pw" ph="Create a password (min. 8 characters)" value={f.pw} onChange={set("pw")} />
+      </FormField>
 
-      {/* ── Profile Details ── */}
-      <FormSection icon={Sparkles} title="Profile Details" />
+      {/* ── 5. Gender & 6. Date of Birth ── */}
+      <div className="grid sm:grid-cols-2 gap-4 pt-1">
+        <div>
+          <span className="block mb-2 text-white/85 font-medium text-sm">Gender</span>
+          <div className="grid grid-cols-3 gap-1.5">
+            {["Male", "Female", "Prefer not to say"].map((g) => (
+              <button
+                type="button"
+                key={g}
+                onClick={() => setF((p) => ({ ...p, gender: g }))}
+                className={`chip justify-center px-1.5 text-[11px] h-10 ${f.gender === g ? "chip-on font-semibold" : ""}`}
+              >
+                {g === "Prefer not to say" ? "Other" : g}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      <div className="text-sm text-mute mb-3 font-medium">Gender</div>
-      <div className="grid grid-cols-3 gap-3">
-        {["Male", "Female", "Prefer not to say"].map((g) => (
-          <button
-            type="button"
-            key={g}
-            onClick={() => setF((p) => ({ ...p, gender: g }))}
-            className={`chip justify-center px-2 text-xs ${f.gender === g ? "chip-on" : ""}`}
-          >
-            {g}
-          </button>
-        ))}
-      </div>
-
-      <div className="grid sm:grid-cols-2 gap-4 mt-4">
         <FormField label="Date of Birth" err={e.dob}>
           <input
             id="reg-dob"
             type="date"
-            className="inp"
+            className="inp h-10"
             value={f.dob}
             onChange={set("dob")}
           />
         </FormField>
-
-        <FormField label="Height (cm)" err={e.height}>
-          <input
-            id="reg-height"
-            type="number"
-            min="100" max="250"
-            className="inp"
-            value={f.height}
-            onChange={set("height")}
-            placeholder="e.g. 175"
-          />
-        </FormField>
-
-        <FormField label="Weight (kg) — Optional">
-          <input
-            id="reg-weight"
-            type="number"
-            min="30" max="200"
-            className="inp"
-            value={f.weight}
-            onChange={set("weight")}
-            placeholder="e.g. 68"
-          />
-        </FormField>
-
-        <FormField label="Body Type — Optional">
-          <select id="reg-body" className="inp" value={f.body} onChange={set("body")}>
-            <option value="">Select</option>
-            {["Slim", "Athletic", "Average", "Broad"].map((b) => (
-              <option key={b}>{b}</option>
-            ))}
-          </select>
-        </FormField>
       </div>
 
-      {/* ── Style Preferences ── */}
-      <FormSection icon={Heart} title="Style Preferences" />
-
-      <div className="text-sm mb-3">
-        Favourite Colors{" "}
-        <span className="text-mute text-xs">(pick up to 5)</span>
-      </div>
-      <div className="flex flex-wrap gap-3">
-        {colors.map(([n, c]) => (
-          <button
-            type="button"
-            key={n}
-            aria-label={n}
-            aria-pressed={cl.includes(n)}
-            onClick={() => tg(cl, setCl, n, 5)}
-            className={`w-9 h-9 rounded-full grid place-items-center border-2 transition hover:scale-110
-              ${cl.includes(n)
-                ? "border-acc shadow-[0_0_14px_rgba(255,159,47,.5)]"
-                : "border-line2 opacity-80 hover:opacity-100"}`}
-            style={{ background: c }}
-            title={n}
-          >
-            {cl.includes(n) && (
-              <Check
-                size={14}
-                className={n === "White" || n === "Beige" ? "text-black" : "text-white"}
-              />
-            )}
-          </button>
-        ))}
-      </div>
-
-      <div className="text-sm mt-6 mb-3">
-        Preferred Styles{" "}
-        <span className="text-mute text-xs">(select multiple)</span>
-      </div>
-      <div className="flex flex-wrap gap-3">
-        {styles.map((s) => (
-          <button
-            type="button"
-            key={s}
-            onClick={() => tg(st, setSt, s)}
-            className={`chip ${st.includes(s) ? "chip-on" : ""}`}
-          >
-            {s}
-          </button>
-        ))}
-      </div>
-
-      {e.form && <div className="mt-4"><Err m={e.form} /></div>}
+      {e.form && <div className="mt-2"><Err m={e.form} /></div>}
 
       <button
-        className="btn-p w-full h-12 mt-8 disabled:opacity-60"
+        type="submit"
+        className="btn-p w-full h-12 mt-4 font-semibold text-sm shadow-[0_0_20px_rgba(245,158,11,0.3)] disabled:opacity-60"
         disabled={loading}
       >
-        {loading ? "Creating account…" : <>Create Account <ArrowRight size={16} /></>}
+        {loading ? "Creating Account…" : <>Create Account <ArrowRight size={16} /></>}
       </button>
 
-      <p className="text-center text-xs text-mute mt-5">
-        By creating an account you agree to our{" "}
-        <span className="text-acc cursor-pointer hover:underline">Terms of Service</span>
-        {" "}and{" "}
-        <span className="text-acc cursor-pointer hover:underline">Privacy Policy</span>.
+      <p className="text-center text-xs text-mute mt-4">
+        Already have an account?{" "}
+        <Link to="/auth" className="text-acc font-semibold hover:underline">
+          Sign In
+        </Link>
+      </p>
+
+      <p className="text-center text-[11px] text-stone-500 mt-2">
+        By creating an account, you agree to Make Me Ready's{" "}
+        <span className="text-stone-400 cursor-pointer hover:underline">Terms</span> and{" "}
+        <span className="text-stone-400 cursor-pointer hover:underline">Privacy Policy</span>.
       </p>
     </form>
   );

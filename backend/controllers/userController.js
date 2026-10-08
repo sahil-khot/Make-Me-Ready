@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { User, WardrobeItem, CatalogItem } from "../models/index.js";
 import { publicUser } from "./authController.js";
 import { products } from "../../frontend/src/data.js";
@@ -47,9 +48,19 @@ export const updateProfile = async (req, res, next) => {
       "weight",
       "body",
       "location",
+      "city",
+      "tagline",
       "avatar",
       "colors",
       "styles",
+      "brands",
+      "occasions",
+      "shirtSize",
+      "pantsSize",
+      "shoeSize",
+      "otherMeasurements",
+      "fashionPreferences",
+      "addresses",
     ];
 
     // Filter only allowed keys and trim string values
@@ -187,6 +198,31 @@ export const addToCart = async (req, res, next) => {
         img: line.image,
       })),
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body || {};
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current and new password are required." });
+    }
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: "New password must be at least 8 characters long." });
+    }
+    const user = await User.findById(req.auth.sub).select("+passwordHash");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Incorrect current password." });
+    }
+    user.passwordHash = await bcrypt.hash(newPassword, 12);
+    await user.save();
+    return res.json({ message: "Password updated successfully." });
   } catch (error) {
     next(error);
   }
