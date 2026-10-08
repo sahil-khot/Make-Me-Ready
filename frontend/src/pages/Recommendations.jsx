@@ -17,7 +17,229 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Hero, Section, Modal } from "../ui.jsx";
 import { useStore } from "../store.jsx";
-import { IMG, looks as defaultLooks } from "../data/constants.js";
+import { IMG } from "../data/constants.js";
+
+export const boyRecommendations = [
+  {
+    id: "rec-boy-1",
+    title: "Camel Blazer Smart Casual",
+    occ: "casual",
+    tags: ["Casual", "Smart", "Autumn", "Everyday"],
+    img: "/Recommendations/boy 1.png",
+    gender: "Men",
+    matchScore: 95,
+  },
+  {
+    id: "rec-boy-2",
+    title: "Romantic Candlelight Dinner",
+    occ: "date",
+    tags: ["Date", "Evening", "Minimal", "Night"],
+    img: "/Recommendations/boy 2.png",
+    gender: "Men",
+    matchScore: 88,
+  },
+  {
+    id: "rec-boy-3",
+    title: "Urban Cafe Stroll",
+    occ: "casual",
+    tags: ["Casual", "Street", "Coffee", "Minimal"],
+    img: "/Recommendations/boy 3.png",
+    gender: "Men",
+    matchScore: 90,
+  },
+  {
+    id: "rec-boy-4",
+    title: "Ivory Chikankari Festive Kurta",
+    occ: "festive",
+    tags: ["Festive", "Traditional", "Diwali", "Ethnic"],
+    img: "/Recommendations/boy 4.png",
+    gender: "Men",
+    matchScore: 93,
+  },
+  {
+    id: "rec-boy-5",
+    title: "Athleisure Training Silhouette",
+    occ: "gym",
+    tags: ["Gym", "Athleisure", "Sporty", "Workout"],
+    img: "/Recommendations/boy 5.png",
+    gender: "Men",
+    matchScore: 92,
+  },
+  {
+    id: "rec-boy-6",
+    title: "Airport Ready Jetsetter",
+    occ: "travel",
+    tags: ["Travel", "Airport", "Transit", "Modern"],
+    img: "/Recommendations/boy 6.png",
+    gender: "Men",
+    matchScore: 91,
+  },
+  {
+    id: "rec-boy-7",
+    title: "Nightclub Lounge Athleisure",
+    occ: "party",
+    tags: ["Party", "Nightlife", "Lounge", "Urban"],
+    img: "/Recommendations/boy 7.png",
+    gender: "Men",
+    matchScore: 98,
+  },
+  {
+    id: "rec-boy-8",
+    title: "Executive Boardroom Power Suit",
+    occ: "office",
+    tags: ["Office", "Formal", "Corporate", "Tailored"],
+    img: "/Recommendations/boy 8.png",
+    gender: "Men",
+    matchScore: 92,
+  },
+  {
+    id: "rec-boy-9",
+    title: "Mediterranean Beach Resort",
+    occ: "beach",
+    tags: ["Beach", "Summer", "Resort", "Vacation"],
+    img: "/Recommendations/boy 9.png",
+    gender: "Men",
+    matchScore: 93,
+  },
+  {
+    id: "rec-boy-10",
+    title: "Urban Crossbody Streetwear",
+    occ: "casual",
+    tags: ["Casual", "Streetwear", "Sporty", "Youth"],
+    img: "/Recommendations/boy 10.png",
+    gender: "Men",
+    matchScore: 98,
+  },
+  {
+    id: "rec-boy-11",
+    title: "Imperial Ivory Groom Sherwani",
+    occ: "wedding",
+    tags: ["Wedding", "Royal", "Traditional", "Grand"],
+    img: "/Recommendations/boy 11.png",
+    gender: "Men",
+    matchScore: 95,
+  },
+  {
+    id: "rec-boy-12",
+    title: "Emerald 3-Piece Tuxedo",
+    occ: "wedding",
+    tags: ["Wedding", "Reception", "Luxury", "Black Tie"],
+    img: "/Recommendations/boy 12.png",
+    gender: "Men",
+    matchScore: 93,
+  },
+];
+
+export const girlRecommendations = [
+  {
+    id: "rec-girl-1",
+    title: "Glam Black Night-Out Mini",
+    occ: "party",
+    tags: ["Party", "Evening", "Glam", "Nightlife"],
+    img: "/Recommendations/girl 1.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+  {
+    id: "rec-girl-2",
+    title: "Cozy Loungewear Pastel Set",
+    occ: "casual",
+    tags: ["Casual", "Loungewear", "Everyday", "Comfort"],
+    img: "/Recommendations/girl 2.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+  {
+    id: "rec-girl-3",
+    title: "Sky Blue Flowy Romance Maxi",
+    occ: "date",
+    tags: ["Date", "Romantic", "Elegant", "Evening"],
+    img: "/Recommendations/girl 3.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+  {
+    id: "rec-girl-4",
+    title: "Brown Ribbed Top & Vintage Jeans",
+    occ: "casual",
+    tags: ["Casual", "Everyday", "Street", "Denim"],
+    img: "/Recommendations/girl 4.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+  {
+    id: "rec-girl-5",
+    title: "Blush Floral Festive Lehenga",
+    occ: "wedding",
+    tags: ["Wedding", "Traditional", "Festive", "Royal"],
+    img: "/Recommendations/girl 5.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+  {
+    id: "rec-girl-6",
+    title: "Emerald Royal Velvet Lehenga",
+    occ: "wedding",
+    tags: ["Wedding", "Traditional", "Royal", "Grand"],
+    img: "/Recommendations/girl 6.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+  {
+    id: "rec-girl-7",
+    title: "Modern Ivory Blazer & Trousers",
+    occ: "office",
+    tags: ["Office", "Formal", "Corporate", "Chic"],
+    img: "/Recommendations/girl 7.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+  {
+    id: "rec-girl-8",
+    title: "Boho Sunset Resort Maxi Dress",
+    occ: "beach",
+    tags: ["Beach", "Summer", "Vacation", "Resort"],
+    img: "/Recommendations/girl 8.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+  {
+    id: "rec-girl-9",
+    title: "Varsity Streetwear Oversized Fit",
+    occ: "casual",
+    tags: ["Casual", "Streetwear", "Trendy", "Everyday"],
+    img: "/Recommendations/girl 9.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+  {
+    id: "rec-girl-10",
+    title: "Satin Slip Date Night Gown",
+    occ: "date",
+    tags: ["Date", "Glamour", "Evening", "Romantic"],
+    img: "/Recommendations/girl 10.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+  {
+    id: "rec-girl-11",
+    title: "Cozy Cashmere Winter Layering",
+    occ: "winter",
+    tags: ["Winter", "Warmth", "Layered", "Autumn"],
+    img: "/Recommendations/girl 11.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+  {
+    id: "rec-girl-12",
+    title: "Festive Banarasi Silk Saree",
+    occ: "festive",
+    tags: ["Festive", "Traditional", "Celebration", "Ethnic"],
+    img: "/Recommendations/girl 12.png",
+    gender: "Women",
+    matchScore: 94,
+  },
+];
 
 const occasionFilters = [
   { id: "all", label: "All Occasions" },
@@ -34,105 +256,84 @@ const occasionFilters = [
 ];
 
 export default function Recommendations() {
+  const { toggleSave, saved = [], catalog, user, isFemale: storeIsFemale } = useStore();
+  const { wardrobe = [] } = catalog || {};
+  const by = Object.fromEntries(wardrobe.map((w) => [w.id, w]));
+  const nv = useNavigate();
+
+  // Determine logged-in user gender for smart ordering and recommendations
+  const userGender = user?.profile?.gender || user?.gender || "";
+  const isFemale = storeIsFemale || userGender.toLowerCase() === "female" || userGender.toLowerCase() === "f";
+  const isMale   = !isFemale;
+
   const [genderFilter, setGenderFilter] = useState("All");
   const [occFilter, setOccFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [modalLook, setModalLook] = useState(null);
   const [aiModal, setAiModal] = useState(false);
 
-  const { toggleSave, saved = [], catalog, user } = useStore();
-  const { wardrobe = [] } = catalog || {};
-  const by = Object.fromEntries(wardrobe.map((w) => [w.id, w]));
-  const nv = useNavigate();
-
-  // Determine logged-in user gender for smart ordering
-  const userGender = user?.profile?.gender || user?.gender || "";
-  const isFemale = userGender.toLowerCase() === "female" || userGender.toLowerCase() === "f";
-  const isMale   = userGender.toLowerCase() === "male"   || userGender.toLowerCase() === "m";
-
-  // Merge catalog looks with defaultLooks so all 20 Men and 22 Women looks are always present
-  const allLooks = useMemo(() => {
-    const list = Array.isArray(catalog?.looks) && catalog.looks.length > 0 ? catalog.looks : defaultLooks;
-    const map = new Map();
-    // Default base looks first (guarantees all 20 Men + 22 Women looks)
-    defaultLooks.forEach((l) => map.set(l.id, l));
-    // Overlay any catalog updates
-    list.forEach((l) => {
-      const existing = map.get(l.id) || {};
-      map.set(l.id, { ...existing, ...l });
-    });
-    return Array.from(map.values());
-  }, [catalog?.looks]);
-
   const isMenLook = (l) => {
+    if (!l) return false;
     const g = (l.gender || "").toLowerCase();
-    return g === "men" || g === "male" || (l.id && l.id.startsWith("outfit-") && !l.id.includes("-w"));
+    return g === "men" || g === "male";
   };
 
   const isWomenLook = (l) => {
+    if (!l) return false;
     const g = (l.gender || "").toLowerCase();
-    return g === "women" || g === "female" || (l.id && l.id.includes("-w"));
+    return g === "women" || g === "female";
   };
 
-  // Master AI looks: guaranteed 20 Men looks and 22 Women looks
-  const masterAiLooks = allLooks.filter(isMenLook);
-  const womenLooks = allLooks.filter(isWomenLook);
+  // Determine active pool based on selected tab and user profile:
+  // Male users -> show the 12 boy images
+  // Female users -> show the 12 girl images
+  const activePool = useMemo(() => {
+    if (genderFilter === "Men") return boyRecommendations;
+    if (genderFilter === "Women") return girlRecommendations;
+    return isFemale ? girlRecommendations : boyRecommendations;
+  }, [genderFilter, isFemale]);
 
-  // Filter recommendations based on gender, occasion, and search query
-  const filteredLooks = allLooks.filter((l) => {
-    // Gender filter
-    if (genderFilter === "Men" && !isMenLook(l)) {
-      return false;
-    }
-    if (genderFilter === "Women" && !isWomenLook(l)) {
-      return false;
-    }
+  // Master lists for tab badge counts
+  const masterAiLooks = boyRecommendations;
+  const womenLooks = girlRecommendations;
 
-    // Occasion filter
-    if (occFilter !== "all") {
-      const targetOcc = occFilter.toLowerCase();
-      const matchOcc = (l.occ || "").toLowerCase() === targetOcc;
-      const matchTags = l.tags?.some((t) => t.toLowerCase() === targetOcc);
-      if (!matchOcc && !matchTags) return false;
-    }
+  // Filter recommendations based on occasion and search query
+  const filteredLooks = useMemo(() => {
+    return activePool.filter((l) => {
+      // Occasion filter
+      if (occFilter !== "all") {
+        const targetOcc = occFilter.toLowerCase();
+        const matchOcc = (l.occ || "").toLowerCase() === targetOcc;
+        const matchTags = l.tags?.some((t) => t.toLowerCase() === targetOcc);
+        if (!matchOcc && !matchTags) return false;
+      }
 
-    // Search query filter
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      const matchTitle = l.title?.toLowerCase().includes(q);
-      const matchOcc = l.occ?.toLowerCase().includes(q);
-      const matchTags = l.tags?.some((t) => t.toLowerCase().includes(q));
-      if (!matchTitle && !matchOcc && !matchTags) return false;
-    }
-    return true;
-  });
+      // Search query filter
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchTitle = l.title?.toLowerCase().includes(q);
+        const matchOcc = l.occ?.toLowerCase().includes(q);
+        const matchTags = l.tags?.some((t) => t.toLowerCase().includes(q));
+        if (!matchTitle && !matchOcc && !matchTags) return false;
+      }
+      return true;
+    });
+  }, [activePool, occFilter, searchQuery]);
 
-  // Gender-smart sorting: female users see Women's looks first, male users see Men's first
-  const genderSortedFilteredLooks = [...filteredLooks].sort((a, b) => {
-    const aIsWomen = isWomenLook(a);
-    const bIsWomen = isWomenLook(b);
-    if (isFemale) {
-      if (aIsWomen && !bIsWomen) return -1;
-      if (!aIsWomen && bIsWomen) return 1;
-    } else if (isMale) {
-      if (!aIsWomen && bIsWomen) return -1;
-      if (aIsWomen && !bIsWomen) return 1;
-    }
-    return 0;
-  });
+  // Curated Trending picks from active recommendations
+  const trendingLooks = useMemo(() => {
+    return activePool.slice(0, 5);
+  }, [activePool]);
 
-  // Curated Trending picks from real database looks
-  const trendingLooks = allLooks.filter((l) =>
-    ["outfit-17", "outfit-12", "outfit-15", "outfit-8", "outfit-14"].includes(l.id)
-  );
-
-  // Curated Seasonal picks from real database looks
-  const seasonalPicks = [
-    { label: "Summer Resort", look: allLooks.find((l) => l.id === "outfit-9") },
-    { label: "Winter & Autumn", look: allLooks.find((l) => l.id === "outfit-20") },
-    { label: "Festive Season", look: allLooks.find((l) => l.id === "outfit-4") },
-    { label: "Monsoon & Urban", look: allLooks.find((l) => l.id === "outfit-18") },
-  ].filter((item) => item.look);
+  // Curated Seasonal picks from active recommendations
+  const seasonalPicks = useMemo(() => {
+    return [
+      { label: "Summer Resort", look: activePool.find((l) => l.occ === "beach") || activePool[0] },
+      { label: "Winter & Autumn", look: activePool.find((l) => l.occ === "winter" || l.occ === "casual") || activePool[1] },
+      { label: "Festive Season", look: activePool.find((l) => l.occ === "festive" || l.occ === "wedding") || activePool[3] },
+      { label: "Urban & Evening", look: activePool.find((l) => l.occ === "party" || l.occ === "date") || activePool[2] },
+    ].filter((item) => item.look);
+  }, [activePool]);
 
   return (
     <div className="space-y-12 pb-16">
@@ -183,9 +384,9 @@ export default function Recommendations() {
           {/* Gender Selector Tabs */}
           <div className="flex items-center gap-1.5 p-1 bg-black/40 rounded-xl border border-line w-fit">
             {[
-              { id: "All", label: "All Looks", count: allLooks.length },
-              { id: "Men", label: "Men's Looks", count: masterAiLooks.length },
-              { id: "Women", label: "Women's Looks", count: womenLooks.length },
+              { id: "All", label: isFemale ? "My Looks (Women)" : "My Looks (Men)", count: 12 },
+              { id: "Men", label: "Men's Looks", count: 12 },
+              { id: "Women", label: "Women's Looks", count: 12 },
             ].map((g) => (
               <button
                 key={g.id}
@@ -255,11 +456,11 @@ export default function Recommendations() {
           <div>
             <p className="text-sm font-semibold text-white">
               {isFemale
-                ? "Showing Women's looks first — Men's looks at the bottom"
-                : "Showing Men's looks first — Women's looks at the bottom"}
+                ? "Showing 12 Curated Women's Outfit Recommendations"
+                : "Showing 12 AI Engineered Men's Outfit Recommendations"}
             </p>
             <p className="text-xs text-mute mt-0.5">
-              Personalised based on your profile · Change your gender in Profile settings
+              Personalised based on your profile · All looks sourced from verified models
             </p>
           </div>
         </div>
@@ -268,18 +469,16 @@ export default function Recommendations() {
       {/* ── Master AI Recommendations Section ── */}
       <Section
         title={
-          genderFilter === "Men"
-            ? "AI Generated Outfits for Men (20 Master Looks)"
-            : genderFilter === "Women"
-            ? "Curated Fashion Outfits for Women (22 Looks)"
-            : isFemale
-            ? "Recommended Outfits for You — Women's First"
-            : "Recommended Outfits for You"
+          genderFilter === "Men" || (!isFemale && genderFilter === "All")
+            ? "AI Generated Outfits for Men (12 Master Looks)"
+            : "Curated Fashion Outfits for Women (12 Master Looks)"
         }
         icon="Sparkles"
-        sub={`Showing ${genderSortedFilteredLooks.length} verified looks${userGender ? ` · Sorted for ${userGender} preference` : ""}  with matched accessories & footwear`}
+        sub={`Showing ${filteredLooks.length} verified looks · Curated for ${
+          genderFilter === "Men" || (!isFemale && genderFilter === "All") ? "Men" : "Women"
+        }`}
       >
-        {genderSortedFilteredLooks.length === 0 ? (
+        {filteredLooks.length === 0 ? (
           <div className="card p-12 text-center border-line">
             <p className="text-mute text-sm">No outfits found matching your filters.</p>
             <button
@@ -295,9 +494,9 @@ export default function Recommendations() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-            {genderSortedFilteredLooks.map((l) => {
+            {filteredLooks.map((l) => {
               const isSaved = saved.includes(l.id);
-              const matchScore = l.matchScore || 95;
+              const matchScore = l.matchScore || 94;
 
               return (
                 <div
@@ -316,7 +515,7 @@ export default function Recommendations() {
                       className="w-full h-full object-contain p-2 group-hover:scale-104 transition-transform duration-500"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = IMG["hero-wardrobe"];
+                        e.target.src = "/BackGround Images/Recommendations BackGround Image.png";
                       }}
                     />
                     {/* Subtle top vignette for readable badges */}
@@ -324,9 +523,11 @@ export default function Recommendations() {
 
                     {/* Top Badges */}
                     <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 z-10">
-                      <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-600/90 text-white backdrop-blur-md shadow-md">
-                        {matchScore}% Match
-                      </span>
+                      {isWomenLook(l) && (
+                        <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-600/90 text-white backdrop-blur-md shadow-md">
+                          {matchScore}% Match
+                        </span>
+                      )}
                       <span className="px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider bg-black/80 text-amber-400 border border-amber-500/30 backdrop-blur-md">
                         {l.occ}
                       </span>
@@ -453,11 +654,13 @@ export default function Recommendations() {
                 />
               </button>
 
-              <div className="absolute top-2.5 left-2.5">
-                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-600/90 text-white font-bold">
-                  {l.matchScore || 95}% Match
-                </span>
-              </div>
+              {isWomenLook(l) && (
+                <div className="absolute top-2.5 left-2.5">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-600/90 text-white font-bold">
+                    {l.matchScore || 94}% Match
+                  </span>
+                </div>
+              )}
 
               <div className="absolute bottom-0 p-3.5 w-full">
                 <div className="font-serif font-semibold text-xs md:text-sm text-white line-clamp-1">
@@ -504,7 +707,7 @@ export default function Recommendations() {
 
           <div className="card flex items-center gap-4 p-3 flex-1 min-w-[280px] rounded-xl border border-acc/40 bg-gradient-to-r from-acc/10 to-card">
             <img
-              src={allLooks[0]?.img || "/img/outfits/outfit-1.png"}
+              src={isFemale ? "/Recommendations/girl 1.png" : "/Recommendations/boy 1.png"}
               alt="Result Look"
               className="w-24 h-28 rounded-xl object-cover border border-line"
             />
@@ -513,7 +716,7 @@ export default function Recommendations() {
                 98% Synergy
               </span>
               <div className="font-serif font-semibold mt-1">
-                {allLooks[0]?.title || "Smart Casual Set"}
+                {activePool[0]?.title || "Smart Casual Set"}
               </div>
               <div className="text-xs text-mute mb-2">
                 Versatile, clean & effortlessly coordinated
@@ -549,7 +752,7 @@ export default function Recommendations() {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = IMG["hero-wardrobe"];
+                  e.target.src = "/BackGround Images/Recommendations BackGround Image.png";
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
@@ -581,7 +784,9 @@ export default function Recommendations() {
                 </div>
                 <div className="text-xs text-mute mt-1 flex items-center justify-between">
                   <span>{look.tags?.join(" • ")}</span>
-                  <span className="text-acc font-medium">{look.matchScore || 95}% Match</span>
+                  {isWomenLook(look) && (
+                    <span className="text-acc font-medium">{look.matchScore || 94}% Match</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -631,9 +836,11 @@ export default function Recommendations() {
                 alt={modalLook.title}
                 className="w-full h-full object-contain p-2"
               />
-              <span className="absolute top-3 left-3 px-3 py-1 rounded-md text-xs font-bold bg-emerald-600 text-white shadow-md">
-                {modalLook.matchScore || 95}% Match Score
-              </span>
+              {isWomenLook(modalLook) && (
+                <span className="absolute top-3 left-3 px-3 py-1 rounded-md text-xs font-bold bg-emerald-600 text-white shadow-md">
+                  {modalLook.matchScore || 94}% Match Score
+                </span>
+              )}
               <span className="absolute top-3 right-3 px-3 py-1 rounded-md text-xs font-semibold uppercase bg-black/70 text-acc border border-acc/30">
                 {modalLook.occ}
               </span>

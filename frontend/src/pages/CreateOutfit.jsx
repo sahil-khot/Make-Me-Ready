@@ -92,6 +92,237 @@ const Stepper = ({ currentStep, onStepClick, maxStepReached }) => {
   );
 };
 
+export const BOY_OUTFIT_COLLECTION = [
+  {
+    imageNum: 1,
+    img: "/Recommendations/boy 1.png",
+    title: "Camel Blazer Smart Casual",
+    style: "Smart Casual",
+    matchScore: 95,
+    summary: "Refined camel blazer styling with tailored chinos and premium leather accents.",
+    whyItWorks: "Warm neutral tones paired with structured tailoring deliver elevated confidence for any day-to-evening setting.",
+  },
+  {
+    imageNum: 2,
+    img: "/Recommendations/boy 2.png",
+    title: "Romantic Candlelight Dinner",
+    style: "Minimal",
+    matchScore: 94,
+    summary: "Crisp white tailored dress shirt with slate dress trousers and polished footwear.",
+    whyItWorks: "Clean monochrome lines convey effortless poise and understated romance under warm evening light.",
+  },
+  {
+    imageNum: 3,
+    img: "/Recommendations/boy 3.png",
+    title: "Urban Cafe Stroll",
+    style: "Casual",
+    matchScore: 93,
+    summary: "Breezy charcoal linen shirt paired with relaxed cotton trousers and clean white sneakers.",
+    whyItWorks: "Tactile natural fabrics keep you cool while subtle tailoring prevents the look from looking slouchy.",
+  },
+  {
+    imageNum: 4,
+    img: "/Recommendations/boy 4.png",
+    title: "Ivory Chikankari Festive Kurta",
+    style: "Traditional",
+    matchScore: 96,
+    summary: "Artisanal embroidered festive kurta ensemble styled with handcrafted jewelry accents.",
+    whyItWorks: "Intricate tone-on-tone embroidery channels grand celebratory heritage with modern lightweight grace.",
+  },
+  {
+    imageNum: 5,
+    img: "/Recommendations/boy 5.png",
+    title: "Athleisure Training Silhouette",
+    style: "Sporty",
+    matchScore: 92,
+    summary: "High-performance all-black athletic layers with engineered stretch and trainer shoes.",
+    whyItWorks: "Ergonomic cuts and moisture-wicking weaves maximize agility and dynamic athletic presence.",
+  },
+  {
+    imageNum: 6,
+    img: "/Recommendations/boy 6.png",
+    title: "Airport Jetsetter Transit Look",
+    style: "Travel",
+    matchScore: 94,
+    summary: "Tailored transit look with relaxed tapered pants, designer duffle, and polarized shades.",
+    whyItWorks: "Engineered for frictionless long-haul flights and business lounge comfort without sacrificing silhouette.",
+  },
+  {
+    imageNum: 7,
+    img: "/Recommendations/boy 7.png",
+    title: "Nightclub Lounge Monochrome",
+    style: "Party",
+    matchScore: 95,
+    summary: "Sleek nocturnal tailoring with textured shirt, dark trousers, and chronograph timepiece.",
+    whyItWorks: "High-contrast dark tones capture dynamic club spotlights with sharp, charismatic precision.",
+  },
+  {
+    imageNum: 8,
+    img: "/Recommendations/boy 8.png",
+    title: "Executive Boardroom Power Suit",
+    style: "Formal",
+    matchScore: 98,
+    summary: "Sharp charcoal wool suit with Italian derby shoes and executive leather belt.",
+    whyItWorks: "Commanding lapels and pristine trouser crease convey executive leadership and uncompromising authority.",
+  },
+  {
+    imageNum: 9,
+    img: "/Recommendations/boy 9.png",
+    title: "Mediterranean Resort Linen",
+    style: "Resort",
+    matchScore: 93,
+    summary: "Breathable textured resort shirt with breezy cropped trousers and boat shoes.",
+    whyItWorks: "Airy weave and sun-washed earth tones radiate relaxed coastal luxury and effortless holiday vibes.",
+  },
+  {
+    imageNum: 10,
+    img: "/Recommendations/boy 10.png",
+    title: "Urban Crossbody Streetwear",
+    style: "Streetwear",
+    matchScore: 94,
+    summary: "Utility cargo pants paired with structured graphic overshirt and chunky sneakers.",
+    whyItWorks: "Contemporary streetwear proportions balance utility pockets with sharp clean lines for urban exploration.",
+  },
+  {
+    imageNum: 11,
+    img: "/Recommendations/boy 11.png",
+    title: "Imperial Ivory Royal Sherwani",
+    style: "Traditional",
+    matchScore: 97,
+    summary: "Opulent regal sherwani with velvet slippers and handcrafted royal neckpiece.",
+    whyItWorks: "Rich zari work and structured royal collar create an unforgettable imperial presence for grand weddings.",
+  },
+  {
+    imageNum: 12,
+    img: "/Recommendations/boy 12.png",
+    title: "Midnight Emerald Tuxedo",
+    style: "Black Tie",
+    matchScore: 96,
+    summary: "Lustrous emerald silk jacket with satin shawl lapels and patent dress shoes.",
+    whyItWorks: "Daring jewel tone breaks traditional tux monotony while retaining strict gala elegance.",
+  },
+];
+
+export const GIRL_OUTFIT_COLLECTION = [
+  {
+    imageNum: 1,
+    img: "/Recommendations/girl 1.png",
+    title: "Glam Night-Out Mini Dress",
+    style: "Party",
+    matchScore: 94,
+    summary: "Sculpted black cocktail mini with stiletto heels and shimmering statement jewelry.",
+    whyItWorks: "Striking silhouette designed to catch nightlife ambiance with effortless glamour and movement.",
+  },
+  {
+    imageNum: 2,
+    img: "/Recommendations/girl 2.png",
+    title: "Relaxed Loungewear Pastel Set",
+    style: "Casual",
+    matchScore: 94,
+    summary: "Ultra-soft pastel knit set with minimalist slide slippers and cozy hair accessories.",
+    whyItWorks: "Premium relaxed silhouette offering supreme leisure comfort while maintaining chic aesthetic appeal.",
+  },
+  {
+    imageNum: 3,
+    img: "/Recommendations/girl 3.png",
+    title: "Sky Blue Romance Maxi Gown",
+    style: "Romantic",
+    matchScore: 94,
+    summary: "Floating sky blue chiffon maxi with subtle bodice drape and delicate gold accents.",
+    whyItWorks: "Soft color palette and ethereal movement create a fairytale aura ideal for garden dates and evening walks.",
+  },
+  {
+    imageNum: 4,
+    img: "/Recommendations/girl 4.png",
+    title: "Brown Ribbed Top & Vintage Denim",
+    style: "Streetwear",
+    matchScore: 94,
+    summary: "Form-fitting high-neck ribbed crop top styled with straight-leg denim and designer sneakers.",
+    whyItWorks: "The timeless high-low balance: structured heavy denim anchors the sleek, feminine knitwear top.",
+  },
+  {
+    imageNum: 5,
+    img: "/Recommendations/girl 5.png",
+    title: "Blush Floral Festive Lehenga",
+    style: "Traditional",
+    matchScore: 94,
+    summary: "Exquisite floral embroidery on blush organza with authentic kundan choker and dupatta.",
+    whyItWorks: "Fresh floral motifs bring modern romantic delicacy to traditional celebratory celebrations.",
+  },
+  {
+    imageNum: 6,
+    img: "/Recommendations/girl 6.png",
+    title: "Emerald Royal Velvet Lehenga",
+    style: "Royal",
+    matchScore: 94,
+    summary: "Grand deep emerald velvet skirt with intricate antique gold zardozi detailing.",
+    whyItWorks: "Heavy velvet luster commands attention with regal dignity at high-profile wedding receptions.",
+  },
+  {
+    imageNum: 7,
+    img: "/Recommendations/girl 7.png",
+    title: "Modern Ivory Blazer & Trousers",
+    style: "Formal",
+    matchScore: 94,
+    summary: "Pristine tailored ivory blazer with fluid wide-leg trousers and block court heels.",
+    whyItWorks: "Clean monochrome power dressing that projects supreme boardroom confidence and modern chic.",
+  },
+  {
+    imageNum: 8,
+    img: "/Recommendations/girl 8.png",
+    title: "Sunset Resort Flowing Sundress",
+    style: "Resort",
+    matchScore: 94,
+    summary: "Breezy tiered sundress in sun-drenched warm tones paired with woven straw accessories.",
+    whyItWorks: "Lightweight cotton voile catches sea breezes effortlessly for vacation brunches and beach walks.",
+  },
+  {
+    imageNum: 9,
+    img: "/Recommendations/girl 9.png",
+    title: "Oversized Streetwear Varsity Chic",
+    style: "Streetwear",
+    matchScore: 94,
+    summary: "Boxy varsity bomber jacket with pleated tennis skirt, crew socks, and platform kicks.",
+    whyItWorks: "Playful collegiate retro proportions infused with high-energy street culture and attitude.",
+  },
+  {
+    imageNum: 10,
+    img: "/Recommendations/girl 10.png",
+    title: "Sculpted Satin Date Night Slip",
+    style: "Glamour",
+    matchScore: 94,
+    summary: "Fluid cowl-neck satin slip dress styled with ankle-strap heels and crystal drop earrings.",
+    whyItWorks: "Liquid-like satin catches dim candlelight beautifully, highlighting natural graceful curves.",
+  },
+  {
+    imageNum: 11,
+    img: "/Recommendations/girl 11.png",
+    title: "Cashmere Layered Winter Elegance",
+    style: "Layered",
+    matchScore: 94,
+    summary: "Plush cashmere knit layered under a tailored wool coat with leather gloves and Chelsea boots.",
+    whyItWorks: "Multi-layered luxury fabrics offer maximum thermal insulation with impeccable European tailoring.",
+  },
+  {
+    imageNum: 12,
+    img: "/Recommendations/girl 12.png",
+    title: "Heritage Banarasi Silk Drape",
+    style: "Festive",
+    matchScore: 94,
+    summary: "Handwoven pure silk Banarasi saree with opulent zari border and temple jewelry set.",
+    whyItWorks: "Timeless cultural magnificence that honours artisanal heritage with unmatched grace and majesty.",
+  },
+];
+
+export function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export default function CreateOutfit() {
   const location = useLocation();
   const {
@@ -109,6 +340,9 @@ export default function CreateOutfit() {
   // Active step (1: Occasion, 2: Preferences, 3: Wardrobe, 4: Generate)
   const [step, setStep] = useState(1);
   const [maxStepReached, setMaxStepReached] = useState(1);
+
+  // User gender choice override (defaults to profile gender)
+  const [genderChoice, setGenderChoice] = useState(() => (isFemale ? "Women" : "Men"));
 
   // STEP 1 STATE: Occasion
   const [occFilter, setOccFilter] = useState("All");
@@ -129,9 +363,11 @@ export default function CreateOutfit() {
   const [wardrobeCat, setWardrobeCat] = useState("All");
   const [selectedWardrobeIds, setSelectedWardrobeIds] = useState([]);
 
-  // STEP 4 STATE: Generated Looks & Customization
+  // STEP 4 STATE: 4-Set Shuffled Generation Engine
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationPhase, setGenerationPhase] = useState(0);
+  const [sessionSets, setSessionSets] = useState([]); // 4 sets of 3 items each
+  const [currentSetIndex, setCurrentSetIndex] = useState(0); // 0, 1, 2, or 3
   const [generatedLooks, setGeneratedLooks] = useState([]);
 
   // Modals for Step 4
@@ -147,8 +383,9 @@ export default function CreateOutfit() {
     setTimeout(() => setToastMsg(""), 3200);
   };
 
-  // Resolve active target gender: respects user profile/isFemale, explicit prompts, and wardrobe selection
+  // Resolve active target gender: respects explicit choice, prompts, and user profile
   const activeGender = useMemo(() => {
+    if (genderChoice) return genderChoice;
     const promptLower = (aiPrompt || "").toLowerCase();
     if (/\b(female|woman|women|girl|ladies|lady)\b/i.test(promptLower)) {
       return "Women";
@@ -163,7 +400,7 @@ export default function CreateOutfit() {
       if (selectedM) return "Men";
     }
     return isFemale ? "Women" : "Men";
-  }, [aiPrompt, selectedWardrobeIds, isFemale, womenProducts, menProducts]);
+  }, [genderChoice, aiPrompt, selectedWardrobeIds, isFemale, womenProducts, menProducts]);
 
   const isWomen = activeGender === "Women";
 
@@ -280,585 +517,78 @@ export default function CreateOutfit() {
     });
   };
 
-  // ── Outfit Generation Engine ──
+  // ── 4-Set Shuffled Outfit Generation Engine ──
   const generateOutfits = () => {
     setIsGenerating(true);
     setGenerationPhase(1);
 
-    // Simulated multi-stage AI reasoning steps
-    setTimeout(() => setGenerationPhase(2), 400);
-    setTimeout(() => setGenerationPhase(3), 850);
-    setTimeout(() => setGenerationPhase(4), 1300);
+    setTimeout(() => setGenerationPhase(2), 350);
+    setTimeout(() => setGenerationPhase(3), 750);
+    setTimeout(() => setGenerationPhase(4), 1150);
 
     setTimeout(() => {
       setIsGenerating(false);
 
-      const occId = selectedOccasion.id;
       const occName = selectedOccasion.name;
-      const occCat = (selectedOccasion.category || "").toLowerCase();
-      const promptLower = (aiPrompt || "").toLowerCase();
-      const primaryStyle = selectedStyles[0] || "Smart Casual";
-      const primaryColor = selectedColors.includes("Any") ? "Neutral & Balanced" : selectedColors.join(" + ");
+      const primaryColor = selectedColors.includes("Any") ? "Neutral and Balanced" : selectedColors.join(" + ");
 
-      // Helper to find a specific product from available pool
-      const findPiece = (id) => {
-        return (
-          wardrobePool.find((w) => w.id === id) ||
-          (womenProducts || []).find((w) => w.id === id) ||
-          (menProducts || []).find((m) => m.id === id) ||
-          null
-        );
-      };
+      // 1. Selected gender determines image collection:
+      // Male -> boy 1–boy 12 | Female -> girl 1–girl 12
+      const baseCollection = isWomen ? GIRL_OUTFIT_COLLECTION : BOY_OUTFIT_COLLECTION;
 
-      // Check if user specifically requested a Dress or if wardrobe selection has a dress
-      const wantsDress = isWomen && (
-        /\b(dress|gown|frock|maxi|midi|slip dress|anarkali|sundress)\b/i.test(promptLower) ||
-        selectedStyles.some((s) => ["Formal", "Elegant", "Party"].includes(s) && /\bdress\b/i.test(promptLower)) ||
-        selectedWardrobeIds.some((id) => {
-          const item = wardrobePool.find((w) => w.id === id);
-          return item && ((item.cat || item.category) === "Dresses" || /dress|gown/i.test(item.name));
-        }) ||
-        (/\bdress\b/i.test(promptLower))
-      );
+      // 2. For every generation session, shuffle the 12 images first
+      const shuffled = shuffleArray(baseCollection);
 
-      // Determine occasion group classification
-      const isProfessional =
-        occCat === "professional" ||
-        ["job-interview", "office-work", "formal-event", "business-networking"].includes(occId) ||
-        selectedStyles.includes("Formal") ||
-        (selectedStyles.includes("Smart Casual") && occCat === "professional") ||
-        /\b(professional|interview|office|corporate|business|work|formal)\b/i.test(promptLower);
-
-      const isWeddingOrFestive =
-        occCat === "traditional" ||
-        ["wedding", "engagement", "family-gathering", "festive-diwali"].includes(occId) ||
-        selectedStyles.includes("Traditional") ||
-        /\b(wedding|sangeet|reception|festive|diwali|traditional|ethnic)\b/i.test(promptLower);
-
-      const isPartyOrNightOut =
-        ["party", "concert-night-out", "birthday"].includes(occId) ||
-        selectedStyles.includes("Party") ||
-        /\b(party|club|cocktail|night out|gala|concert)\b/i.test(promptLower);
-
-      const isDateNight =
-        occId === "date-night" ||
-        selectedStyles.includes("Romantic") ||
-        /\b(date|dinner|candlelight|romantic)\b/i.test(promptLower);
-
-      const isTravelOrResort =
-        occCat === "travel" ||
-        ["travel-vacation", "beach-resort", "outdoor-adventure"].includes(occId) ||
-        selectedWeather === "Hot" ||
-        /\b(travel|airport|beach|resort|vacation)\b/i.test(promptLower);
-
-      const isWinter =
-        occId === "winter" ||
-        ["Cold", "Cool"].includes(selectedWeather) ||
-        /\b(winter|cold|fleece|knit|coat)\b/i.test(promptLower);
-
-      // Template definitions for all combinations
-      let templates = [];
-
-      if (isWomen) {
-        if (isProfessional) {
-          if (wantsDress) {
-            templates = [
-              {
-                title: "Executive Blazer & Midi Slip Dress",
-                style: "Formal",
-                matchScore: 98,
-                summary: `Sculpted professional silhouette pairing a structured blazer aesthetic with a satin midi slip dress for ${occName}.`,
-                whyItWorks: `Harmonizes authoritative executive drape with fluid silk luster. Block heels and a structured leather bag ensure all-day comfort with boardroom credibility.`,
-                img: "/img/outfits/outfit-w7.png",
-                pieceIds: ["women-dress-4", "women-shoe-2", "women-acc-1", "women-acc-3"],
-              },
-              {
-                title: "Modern Minimalist Sheath Dress",
-                style: "Minimal",
-                matchScore: 96,
-                summary: `Streamlined corporate dress with clean architectural drape, tailored for presentations and client meetings.`,
-                whyItWorks: `Zero visual clutter, maximum polish. Paired with Italian leather mules and a refined gold pendant for effortless high-fashion authority.`,
-                img: "/img/outfits/outfit-w16.png",
-                pieceIds: ["women-dress-1", "women-shoe-3", "women-jewel-1", "women-acc-5"],
-              },
-              {
-                title: "Tailored Velvet Midi Ensemble",
-                style: "Smart Casual",
-                matchScore: 94,
-                summary: `Sophisticated business cocktail dress balancing rich texture with executive accessories for ${occName}.`,
-                whyItWorks: `Velvet cocktail dress provides rich, dignified presence suitable for corporate networking dinners and evening summits.`,
-                img: "/img/outfits/outfit-w10.png",
-                pieceIds: ["women-dress-2", "women-shoe-2", "women-jewel-4", "women-acc-1"],
-              },
-            ];
-          } else {
-            templates = [
-              {
-                title: "Executive Tailored Suit & Satin Shirt",
-                style: "Formal",
-                matchScore: 98,
-                summary: `High-waist wide-leg tailored trousers paired with a pure satin button-down shirt for commanding authority.`,
-                whyItWorks: `Sharp vertical creases elongate the frame, while the lustrous satin top provides high-end contrast suitable for high-stakes professional settings.`,
-                img: "/img/outfits/outfit-w16.png",
-                pieceIds: ["women-top-4", "women-pant-1", "women-shoe-2", "women-acc-3", "women-acc-1"],
-              },
-              {
-                title: "Smart Casual Linen & Cigarette Pants",
-                style: "Smart Casual",
-                matchScore: 95,
-                summary: `Crisp oversized linen shirt styled with slim ankle trousers and minimalist mules for modern agility.`,
-                whyItWorks: `Balances European corporate ease with precise tailoring. Breathable fabrics keep you composed throughout packed schedules.`,
-                img: "/img/outfits/outfit-w7.png",
-                pieceIds: ["women-top-3", "women-pant-4", "women-shoe-3", "women-acc-1", "women-jewel-1"],
-              },
-              {
-                title: "Contemporary Monochrome Knit & Palazzos",
-                style: "Minimal",
-                matchScore: 93,
-                summary: `High-neck ribbed knit tucked into fluid pleated palazzos with rose gold accents.`,
-                whyItWorks: `Delivers modern creative director energy. Clean proportion between slim knit and voluminous trouser lines.`,
-                img: "/img/outfits/outfit-w4.png",
-                pieceIds: ["women-top-1", "women-pant-2", "women-shoe-2", "women-jewel-1", "women-acc-3"],
-              },
-            ];
-          }
-        } else if (isWeddingOrFestive) {
-          templates = [
-            {
-              title: "Blush Floral Royal Lehenga",
-              style: "Traditional",
-              matchScore: 99,
-              summary: `Handcrafted festive ensemble featuring intricate embroidery and royal gold ornaments for ${occName}.`,
-              whyItWorks: `Rich celebratory hues paired with authentic kundan choker and ethnic juttis deliver majestic festive sophistication.`,
-              img: "/img/outfits/outfit-w5.png",
-              pieceIds: ["women-dress-5", "women-shoe-5", "women-jewel-2", "women-jewel-3"],
-            },
-            {
-              title: "Emerald Royal Velvet Lehenga",
-              style: "Royal",
-              matchScore: 97,
-              summary: `Opulent deep jewel-toned celebration gown designed for wedding celebrations and receptions.`,
-              whyItWorks: `Heavy velvet drape combined with sparkling polki jewelry creates an unforgettable regal entrance.`,
-              img: "/img/outfits/outfit-w6.png",
-              pieceIds: ["women-dress-5", "women-shoe-5", "women-jewel-2", "women-jewel-4"],
-            },
-            {
-              title: "Festive Banarasi Silk Saree",
-              style: "Festive",
-              matchScore: 96,
-              summary: `Timeless pure silk traditional drape styled with handcrafted drop earrings and embroidered juttis.`,
-              whyItWorks: `Embodies grace and heritage luxury, perfectly attuned to celebration rituals and family gatherings.`,
-              img: "/img/outfits/outfit-w12.png",
-              pieceIds: ["women-top-5", "women-pant-2", "women-shoe-5", "women-jewel-1"],
-            },
-          ];
-        } else if (isPartyOrNightOut) {
-          templates = [
-            {
-              title: "Glam Black Night-Out Mini",
-              style: "Party",
-              matchScore: 98,
-              summary: `Show-stopping mini dress with stiletto heels and statement diamond jewelry for ${occName}.`,
-              whyItWorks: `High-octane glamour balanced with sleek monochrome lines. Designed to shine under party lighting.`,
-              img: "/img/outfits/outfit-w1.png",
-              pieceIds: ["women-dress-2", "women-shoe-1", "women-jewel-3", "women-jewel-4"],
-            },
-            {
-              title: "Burgundy Velvet Evening Gown",
-              style: "Glamour",
-              matchScore: 96,
-              summary: `Rich jewel-toned velvet maxi with dramatic drape and gold tennis bracelet.`,
-              whyItWorks: `Plush texture captures depth beautifully, giving you instant red-carpet presence.`,
-              img: "/img/outfits/outfit-w20.png",
-              pieceIds: ["women-dress-4", "women-shoe-1", "women-jewel-1", "women-acc-1"],
-            },
-            {
-              title: "Sangeet Sequin & Organza Chic",
-              style: "Trendy",
-              matchScore: 94,
-              summary: `Luxe puff-sleeve organza blouse paired with wide-leg evening pants and heels.`,
-              whyItWorks: `Modern two-piece party coordination with high visual movement and effortless dancing comfort.`,
-              img: "/img/outfits/outfit-w17.png",
-              pieceIds: ["women-top-2", "women-pant-1", "women-shoe-1", "women-jewel-2"],
-            },
-          ];
-        } else if (isDateNight) {
-          templates = [
-            {
-              title: "Satin Slip Date Night Gown",
-              style: "Romantic",
-              matchScore: 98,
-              summary: `Luminous satin midi slip dress with stiletto heels and layered 18K gold pendant for ${occName}.`,
-              whyItWorks: `Subtle sheen reflects candlelight softly. Minimalist jewelry keeps attention on an elegant neckline.`,
-              img: "/img/outfits/outfit-w10.png",
-              pieceIds: ["women-dress-4", "women-shoe-1", "women-jewel-1", "women-acc-1"],
-            },
-            {
-              title: "Sky Blue Flowy Maxi Gown",
-              style: "Elegant",
-              matchScore: 96,
-              summary: `Ethereal silk maxi dress with gentle movement, tennis bracelet, and luxury watch.`,
-              whyItWorks: `Romantic, dreamy silhouette designed for effortless charm from cocktail hours to quiet dinners.`,
-              img: "/img/outfits/outfit-w3.png",
-              pieceIds: ["women-dress-1", "women-shoe-1", "women-jewel-4", "women-acc-3"],
-            },
-            {
-              title: "Organza Peplum & Tailored Pants",
-              style: "Chic",
-              matchScore: 93,
-              summary: `Puff-sleeve blouse paired with sleek high-waist trousers and kitten heels.`,
-              whyItWorks: `Delivers feminine charm with tailored discipline. Striking yet approachable for intimate dinner settings.`,
-              img: "/img/outfits/outfit-w4.png",
-              pieceIds: ["women-top-2", "women-pant-1", "women-shoe-2", "women-jewel-1"],
-            },
-          ];
-        } else if (isTravelOrResort) {
-          templates = [
-            {
-              title: "Boho Sunset Resort Maxi Dress",
-              style: "Resort",
-              matchScore: 97,
-              summary: `Tiered breathable sundress with leather slides, straw beach tote, and designer sunglasses for ${occName}.`,
-              whyItWorks: `Lightweight cotton drape guarantees cooling comfort under the sun while keeping resort style on point.`,
-              img: "/img/outfits/outfit-w8.png",
-              pieceIds: ["women-dress-3", "women-shoe-3", "women-acc-2", "women-other-2"],
-            },
-            {
-              title: "Luxe Airport Travel Co-ord",
-              style: "Travel",
-              matchScore: 95,
-              summary: `Breezy linen shirt paired with flared palazzo pants, designer sneakers, and crossbody bag.`,
-              whyItWorks: `Engineered for long flights and transition hours. Unmatched comfort without sacrificing elevated aesthetic.`,
-              img: "/img/outfits/outfit-w19.png",
-              pieceIds: ["women-top-3", "women-pant-2", "women-shoe-4", "women-acc-1"],
-            },
-            {
-              title: "Pastel Summer Sundress",
-              style: "Casual",
-              matchScore: 93,
-              summary: `Charming silk floral dress with leather mules and UV protective cat-eye sunglasses.`,
-              whyItWorks: `Effortless daywear that transitions smoothly from sightseeing to seaside dining.`,
-              img: "/img/outfits/outfit-w14.png",
-              pieceIds: ["women-dress-1", "women-shoe-3", "women-acc-2", "women-jewel-1"],
-            },
-          ];
-        } else if (isWinter) {
-          templates = [
-            {
-              title: "Cashmere Winter Layering",
-              style: "Layered",
-              matchScore: 98,
-              summary: `High-neck ribbed knit paired with cigarette ankle trousers, block heels, and mulberry silk scarf.`,
-              whyItWorks: `Retains cozy body warmth while keeping clean European silhouettes without excess bulk.`,
-              img: "/img/outfits/outfit-w11.png",
-              pieceIds: ["women-top-1", "women-pant-4", "women-shoe-2", "women-acc-4"],
-            },
-            {
-              title: "Chic Trench Coat Silhouette",
-              style: "Formal",
-              matchScore: 95,
-              summary: `Tailored satin button-down, wide-leg trousers, block heels, and fleece touchscreen gloves.`,
-              whyItWorks: `Timeless cold-weather sophistication built for city strolls and chilly work mornings.`,
-              img: "/img/outfits/outfit-w16.png",
-              pieceIds: ["women-top-4", "women-pant-1", "women-shoe-2", "women-other-3"],
-            },
-            {
-              title: "Cozy Knit & Vintage Denim",
-              style: "Casual",
-              matchScore: 92,
-              summary: `Warm textured knit paired with sturdy vintage denim jeans and chunky designer sneakers.`,
-              whyItWorks: `Casual winter staple that feels relaxed, snug, and effortlessly stylish.`,
-              img: "/img/outfits/outfit-w4.png",
-              pieceIds: ["women-top-1", "women-pant-3", "women-shoe-4", "women-acc-1"],
-            },
-          ];
-        } else {
-          // General Casual / Everyday Women
-          templates = [
-            {
-              title: "Vintage Denim & Ribbed Knit Top",
-              style: "Casual",
-              matchScore: 97,
-              summary: `High-neck ribbed crop top paired with vintage straight-leg denim and designer sneakers for ${occName}.`,
-              whyItWorks: `Everyday gold standard: clean fit, premium denim structure, and all-day walking comfort.`,
-              img: "/img/outfits/outfit-w4.png",
-              pieceIds: ["women-top-1", "women-pant-3", "women-shoe-4", "women-acc-1"],
-            },
-            {
-              title: "Smart Casual Linen & Culottes",
-              style: "Smart Casual",
-              matchScore: 95,
-              summary: `Breezy linen shirt with paperbag waist culottes, leather slides, and cat-eye sunglasses.`,
-              whyItWorks: `Airy and laid-back yet carefully tailored, keeping you fresh across city outings and coffee runs.`,
-              img: "/img/outfits/outfit-w22.png",
-              pieceIds: ["women-top-3", "women-pant-5", "women-shoe-3", "women-acc-2"],
-            },
-            {
-              title: "Cream Minimalist Kurti Palazzo",
-              style: "Minimal",
-              matchScore: 92,
-              summary: `Ethnic tunic top with fluid linen palazzo pants, ethnic juttis, and gold pendant.`,
-              whyItWorks: `Understated fusion elegance that combines traditional comfort with modern minimalist lines.`,
-              img: "/img/outfits/outfit-w18.png",
-              pieceIds: ["women-top-5", "women-pant-2", "women-shoe-5", "women-jewel-1"],
-            },
-          ];
-        }
-      } else {
-        // MEN
-        if (isProfessional) {
-          templates = [
-            {
-              title: "Executive Power Suit",
-              style: "Formal",
-              matchScore: 98,
-              summary: `Crisp tailored white shirt with charcoal wool trousers, Italian derby shoes, and chronograph watch for ${occName}.`,
-              whyItWorks: `Commanding boardroom presence with razor-sharp shoulders and tailored trouser break. Conveys supreme authority and confidence.`,
-              img: "/img/outfits/outfit-8.png",
-              pieceIds: ["w-shirt-1", "w-pant-3", "w-shoe-1", "w-acc-1", "w-acc-2"],
-            },
-            {
-              title: "Gallery Art Curator Chic",
-              style: "Smart Casual",
-              matchScore: 96,
-              summary: `Navy oxford slim dress shirt paired with slate pleated trousers and monk strap brogues.`,
-              whyItWorks: `Modern creative-executive tailoring. Balances professional dignity with understated artistic refinement.`,
-              img: "/img/outfits/outfit-14.jpg",
-              pieceIds: ["w-shirt-3", "w-pant-1", "w-shoe-2", "w-acc-1"],
-            },
-            {
-              title: "Modern Tailored Oxford & Chinos",
-              style: "Smart Casual",
-              matchScore: 94,
-              summary: `Charcoal luxury linen shirt paired with slim Italian chinos, suede chelsea boots, and leather belt.`,
-              whyItWorks: `Versatile day-to-evening corporate look suitable for agile work environments and business dinners.`,
-              img: "/img/outfits/outfit-1.png",
-              pieceIds: ["w-shirt-2", "w-pant-2", "w-shoe-4", "w-acc-2"],
-            },
-          ];
-        } else if (isWeddingOrFestive) {
-          templates = [
-            {
-              title: "Imperial Ivory Groom Sherwani",
-              style: "Traditional",
-              matchScore: 99,
-              summary: `Majestic tailored festive sherwani ensemble with artisan velvet evening slippers and gold chain for ${occName}.`,
-              whyItWorks: `Royal festive opulence tailored to perfection. Conveys tradition, grandeur, and celebration joy.`,
-              img: "/img/outfits/outfit-11.png",
-              pieceIds: ["w-shirt-1", "w-pant-1", "w-shoe-5", "w-jewel-1"],
-            },
-            {
-              title: "Emerald 3-Piece Reception Tuxedo",
-              style: "Luxury",
-              matchScore: 97,
-              summary: `Rich emerald silk party shirt paired with slate formal trousers, derby shoes, and steel watch.`,
-              whyItWorks: `Sartorial excellence for evening celebrations and gala events. Striking color depth in any lighting.`,
-              img: "/img/outfits/outfit-12.png",
-              pieceIds: ["w-shirt-4", "w-pant-1", "w-shoe-1", "w-acc-1"],
-            },
-            {
-              title: "Ivory Chikankari Festive Kurta",
-              style: "Festive",
-              matchScore: 95,
-              summary: `Handcrafted chikankari kurta with pleated trousers, handcrafted cuff bracelet, and velvet slippers.`,
-              whyItWorks: `Pure celebratory grace with rich artisanal heritage, ideal for Diwali and family occasions.`,
-              img: "/img/outfits/outfit-4.png",
-              pieceIds: ["w-shirt-1", "w-pant-1", "w-shoe-5", "w-jewel-3"],
-            },
-          ];
-        } else if (isPartyOrNightOut) {
-          templates = [
-            {
-              title: "Midnight Navy Satin Shawl Tuxedo",
-              style: "Party",
-              matchScore: 98,
-              summary: `Navy dress shirt with tailored dress trousers, Italian derby shoes, and chronograph watch for ${occName}.`,
-              whyItWorks: `Refined black-tie aesthetic tailored for evening galas, VIP celebrations, and nightlife events.`,
-              img: "/img/outfits/outfit-17.png",
-              pieceIds: ["w-shirt-3", "w-pant-1", "w-shoe-1", "w-acc-1"],
-            },
-            {
-              title: "Emerald Silk Party Shirt & Trousers",
-              style: "Luxury",
-              matchScore: 96,
-              summary: `Lustrous silk party shirt with slate trousers, velvet slippers, and gold link chain.`,
-              whyItWorks: `Deep jewel tones inject magnetic charisma into high-energy social gatherings.`,
-              img: "/img/outfits/outfit-12.png",
-              pieceIds: ["w-shirt-4", "w-pant-1", "w-shoe-5", "w-jewel-1"],
-            },
-            {
-              title: "Urban Nightclub Athleisure & Leather",
-              style: "Trendy",
-              matchScore: 94,
-              summary: `Charcoal linen shirt paired with modern cargo pants, court sneakers, and steel watch.`,
-              whyItWorks: `Contemporary streetwear fusion providing effortless dance-floor ease and sharp silhouette.`,
-              img: "/img/outfits/outfit-10.jpg",
-              pieceIds: ["w-shirt-2", "w-pant-5", "w-shoe-3", "w-acc-1"],
-            },
-          ];
-        } else if (isDateNight) {
-          templates = [
-            {
-              title: "Romantic Candlelight Dinner",
-              style: "Minimal",
-              matchScore: 98,
-              summary: `Tailored white dress shirt with slate dress trousers, derby leather shoes, and chronograph watch for ${occName}.`,
-              whyItWorks: `Classic, timeless elegance that conveys careful preparation and respectful poise.`,
-              img: "/img/outfits/outfit-2.png",
-              pieceIds: ["w-shirt-1", "w-pant-1", "w-shoe-1", "w-acc-1"],
-            },
-            {
-              title: "Mocha Linen Minimalist Cafe",
-              style: "Smart Casual",
-              matchScore: 95,
-              summary: `Charcoal linen shirt with Italian chinos, suede chelsea boots, and leather accessories.`,
-              whyItWorks: `Approachable yet sophisticated. The matte linen texture adds subtle tactile depth.`,
-              img: "/img/outfits/outfit-19.png",
-              pieceIds: ["w-shirt-2", "w-pant-2", "w-shoe-4", "w-acc-1"],
-            },
-            {
-              title: "Camel Blazer Evening Tailoring",
-              style: "Chic",
-              matchScore: 93,
-              summary: `Navy oxford shirt paired with slate trousers, monk strap brogues, and steel watch.`,
-              whyItWorks: `Smart contrast between navy and slate creates structured, trustworthy romantic style.`,
-              img: "/img/outfits/outfit-1.png",
-              pieceIds: ["w-shirt-3", "w-pant-1", "w-shoe-2", "w-acc-1"],
-            },
-          ];
-        } else if (isTravelOrResort) {
-          templates = [
-            {
-              title: "Mediterranean Beach Resort",
-              style: "Resort",
-              matchScore: 97,
-              summary: `Textured breathable casual shirt with cotton tapered pants, white sneakers, and polarized sunglasses for ${occName}.`,
-              whyItWorks: `Light, breezy fabrics maximize heat dissipation while maintaining polished holiday luxury.`,
-              img: "/img/outfits/outfit-9.png",
-              pieceIds: ["w-shirt-5", "w-pant-4", "w-shoe-3", "w-acc-3"],
-            },
-            {
-              title: "Airport Ready Jetsetter",
-              style: "Travel",
-              matchScore: 95,
-              summary: `Navy oxford shirt with tapered relaxed pants, white sneakers, and leather travel duffle.`,
-              whyItWorks: `Built for frictionless transit and lounge comfort without dressing down.`,
-              img: "/img/outfits/outfit-6.png",
-              pieceIds: ["w-shirt-3", "w-pant-4", "w-shoe-3", "w-other-1"],
-            },
-            {
-              title: "Olive Utility Overshirt & Cargos",
-              style: "Casual",
-              matchScore: 93,
-              summary: `Linen casual shirt with minimalist cargo pants, court sneakers, and polarized sunglasses.`,
-              whyItWorks: `Rugged functional utility matched with clean contemporary proportions.`,
-              img: "/img/outfits/outfit-18.png",
-              pieceIds: ["w-shirt-2", "w-pant-5", "w-shoe-3", "w-acc-3"],
-            },
-          ];
-        } else if (isWinter) {
-          templates = [
-            {
-              title: "Autumn Quarter-Zip Knitwear",
-              style: "Layered",
-              matchScore: 98,
-              summary: `Oxford shirt layered with tapered cotton pants, suede chelsea boots, and cashmere scarf for ${occName}.`,
-              whyItWorks: `Thermal layering engineered to look structured, warm, and sophisticated.`,
-              img: "/img/outfits/outfit-20.png",
-              pieceIds: ["w-shirt-3", "w-pant-4", "w-shoe-4", "w-other-3"],
-            },
-            {
-              title: "Executive Power Suit Layering",
-              style: "Formal",
-              matchScore: 95,
-              summary: `Tailored white shirt with charcoal wool trousers, derby shoes, and chronograph watch.`,
-              whyItWorks: `Heavy wool texture insulates while maintaining razor-sharp silhouette against cold breezes.`,
-              img: "/img/outfits/outfit-8.png",
-              pieceIds: ["w-shirt-1", "w-pant-3", "w-shoe-1", "w-acc-1"],
-            },
-            {
-              title: "Utility Overshirt & Cargo Layer",
-              style: "Casual",
-              matchScore: 92,
-              summary: `Textured shirt paired with modern cargo pants, white sneakers, and chronograph watch.`,
-              whyItWorks: `Casual cold-weather protection with relaxed weekend proportions.`,
-              img: "/img/outfits/outfit-18.png",
-              pieceIds: ["w-shirt-5", "w-pant-5", "w-shoe-3", "w-acc-1"],
-            },
-          ];
-        } else {
-          // General Casual / Everyday Men
-          templates = [
-            {
-              title: "Urban Cafe Stroll",
-              style: "Casual",
-              matchScore: 97,
-              summary: `Charcoal linen shirt with cotton tapered pants, classic white sneakers, and polarized sunglasses for ${occName}.`,
-              whyItWorks: `Effortless day-off dressing with clean monochrome tones and relaxed walking comfort.`,
-              img: "/img/outfits/outfit-3.png",
-              pieceIds: ["w-shirt-2", "w-pant-4", "w-shoe-3", "w-acc-3"],
-            },
-            {
-              title: "Olive Utility Overshirt & Cargos",
-              style: "Streetwear",
-              matchScore: 95,
-              summary: `Textured shirt with minimalist cargo pants, white sneakers, and steel watch.`,
-              whyItWorks: `Contemporary streetwear aesthetic built for comfort, utility, and sharp silhouette.`,
-              img: "/img/outfits/outfit-18.png",
-              pieceIds: ["w-shirt-5", "w-pant-5", "w-shoe-3", "w-acc-1"],
-            },
-            {
-              title: "Camel Blazer Smart Casual",
-              style: "Smart Casual",
-              matchScore: 93,
-              summary: `Tailored white shirt with Italian chinos, court sneakers, and reversible belt.`,
-              whyItWorks: `Elevated smart casual that looks crisp at brunch, casual meetings, and gallery strolls.`,
-              img: "/img/outfits/outfit-1.png",
-              pieceIds: ["w-shirt-1", "w-pant-2", "w-shoe-3", "w-acc-2"],
-            },
-          ];
-        }
-      }
-
-      // Map piece IDs into real objects and prioritize user's selected wardrobe pieces
+      // 3. Divide them into 4 sets: Set 1 (3), Set 2 (3), Set 3 (3), Set 4 (3)
+      const sessionTimestamp = Date.now();
       const userSelectedPieces = selectedWardrobeIds
         .map((id) => wardrobePool.find((w) => w.id === id))
         .filter(Boolean);
 
-      const generated = templates.map((tmpl, idx) => {
-        let lookPieces = tmpl.pieceIds.map(findPiece).filter(Boolean);
-
-        // If user manually chose specific items in Step 3, incorporate them seamlessly
-        if (userSelectedPieces.length > 0) {
-          const combined = [...userSelectedPieces];
-          lookPieces.forEach((p) => {
-            const sameCat = combined.some(
-              (u) => (u.cat || u.category || "").toLowerCase() === (p.cat || p.category || "").toLowerCase()
-            );
-            if (!sameCat && !combined.some((u) => u.id === p.id)) {
-              combined.push(p);
-            }
-          });
-          lookPieces = combined;
-        }
-
-        return {
-          id: `outfit-${Date.now()}-${idx + 1}`,
-          title: tmpl.title,
-          style: tmpl.style,
-          colorPalette: primaryColor,
-          matchScore: tmpl.matchScore,
-          summary: tmpl.summary,
-          whyItWorks: tmpl.whyItWorks,
-          img: tmpl.img,
-          pieces: lookPieces,
-        };
+      const sets = [0, 1, 2, 3].map((setIdx) => {
+        const chunk = shuffled.slice(setIdx * 3, setIdx * 3 + 3);
+        return chunk.map((item, idx) => {
+          let lookPieces = wardrobePool.slice(idx * 2, idx * 2 + 4);
+          if (userSelectedPieces.length > 0) {
+            lookPieces = [
+              ...userSelectedPieces,
+              ...lookPieces.filter((p) => !userSelectedPieces.some((u) => u.id === p.id)),
+            ].slice(0, 5);
+          }
+          return {
+            id: `outfit-${sessionTimestamp}-${setIdx}-${idx + 1}`,
+            title: item.title,
+            style: item.style,
+            colorPalette: primaryColor,
+            matchScore: item.matchScore || (isWomen ? 94 : 95),
+            summary: `${item.summary} Personalized for ${occName}.`,
+            whyItWorks: item.whyItWorks,
+            img: item.img,
+            pieces: lookPieces.length > 0 ? lookPieces : wardrobePool.slice(0, 3),
+            gender: activeGender,
+            setIndex: setIdx,
+          };
+        });
       });
 
-      setGeneratedLooks(generated);
+      // Initially show Set 1
+      setSessionSets(sets);
+      setCurrentSetIndex(0);
+      setGeneratedLooks(sets[0]);
       goToStep(4);
-      triggerToast("✨ AI generated 3 complete looks!");
-    }, 1600);
+      triggerToast("✨ AI generated 3 outfit recommendations (Set 1 of 4)!");
+    }, 1400);
+  };
+
+  // ── "Generate Another Set" Handler (Sets 1 -> 2 -> 3 -> 4) ──
+  const handleNextSet = () => {
+    if (currentSetIndex < 3 && sessionSets.length > currentSetIndex + 1) {
+      const nextIdx = currentSetIndex + 1;
+      setCurrentSetIndex(nextIdx);
+      setGeneratedLooks(sessionSets[nextIdx]);
+      triggerToast(`✨ Showing Set ${nextIdx + 1} of 4 (${(nextIdx + 1) * 3}/12 recommendations)`);
+      window.scrollTo({ top: 380, behavior: "smooth" });
+    }
   };
 
   // ── Save Look Handler ──
@@ -1190,6 +920,38 @@ export default function CreateOutfit() {
             </div>
           </div>
 
+          {/* Style Profile & Target Gender Selector */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-semibold text-white">Target Wardrobe & Gender</label>
+              <span className="text-xs text-amber-400 font-medium">Currently styling for: {activeGender}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setGenderChoice("Men")}
+                className={`py-2.5 px-4 rounded-xl border text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition ${
+                  activeGender === "Men"
+                    ? "bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/20"
+                    : "bg-[#161616] border-white/10 text-stone-300 hover:text-white hover:border-white/20"
+                }`}
+              >
+                <span>👔 Men's Collection (boy 1–12)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setGenderChoice("Women")}
+                className={`py-2.5 px-4 rounded-xl border text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition ${
+                  activeGender === "Women"
+                    ? "bg-amber-500 text-black border-amber-500 shadow-md shadow-amber-500/20"
+                    : "bg-[#161616] border-white/10 text-stone-300 hover:text-white hover:border-white/20"
+                }`}
+              >
+                <span>👗 Women's Collection (girl 1–12)</span>
+              </button>
+            </div>
+          </div>
+
           {/* Large AI Prompt Box */}
           <div className="space-y-2">
             <label htmlFor="ai-prompt" className="block text-sm font-semibold text-white">
@@ -1405,7 +1167,7 @@ export default function CreateOutfit() {
               className="btn-p h-11 px-7 text-xs text-black font-semibold flex items-center gap-2 shadow-lg shadow-amber-500/25"
             >
               <Sparkles size={14} />
-              <span>Generate My Outfits</span>
+              <span>Generate My Outfit</span>
             </button>
           </div>
 
@@ -1551,7 +1313,7 @@ export default function CreateOutfit() {
               className="btn-p h-12 px-8 text-sm text-black font-semibold flex items-center gap-2 shadow-lg shadow-amber-500/25 cursor-pointer"
             >
               <Sparkles size={16} />
-              <span>Generate My Outfits</span>
+              <span>Generate My Outfit</span>
             </button>
           </div>
         </section>
@@ -1617,18 +1379,36 @@ export default function CreateOutfit() {
                     <ArrowLeft size={13} />
                     <span>Back to Wardrobe</span>
                   </button>
+
+                  {currentSetIndex < 3 ? (
+                    <button
+                      type="button"
+                      onClick={handleNextSet}
+                      className="btn-p h-10 px-4 text-xs text-black font-semibold flex items-center gap-1.5 shadow-md shadow-amber-500/20"
+                    >
+                      <Sparkles size={13} />
+                      <span>Generate Another Set ({currentSetIndex + 2}/4)</span>
+                    </button>
+                  ) : (
+                    <span className="text-xs font-semibold px-3 py-2 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      ✓ All 12 Recommendations Shown
+                    </span>
+                  )}
+
                   <button
                     type="button"
                     onClick={generateOutfits}
                     className="btn-s h-10 px-4 text-xs text-stone-300 hover:text-white flex items-center gap-1.5"
+                    title="Start a new session with 12 fresh shuffled recommendations"
                   >
                     <RefreshCw size={13} />
-                    <span>Regenerate All</span>
+                    <span>New Shuffled Session</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={() => goToStep(1)}
-                    className="btn-p h-10 px-4 text-xs text-black font-semibold flex items-center gap-1.5"
+                    className="btn-s h-10 px-4 text-xs text-stone-300 hover:text-white flex items-center gap-1.5"
                   >
                     <RotateCcw size={13} />
                     <span>Start New Outfit</span>
@@ -1660,10 +1440,12 @@ export default function CreateOutfit() {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
 
-                          {/* Match Score Badge */}
-                          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider bg-emerald-600/90 text-white shadow-md">
-                            {look.matchScore}% Match
-                          </span>
+                          {/* Match Score Badge (Only visible on Women's recommendations) */}
+                          {isWomen && (
+                            <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider bg-emerald-600/90 text-white shadow-md">
+                              {look.matchScore}% Match
+                            </span>
+                          )}
 
                           {/* Style Badge */}
                           <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/75 backdrop-blur-md text-amber-400 border border-amber-500/30">
@@ -1764,6 +1546,58 @@ export default function CreateOutfit() {
                   );
                 })}
               </div>
+
+              {/* ── Session Progression Controls & Indicators ── */}
+              <div className="p-5 rounded-3xl bg-[#141414] border border-white/[.08] flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
+                  <div className="flex items-center gap-2">
+                    {[0, 1, 2, 3].map((setNum) => (
+                      <span
+                        key={setNum}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                          currentSetIndex === setNum
+                            ? "bg-amber-500 text-black shadow-md shadow-amber-500/20 font-bold"
+                            : setNum < currentSetIndex
+                            ? "bg-white/10 text-stone-300 line-through opacity-60"
+                            : "bg-white/5 text-stone-400 border border-white/10"
+                        }`}
+                      >
+                        Set {setNum + 1}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-xs text-stone-400">
+                    Showing {(currentSetIndex + 1) * 3} of 12 {activeGender.toLowerCase()} recommendations (no repeats)
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2.5 w-full md:w-auto justify-end">
+                  {currentSetIndex < 3 ? (
+                    <button
+                      type="button"
+                      onClick={handleNextSet}
+                      className="btn-p h-11 px-5 text-xs text-black font-semibold flex items-center gap-2 shadow-md shadow-amber-500/20"
+                    >
+                      <Sparkles size={14} />
+                      <span>Generate Another Set ({currentSetIndex + 2} of 4)</span>
+                    </button>
+                  ) : (
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <span className="text-xs font-semibold px-3 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                        ✓ All 12 recommendations have been displayed
+                      </span>
+                      <button
+                        type="button"
+                        onClick={generateOutfits}
+                        className="btn-p h-11 px-5 text-xs text-black font-semibold flex items-center gap-1.5 shadow-md shadow-amber-500/20"
+                      >
+                        <RefreshCw size={13} />
+                        <span>Start New Session</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </section>
@@ -1776,9 +1610,11 @@ export default function CreateOutfit() {
             <div className="grid sm:grid-cols-2 gap-5">
               <div className="relative aspect-[3/3.8] rounded-2xl overflow-hidden bg-black/60 border border-white/10">
                 <img src={modalLook.img} alt={modalLook.title} className="w-full h-full object-cover" />
-                <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white">
-                  {modalLook.matchScore}% Match
-                </span>
+                {isWomen && (
+                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white">
+                    {modalLook.matchScore}% Match
+                  </span>
+                )}
                 <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-bold uppercase bg-black/75 text-amber-400 border border-amber-500/30">
                   {modalLook.style}
                 </span>
