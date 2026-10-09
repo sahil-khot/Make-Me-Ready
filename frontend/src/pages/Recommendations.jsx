@@ -773,6 +773,10 @@ export default function Recommendations() {
                   <img
                     src={by[x]?.img || IMG["hero-wardrobe"]}
                     alt={by[x]?.name || "Item"}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+                    }}
                     className="aspect-square object-cover"
                   />
                   <div className="text-[11px] text-white p-2 font-medium truncate">
@@ -792,6 +796,10 @@ export default function Recommendations() {
             <img
               src={isFemale ? "/Recommendations/girl 1.png" : "/Recommendations/boy 1.png"}
               alt="Result Look"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/BackGround Images/Recommendations BackGround Image.png";
+              }}
               className="w-24 h-28 rounded-xl object-cover border border-line"
             />
             <div className="text-white flex-1">
@@ -917,6 +925,10 @@ export default function Recommendations() {
               <img
                 src={modalLook.img}
                 alt={modalLook.title}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/BackGround Images/Recommendations BackGround Image.png";
+                }}
                 className="w-full h-full object-contain p-2"
               />
               {isWomenLook(modalLook) && (

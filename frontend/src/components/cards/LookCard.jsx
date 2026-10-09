@@ -86,8 +86,12 @@ export function LookCard({ l, saved }) {
           {l.items.map((i) => (
             <div key={i}>
               <img
-                src={by[i]?.img || IMG["hero-wardrobe"]}
+                src={by[i]?.img || IMG["hero-wardrobe"] || "/BackGround Images/Wardrobe BackGround Image.png"}
                 alt=""
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+                }}
                 className="aspect-square rounded-lg object-cover"
               />
               <div className="text-[10px] text-mute mt-1 truncate">

@@ -786,12 +786,12 @@ export default function Profile() {
     const isFem = user?.gender === "Female" || user?.profile?.gender === "Female";
     const baseCats = isFem
       ? [
-          { cat: "Dress", img: "/wardrobe/d1.png" },
-          { cat: "Top", img: "/wardrobe/shirt 1.png" },
-          { cat: "Pants", img: "/wardrobe/pant 1.png" },
-          { cat: "Footwear", img: "/wardrobe/shoe 1.png" },
-          { cat: "Jewelry", img: "/wardrobe/j1.png" },
-          { cat: "Accessories", img: "/wardrobe/a1.png" },
+          { cat: "Dress", img: "/wardrobe/dress 1.png" },
+          { cat: "Top", img: "/wardrobe/top 1.png" },
+          { cat: "Pants", img: "/wardrobe/panty 1.png" },
+          { cat: "Footwear", img: "/wardrobe/footware 1.png" },
+          { cat: "Jewelry", img: "/wardrobe/jewel 1.png" },
+          { cat: "Accessories", img: "/wardrobe/access 1.png" },
         ]
       : [
           { cat: "Shirts", img: "/wardrobe/shirt 1.png" },
@@ -799,7 +799,7 @@ export default function Profile() {
           { cat: "Shoes", img: "/wardrobe/shoe 1.png" },
           { cat: "Accessories", img: "/wardrobe/a1.png" },
           { cat: "Jewelry", img: "/wardrobe/j1.png" },
-          { cat: "Other", img: "/wardrobe/shirt 2.png" },
+          { cat: "Other", img: "/wardrobe/other 1.png" },
         ];
 
     return baseCats.map((item) => {
@@ -858,6 +858,10 @@ export default function Profile() {
           <img
             src={IMG["hero-profile"] || "/BackGround Images/Profile BG.png"}
             alt="Profile cover"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/BackGround Images/Profile BG.png";
+            }}
             className="absolute inset-y-0 right-0 w-2/3 h-full object-cover opacity-60 pointer-events-none"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-[#121212]/95 md:via-[#121212]/85 to-transparent pointer-events-none" />
@@ -872,6 +876,10 @@ export default function Profile() {
               <img
                 src={getUserAvatar(user)}
                 alt={name || "User Avatar"}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = DEFAULT_AVATAR;
+                }}
                 className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-acc shadow-[0_0_25px_rgba(245,158,11,0.25)] group-hover:brightness-90 transition"
               />
               <button
@@ -1241,6 +1249,10 @@ export default function Profile() {
                   <img
                     src={item.img}
                     alt={item.cat}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent" />
@@ -1276,6 +1288,10 @@ export default function Profile() {
                       <img
                         src={act.img}
                         alt=""
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+                        }}
                         className="w-12 h-12 rounded-xl object-cover shrink-0 border border-line"
                       />
                       <div className="flex-1 min-w-0">
@@ -1373,6 +1389,10 @@ export default function Profile() {
               <img
                 src={getUserAvatar(user)}
                 alt="Profile avatar"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = DEFAULT_AVATAR;
+                }}
                 className="w-16 h-16 rounded-full object-cover border-2 border-acc"
               />
               <div className="flex-1">
@@ -2011,6 +2031,10 @@ export default function Profile() {
                   <img
                     src={item.img}
                     alt={item.cat}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                   />
                 </div>
@@ -2380,6 +2404,10 @@ export default function Profile() {
               <img
                 src={getUserAvatar(user)}
                 alt="Current profile"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = DEFAULT_AVATAR;
+                }}
                 className="w-28 h-28 rounded-full object-cover border-2 border-acc shadow-lg mx-auto"
               />
               {uploadingPhoto && (
@@ -2420,6 +2448,10 @@ export default function Profile() {
                   <img
                     src={p}
                     alt={`Avatar ${idx + 1}`}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = DEFAULT_AVATAR;
+                    }}
                     className="w-12 h-12 rounded-full object-cover"
                   />
                 </button>

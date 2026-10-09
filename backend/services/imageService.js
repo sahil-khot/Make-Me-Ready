@@ -4,18 +4,39 @@ import { fileURLToPath } from "node:url";
 import mongoose from "mongoose";
 import { getGridFSBucket } from "../config/db.js";
 
-const publicImgDir = fileURLToPath(
-  new URL("../../frontend/public/img/", import.meta.url),
+const publicBaseDir = fileURLToPath(
+  new URL("../../frontend/public/", import.meta.url),
 );
-const distImgDir = fileURLToPath(
-  new URL("../../frontend/dist/img/", import.meta.url),
+const distBaseDir = fileURLToPath(
+  new URL("../../frontend/dist/", import.meta.url),
 );
 
+const searchSubdirs = [
+  "img",
+  "img/outfits",
+  "Occasions",
+  "Recommendations",
+  "wardrobe",
+  "BackGround Images",
+  "",
+];
+
 const getLocalImagePath = (filename) => {
-  const pPath = join(publicImgDir, filename);
-  if (existsSync(pPath)) return pPath;
-  const dPath = join(distImgDir, filename);
-  if (existsSync(dPath)) return dPath;
+  if (!filename) return null;
+  const decoded = decodeURIComponent(filename);
+
+  // 1. Search in public directory and subdirectories
+  for (const sub of searchSubdirs) {
+    const candidate = join(publicBaseDir, sub, decoded);
+    if (existsSync(candidate)) return candidate;
+  }
+
+  // 2. Search in dist directory and subdirectories
+  for (const sub of searchSubdirs) {
+    const candidate = join(distBaseDir, sub, decoded);
+    if (existsSync(candidate)) return candidate;
+  }
+
   return null;
 };
 
@@ -29,9 +50,10 @@ const mimeTypes = {
 };
 
 export const sendImage = async (req, res, next) => {
-  const filename = req.params.filename;
-  if (!filename) return res.status(404).json({ message: "Image not found." });
+  const rawFilename = req.params.filename;
+  if (!rawFilename) return res.status(404).json({ message: "Image not found." });
 
+  const filename = decodeURIComponent(rawFilename);
   const ext = filename.split(".").pop().toLowerCase();
   const contentType = mimeTypes[ext] || "application/octet-stream";
 
@@ -40,7 +62,9 @@ export const sendImage = async (req, res, next) => {
     if (mongoose.connection?.readyState === 1 && mongoose.connection.db) {
       const file = await mongoose.connection.db
         .collection("images.files")
-        .findOne({ filename });
+        .findOne({
+          $or: [{ filename }, { filename: rawFilename }],
+        });
 
       if (file) {
         res.set("Content-Type", file.contentType || contentType);

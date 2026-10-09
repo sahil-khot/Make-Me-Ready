@@ -25,11 +25,11 @@ export function OccCard({ o, onClick, on, small }) {
       }`}
     >
       <img
-        src={image}
+        src={image || (title ? `/Occasions/${title}.png` : "/BackGround Images/Occasions BackGround Image.png")}
         alt={title}
         onError={(e) => {
           e.currentTarget.onerror = null;
-          e.currentTarget.src = `/img/${o.id}.jpg`;
+          e.currentTarget.src = "/BackGround Images/Occasions BackGround Image.png";
         }}
         className="absolute inset-0 w-full h-full object-cover object-top"
       />

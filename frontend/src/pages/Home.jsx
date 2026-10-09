@@ -100,12 +100,19 @@ export default function Home() {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
           {popularOccasionIds.map((id) => {
-            const found = occasions.find((o) => o.id === id);
+            const found = occasions.find(
+              (o) =>
+                o.id === id ||
+                (id === "office" && (o.id === "office-work" || o.name === "Office / Work")) ||
+                (id === "date" && (o.id === "date-night" || o.name === "Date Night")) ||
+                (id === "travel" && (o.id === "travel-vacation" || o.name === "Travel / Vacation"))
+            );
             const o = found || {
               id,
               title: id.charAt(0).toUpperCase() + id.slice(1),
               sub: "Outfit Ready",
-              img: `/img/occ-${id}.jpg`,
+              img: IMG[id] || `/Occasions/${id.charAt(0).toUpperCase() + id.slice(1)}.png`,
+              image: IMG[id] || `/Occasions/${id.charAt(0).toUpperCase() + id.slice(1)}.png`,
             };
             return <OccCard key={o.id} o={o} />;
           })}

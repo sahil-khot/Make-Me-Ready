@@ -16,6 +16,10 @@ export const Hero = ({
       <img
         src={resolvedImg}
         alt=""
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+        }}
         className="absolute inset-0 w-full h-full object-cover object-center"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/85 md:via-bg/60 to-transparent" />

@@ -64,8 +64,12 @@ export function Topbar({ menu }) {
                 className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-white/5 text-left text-sm"
               >
                 <img
-                  src={o.img}
+                  src={o.img || o.image || "/BackGround Images/Occasions BackGround Image.png"}
                   alt=""
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/BackGround Images/Occasions BackGround Image.png";
+                  }}
                   className="w-8 h-8 rounded object-cover"
                 />
                 {o.title}
@@ -100,6 +104,10 @@ export function Topbar({ menu }) {
             <img
               src={getUserAvatar(user)}
               alt={displayName}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = DEFAULT_AVATAR;
+              }}
               className="w-10 h-10 rounded-full object-cover border border-line2"
             />
             <span className="hidden sm:block text-sm font-medium">

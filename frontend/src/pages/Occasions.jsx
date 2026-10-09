@@ -150,10 +150,11 @@ export default function Occasions() {
             {/* Consistent Full-Body 2:3 Aspect Ratio Container (matches 1024x1536 source images) */}
             <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-black/60">
               <img
-                src={occ.image}
+                src={occ.image || occ.img || "/BackGround Images/Occasions BackGround Image.png"}
                 alt={occ.name}
                 onError={(e) => {
-                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/BackGround Images/Occasions BackGround Image.png";
                 }}
                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500 ease-out"
               />

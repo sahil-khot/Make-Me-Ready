@@ -247,6 +247,10 @@ export default function Payment() {
                     <img
                       src={it.img || "/img/hero-wardrobe-luxury.jpg"}
                       alt={it.name}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/img/hero-wardrobe-luxury.jpg";
+                      }}
                       className="w-14 h-14 rounded-xl object-cover shrink-0 border border-white/10"
                     />
                     <div className="flex-1 min-w-0">

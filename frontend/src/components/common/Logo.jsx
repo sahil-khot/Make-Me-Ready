@@ -5,6 +5,10 @@ export const Logo = ({ size = 42, text = true, big = false, className = "" }) =>
       alt="Make Me Ready Logo"
       width={size}
       height={size}
+      onError={(e) => {
+        e.currentTarget.onerror = null;
+        e.currentTarget.src = "/img/MMR LOGO.png";
+      }}
       className="object-contain shrink-0 rounded-xl drop-shadow-[0_2px_8px_rgba(245,158,11,0.2)]"
       style={{
         width: size,

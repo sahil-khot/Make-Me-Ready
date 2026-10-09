@@ -246,6 +246,10 @@ export default function Wardrobe() {
         <img
           src={IMG["hero-wardrobe"] || "/BackGround Images/Wardrobe BackGround Image.png"}
           alt="Luxury Wardrobe"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+          }}
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 md:via-black/60 to-transparent" />
@@ -695,6 +699,10 @@ export default function Wardrobe() {
               <img
                 src={confirmDelete.img || IMG["white-shirt"]}
                 alt={confirmDelete.name}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+                }}
                 className="w-16 h-16 rounded-xl object-cover border border-white/10 shrink-0"
               />
               <div className="min-w-0 flex-1">

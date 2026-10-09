@@ -341,6 +341,10 @@ export default function SavedLooks() {
                                   <img
                                     src={p.img || p.image || "/img/hero-wardrobe-luxury.jpg"}
                                     alt={p.name}
+                                    onError={(e) => {
+                                      e.currentTarget.onerror = null;
+                                      e.currentTarget.src = "/img/hero-wardrobe-luxury.jpg";
+                                    }}
                                     className="w-full h-full object-cover"
                                   />
                                 </div>
@@ -518,6 +522,10 @@ export default function SavedLooks() {
                 <img
                   src={selectedLookModal.img || "/img/hero-wardrobe-luxury.jpg"}
                   alt={selectedLookModal.title}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/img/hero-wardrobe-luxury.jpg";
+                  }}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -584,6 +592,10 @@ export default function SavedLooks() {
                           <img
                             src={piece.img || piece.image || "/img/hero-wardrobe-luxury.jpg"}
                             alt={piece.name}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = "/img/hero-wardrobe-luxury.jpg";
+                            }}
                             className="w-full h-full object-cover"
                           />
                         </div>

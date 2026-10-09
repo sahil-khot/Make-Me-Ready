@@ -349,6 +349,10 @@ export default function Shopping() {
         <img
           src={IMG["hero-shopping"] || "/BackGround Images/Shopping BackGround Image.png"}
           alt="Premium Luxury Collection"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/BackGround Images/Shopping BackGround Image.png";
+          }}
           className="absolute inset-0 w-full h-full object-cover object-center opacity-70"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 md:via-black/60 to-transparent" />

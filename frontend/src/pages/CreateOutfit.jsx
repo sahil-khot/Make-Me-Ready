@@ -866,10 +866,11 @@ export default function CreateOutfit() {
                 >
                   <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-black/60">
                     <img
-                      src={occ.image}
+                      src={occ.image || occ.img || "/BackGround Images/Occasions BackGround Image.png"}
                       alt={occ.name}
                       onError={(e) => {
-                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/BackGround Images/Occasions BackGround Image.png";
                       }}
                       className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                     />
@@ -1489,7 +1490,7 @@ export default function CreateOutfit() {
                             alt={look.title}
                             onError={(e) => {
                               e.currentTarget.onerror = null;
-                              e.currentTarget.src = selectedOccasion.image;
+                              e.currentTarget.src = selectedOccasion?.image || selectedOccasion?.img || "/BackGround Images/Create Outfit BackGround Image.png";
                             }}
                             className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                           />
@@ -1674,7 +1675,15 @@ export default function CreateOutfit() {
           <div className="space-y-5">
             <div className="grid sm:grid-cols-2 gap-5">
               <div className="relative aspect-[3/3.8] rounded-2xl overflow-hidden bg-black/60 border border-white/10">
-                <img src={modalLook.img} alt={modalLook.title} className="w-full h-full object-cover" />
+                <img
+                  src={modalLook.img}
+                  alt={modalLook.title}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = selectedOccasion?.image || "/BackGround Images/Create Outfit BackGround Image.png";
+                  }}
+                  className="w-full h-full object-cover"
+                />
                 {isWomen && (
                   <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white">
                     {modalLook.matchScore}% Match
@@ -1718,6 +1727,10 @@ export default function CreateOutfit() {
                           <img
                             src={p.img || p.image || "/BackGround Images/Wardrobe BackGround Image.png"}
                             alt={p.name}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+                            }}
                             className="w-10 h-10 rounded-lg object-cover"
                           />
                           <div className="min-w-0 flex-1">
@@ -1788,6 +1801,10 @@ export default function CreateOutfit() {
                     <img
                       src={piece.img || piece.image || "/BackGround Images/Wardrobe BackGround Image.png"}
                       alt={piece.name}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+                      }}
                       className="w-full aspect-square rounded-lg object-cover mb-1.5"
                     />
                     <div className="text-[11px] font-semibold text-white truncate">{piece.name}</div>
@@ -1816,6 +1833,10 @@ export default function CreateOutfit() {
                         <img
                           src={replacement.img || replacement.image || "/BackGround Images/Wardrobe BackGround Image.png"}
                           alt={replacement.name}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+                          }}
                           className="w-full aspect-square rounded-lg object-cover mb-1 group-hover:scale-105 transition"
                         />
                         <div className="text-[11px] font-semibold text-white truncate">
@@ -1859,6 +1880,10 @@ export default function CreateOutfit() {
                     <img
                       src={acc.img || acc.image || "/BackGround Images/Wardrobe BackGround Image.png"}
                       alt={acc.name}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/BackGround Images/Wardrobe BackGround Image.png";
+                      }}
                       className="w-full aspect-square rounded-lg object-cover mb-1.5 group-hover:scale-105 transition"
                     />
                     <div className="text-xs font-semibold text-white truncate">{acc.name}</div>

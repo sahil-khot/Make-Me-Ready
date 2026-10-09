@@ -32,9 +32,15 @@ const outfitsDir = fileURLToPath(
 const wardrobeDir = fileURLToPath(
   new URL("../../frontend/public/wardrobe", import.meta.url)
 );
+const occasionsDir = fileURLToPath(
+  new URL("../../frontend/public/Occasions", import.meta.url)
+);
+const recommendationsDir = fileURLToPath(
+  new URL("../../frontend/public/Recommendations", import.meta.url)
+);
 
 /**
- * Uploads local outfit and wardrobe images to MongoDB GridFS (images bucket).
+ * Uploads local outfit, wardrobe, and occasion images to MongoDB GridFS (images bucket).
  * Skips files already in GridFS, so re-runs are safe.
  */
 export async function seedImages() {
@@ -46,6 +52,8 @@ export async function seedImages() {
   const dirsToSeed = [
     { dir: outfitsDir, category: "outfits" },
     { dir: wardrobeDir, category: "wardrobe" },
+    { dir: occasionsDir, category: "occasions" },
+    { dir: recommendationsDir, category: "recommendations" },
   ];
 
   let uploaded = 0;
