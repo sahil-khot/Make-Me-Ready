@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import { User, WardrobeItem, CatalogItem, Product } from "../models/index.js";
-import { publicUser, DEMO_USER } from "./authController.js";
+import { publicUser, DEMO_USER, localUsers } from "./authController.js";
 import { products } from "../../frontend/src/data.js";
 
 const formatImageUrl = (img) => {
@@ -14,8 +14,22 @@ const formatImageUrl = (img) => {
 
 export const getUserState = async (req, res, next) => {
   try {
-    const isDemo = req.auth.sub === DEMO_USER._id || req.auth.sub === "demo-user-sahil";
+    const isDemo =
+      req.auth.sub === DEMO_USER._id ||
+      req.auth.sub === "demo-user-alex" ||
+      req.auth.sub === "demo-user-sahil";
     const dbConnected = mongoose.connection?.readyState === 1;
+
+    const localUser = localUsers?.get(req.auth.sub);
+    if (localUser) {
+      return res.json({
+        user: publicUser(localUser),
+        favorites: localUser.favorites || [],
+        savedLooks: localUser.savedLooks || [],
+        cart: localUser.cart || [],
+        wardrobe: [],
+      });
+    }
 
     if (dbConnected && mongoose.Types.ObjectId.isValid(req.auth.sub)) {
       try {

@@ -197,15 +197,15 @@ export async function seedCatalog() {
     );
 
     // 7. Ensure demo quick-login user exists
-    const demoEmail = "sahil@makemeready.in";
+    const demoEmail = "alex@makemeready.in";
     const existingDemoUser = await User.findOne({ email: demoEmail });
     if (!existingDemoUser) {
-      const passwordHash = await bcrypt.hash("Sahil@123", 12);
+      const passwordHash = await bcrypt.hash("Alex@123", 12);
       await User.create({
         email: demoEmail,
         passwordHash,
         profile: {
-          name: "Sahil Khot",
+          name: "Alex",
           city: "Mumbai",
           gender: "Male",
           avatar: "",

@@ -39,8 +39,96 @@ Formatting:
 - Highlight key clothing items or terms in **bold**
 - Keep responses readable, friendly, and structured.`;
 
+function getLocalFashionAdvice(userMessage) {
+  const msg = String(userMessage || "").toLowerCase().trim();
+
+  if (/^(hi|hii|hello|hey|greetings|good\s*(morning|afternoon|evening)|sup)\b/i.test(msg)) {
+    return `Hello! 👋 I'm your **Make Me Ready** personal fashion stylist.
+
+How can I help elevate your look today? Here are a few things we can explore:
+- 👔 **Occasion Styling:** Outfits for interviews, college, parties, dates, or weddings
+- 🎨 **Color Coordination:** Finding complementary tones for your skin tone and aesthetic
+- 🧥 **Layering & Silhouette:** Pro tips on jackets, proportions, and footwear
+- 🛍️ **Wardrobe Advice:** How to style pieces you already own
+
+Where are you heading, or what pieces are you looking to style?`;
+  }
+
+  if (/wedding|marriage|reception|festive|diwali|eid|traditional|ethnic|sherwani|kurta|saree|lehenga/i.test(msg)) {
+    return `Here is a curated high-fashion styling guide for a **Wedding / Festive Occasion**:
+
+### 🌟 Recommended Outfit
+- **For Men:** A structured **Bandhgala** or raw-silk **Kurta with an embroidered Nehru Jacket** in rich jewel tones (Navy, Emerald Green, or Wine Burgundy), paired with tapered ivory churidar or silk trousers. Finish with polished mojaris or monk-strap shoes.
+- **For Women:** An embroidered **Anarkali suit** or contemporary **draped saree/lehenga** with metallic zari accents. Pair with statement jhumkas and block heels for all-night comfort.
+
+### 🎨 Color Palette
+- Deep Royal Tones: **Emerald Green**, **Midnight Navy**, **Rich Wine**, with **Gold/Champagne accents**.
+
+### ✨ Stylist Tips
+- **Grooming:** Clean, structured hairstyle with a subtle woody or amber fragrance.
+- **Accessories:** A minimalist analog watch with a leather or metallic strap elevates traditional attire instantly.`;
+  }
+
+  if (/interview|office|work|formal|business|corporate|meeting|presentation/i.test(msg)) {
+    return `Here is your executive styling breakdown for **Professional & Interview Wear**:
+
+### 💼 Recommended Outfit
+- **The Power Look:** A tailored **Charcoal Grey or Navy Blazer** over a crisp **Egyptian cotton white or light blue button-down shirt**.
+- **Bottoms:** Slim-straight flat-front tailored trousers in matte black or charcoal.
+- **Footwear:** Classic leather **Oxford shoes** or sleek loafers in dark brown or polished black.
+- **Belt:** Leather belt matching your shoe color exactly.
+
+### 🎨 Color Palette
+- **Navy Blue**, **Slate Grey**, **Crisp White**, and **Mocha Brown**. Avoid neon or overly bright colors for interviews.
+
+### ✨ Stylist Pro-Tip
+- **Fit over Brand:** Ensure shoulders fit square without hanging over. Your sleeves should show approximately 1/4 inch of shirt cuff.`;
+  }
+
+  if (/college|casual|everyday|streetwear|hangout|friends|cafe|sneaker|daily/i.test(msg)) {
+    return `Here is a fresh, modern everyday look for **College & Casual Outings**:
+
+### 👕 Recommended Outfit
+- **Top:** An **Oversized heavy-weight Boxy T-Shirt** (240+ GSM) in Off-White, Sage Green, or Washed Charcoal, or an open relaxed linen overshirt.
+- **Bottoms:** Relaxed-fit **straight-leg blue or washed grey denim**, or pleated relaxed chinos.
+- **Footwear:** Clean minimalist **white leather sneakers** (e.g. Stan Smiths, retro runners, or chunky trainers).
+
+### 🎨 Color Palette
+- **Off-White**, **Sage Green**, **Vintage Denim Blue**, and **Earthy Tan**.
+
+### ✨ Stylist Pro-Tip
+- Use the **"Sandwich Dressing"** technique: match the color of your top with the color of your shoes (e.g., white tee + white sneakers) to make the outfit look naturally cohesive!`;
+  }
+
+  if (/date|dinner|party|club|night|evening|bar/i.test(msg)) {
+    return `Here is an alluring, sophisticated outfit for a **Date Night or Evening Party**:
+
+### 🌙 Recommended Outfit
+- **Top:** A well-fitted **Black knitted polo**, dark satin resort shirt, or a textured charcoal mock-neck shirt.
+- **Layer:** A tailored **unstructured black/charcoal blazer** or a suede bomber jacket.
+- **Bottoms:** Slim-tapered tailored trousers or dark rinse indigo denim with zero distressing.
+- **Footwear:** Suede Chelsea boots or sleek minimalist black leather loafers.
+
+### 🎨 Color Palette
+- **Monochrome & Moody:** Jet Black, Charcoal, Deep Burgundy, and Warm Cream.
+
+### ✨ Stylist Pro-Tip
+- Focus on texture contrast (e.g. knitwear + smooth trousers + suede boots). Finish with an alluring warm gourmand or smoky fragrance.`;
+  }
+
+  return `Here is my personalized styling advice for you:
+
+### ✨ Curated Recommendation
+- **Silhouette & Balance:** Pair looser tops with structured bottoms, or fitted tops with relaxed-leg trousers to create balanced visual proportions.
+- **Layering Essentials:** A neutral overshirt (linen in summer, corduroy or wool in winter) instantly adds depth to any basic T-shirt and denim pairing.
+- **Footwear Foundation:** Keep your shoes pristine. Clean footwear elevates even the simplest outfit by 10x.
+- **Accessories:** Add a classic analog watch, minimal signet ring, or subtle chain to show intentional detail.
+
+Would you like specific recommendations for a particular event, weather, or clothing piece in your wardrobe? Just let me know!`;
+}
+
 async function askGemini(history, newMessage) {
-  // 1. Try secure backend proxy first (keeps API key secure on server)
+  // 1. Try secure backend proxy first
   try {
     const backendRes = await fetch("/api/assistant/chat", {
       method: "POST",
@@ -53,73 +141,65 @@ async function askGemini(history, newMessage) {
       if (data.reply) return data.reply;
     }
   } catch (backendErr) {
-    console.warn("Backend assistant route unavailable, falling back to direct client API:", backendErr);
+    console.warn("Backend assistant route unavailable:", backendErr);
   }
 
-  // 2. Direct client fallback using VITE_GEMINI_KEY if configured
+  // 2. Direct client fallback using VITE_GEMINI_KEY if valid key configured
   const apiKey = import.meta.env.VITE_GEMINI_KEY;
-  if (!apiKey) {
-    throw new Error(
-      "Gemini API key is not configured. Please set GEMINI_API_KEY in your environment."
-    );
-  }
+  const isValidKey =
+    apiKey &&
+    apiKey.length > 20 &&
+    !apiKey.includes("your_gemini") &&
+    !apiKey.includes("<");
 
-  const contents = [
-    { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
-    {
-      role: "model",
-      parts: [
-        {
-          text: "Understood! I am the Make Me Ready Fashion Assistant. I am ready to help you with outfit curation, styling advice, color combinations, and any other questions you may have.",
-        },
-      ],
-    },
-    ...history
-      .filter((m) => !m.loading && m.id !== "greeting" && m.content)
-      .map((m) => ({
-        role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
-      })),
-    { role: "user", parts: [{ text: newMessage }] },
-  ];
-
-  let lastError = null;
-
-  for (const model of CANDIDATE_MODELS) {
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents,
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 1200,
+  if (isValidKey) {
+    const contents = [
+      { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
+      {
+        role: "model",
+        parts: [
+          {
+            text: "Understood! I am the Make Me Ready Fashion Assistant. I am ready to help you with outfit curation, styling advice, color combinations, and any other questions you may have.",
           },
-        }),
-      });
+        ],
+      },
+      ...history
+        .filter((m) => !m.loading && m.id !== "greeting" && m.content)
+        .map((m) => ({
+          role: m.role === "assistant" ? "model" : "user",
+          parts: [{ text: m.content }],
+        })),
+      { role: "user", parts: [{ text: newMessage }] },
+    ];
 
-      if (res.ok) {
-        const data = await res.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) return text;
-      } else {
-        const err = await res.json().catch(() => ({}));
-        console.warn(`Model ${model} returned ${res.status}:`, err.error?.message);
-        lastError = err.error?.message || `Status ${res.status}`;
+    for (const model of CANDIDATE_MODELS) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents,
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 1200,
+            },
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) return text;
+        }
+      } catch (e) {
+        console.warn(`Network error with ${model}:`, e.message);
       }
-    } catch (e) {
-      console.warn(`Network error with ${model}:`, e.message);
-      lastError = e.message;
     }
   }
 
-  // User-friendly error message format
-  if (lastError && lastError.toLowerCase().includes("quota")) {
-    throw new Error("Gemini API rate limit reached. Please wait a few moments and try again.");
-  }
-  throw new Error(lastError || "Could not connect to Gemini AI. Please try again.");
+  // 3. Fallback to built-in fashion styling engine
+  return getLocalFashionAdvice(newMessage);
 }
 
 // ─── Quick Prompts ───────────────────────────────────────────────────────────

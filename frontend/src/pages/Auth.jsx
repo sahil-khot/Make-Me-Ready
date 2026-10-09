@@ -80,7 +80,7 @@ const FormField = ({ label, children, err }) => (
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Quick-login credentials for fast dev/demo access
-const QUICK_CREDENTIALS = { email: "sahil@makemeready.in", password: "Sahil@123" };
+const QUICK_CREDENTIALS = { email: "alex@makemeready.in", password: "Alex@123" };
 
 function Login() {
   const nv = useNavigate();
@@ -210,26 +210,6 @@ function Login() {
       >
         {loading ? "Logging in…" : <>Login <ArrowRight size={16} /></>}
       </button>
-
-      {/* Social divider */}
-      <div className="flex items-center gap-3 text-xs text-mute">
-        <i className="flex-1 h-px bg-line2" />
-        Or continue with
-        <i className="flex-1 h-px bg-line2" />
-      </div>
-      <div className="grid grid-cols-3 gap-3">
-        {["Google", "Apple", "Phone"].map((s) => (
-          <button
-            type="button"
-            key={s}
-            disabled
-            title="Social sign-in coming soon"
-            className="btn-s h-12 rounded-xl text-sm opacity-40 cursor-not-allowed"
-          >
-            {s}
-          </button>
-        ))}
-      </div>
     </form>
   );
 }

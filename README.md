@@ -171,8 +171,8 @@ npm run dev
 
 ### 4. Demo Credentials
 You can log in instantly using the **Quick Login** button on the sign-in page, or enter:
-- **Email**: `sahil@makemeready.in`
-- **Password**: `Sahil@123`
+- **Email**: `alex@makemeready.in`
+- **Password**: `Alex@123`
 
 ---
 

@@ -204,9 +204,9 @@ export function Store({ children }) {
     } catch (err) {
       console.warn("Backend quick-login failed, using instant demo session:", err.message);
       const demoUser = {
-        id: "demo-user-sahil",
-        name: "Sahil Khot",
-        email: "sahil@makemeready.in",
+        id: "64a000000000000000000001",
+        name: "Alex",
+        email: "alex@makemeready.in",
         city: "Mumbai",
         gender: "Male",
         avatar: "",
