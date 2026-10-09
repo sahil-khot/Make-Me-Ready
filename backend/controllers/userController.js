@@ -1,6 +1,7 @@
+import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import { User, WardrobeItem, CatalogItem, Product } from "../models/index.js";
-import { publicUser } from "./authController.js";
+import { publicUser, DEMO_USER } from "./authController.js";
 import { products } from "../../frontend/src/data.js";
 
 const formatImageUrl = (img) => {
@@ -13,38 +14,57 @@ const formatImageUrl = (img) => {
 
 export const getUserState = async (req, res, next) => {
   try {
-    const user = await User.findById(req.auth.sub);
-    if (!user) {
-      return res.status(401).json({ message: "Account not found." });
+    const isDemo = req.auth.sub === DEMO_USER._id || req.auth.sub === "demo-user-sahil";
+    const dbConnected = mongoose.connection?.readyState === 1;
+
+    if (dbConnected && mongoose.Types.ObjectId.isValid(req.auth.sub)) {
+      try {
+        const user = await User.findById(req.auth.sub);
+        if (user) {
+          if (user.profile?.avatar?.includes("534528741775-53994a69daeb")) {
+            user.profile.avatar = "";
+            await user.save();
+          }
+
+          const wardrobe = await WardrobeItem.find({ userId: user._id })
+            .sort({ createdAt: -1 })
+            .lean();
+
+          return res.json({
+            user: publicUser(user),
+            favorites: user.favorites || [],
+            savedLooks: user.savedLooks || [],
+            cart: (user.cart || []).map((line) => ({
+              id: line.productId,
+              name: line.name,
+              price: line.price,
+              img: line.image,
+            })),
+            wardrobe: wardrobe.map((item) => ({
+              id: item._id.toString(),
+              name: item.name,
+              cat: item.cat,
+              tag: item.tag,
+              img: formatImageUrl(item.imageFile),
+            })),
+          });
+        }
+      } catch (err) {
+        console.warn("DB query in getUserState failed:", err.message);
+      }
     }
 
-    if (user.profile?.avatar?.includes("534528741775-53994a69daeb")) {
-      user.profile.avatar = "";
-      await user.save();
+    if (isDemo || !dbConnected) {
+      return res.json({
+        user: publicUser(DEMO_USER),
+        favorites: [],
+        savedLooks: [],
+        cart: [],
+        wardrobe: [],
+      });
     }
 
-    const wardrobe = await WardrobeItem.find({ userId: user._id })
-      .sort({ createdAt: -1 })
-      .lean();
-
-    return res.json({
-      user: publicUser(user),
-      favorites: user.favorites || [],
-      savedLooks: user.savedLooks || [],
-      cart: (user.cart || []).map((line) => ({
-        id: line.productId,
-        name: line.name,
-        price: line.price,
-        img: line.image,
-      })),
-      wardrobe: wardrobe.map((item) => ({
-        id: item._id.toString(),
-        name: item.name,
-        cat: item.cat,
-        tag: item.tag,
-        img: formatImageUrl(item.imageFile),
-      })),
-    });
+    return res.status(401).json({ message: "Account not found." });
   } catch (error) {
     next(error);
   }
@@ -94,6 +114,18 @@ export const updateProfile = async (req, res, next) => {
       return res.status(400).json({ message: "Name cannot be empty." });
     }
 
+    const isDemo = req.auth.sub === DEMO_USER._id || req.auth.sub === "demo-user-sahil";
+    const dbConnected = mongoose.connection?.readyState === 1;
+
+    if (!dbConnected || isDemo) {
+      return res.json({
+        user: {
+          ...publicUser(DEMO_USER),
+          ...updates,
+        },
+      });
+    }
+
     const updateFields = Object.fromEntries(
       Object.entries(updates).map(([key, value]) => [`profile.${key}`, value]),
     );
@@ -121,6 +153,13 @@ export const toggleFavorite = async (req, res, next) => {
       return res.status(400).json({ message: "Favorite ID is required." });
     }
 
+    const isDemo = req.auth.sub === DEMO_USER._id || req.auth.sub === "demo-user-sahil";
+    const dbConnected = mongoose.connection?.readyState === 1;
+
+    if (!dbConnected || isDemo) {
+      return res.json({ favorites: [id] });
+    }
+
     const user = await User.findById(req.auth.sub);
     if (!user) {
       return res.status(404).json({ message: "Account not found." });
@@ -143,6 +182,13 @@ export const toggleSavedLook = async (req, res, next) => {
     const id = String(req.body?.id || "");
     if (!id || id.length > 120) {
       return res.status(400).json({ message: "Look ID is required." });
+    }
+
+    const isDemo = req.auth.sub === DEMO_USER._id || req.auth.sub === "demo-user-sahil";
+    const dbConnected = mongoose.connection?.readyState === 1;
+
+    if (!dbConnected || isDemo) {
+      return res.json({ savedLooks: [id] });
     }
 
     const user = await User.findById(req.auth.sub);
@@ -171,26 +217,43 @@ export const addToCart = async (req, res, next) => {
 
     let productData = null;
 
-    // Try finding in dedicated Product collection first
-    const prodDoc = await Product.findOne({ id: productId }).lean();
-    if (prodDoc) {
-      productData = prodDoc;
-    } else {
-      const catalogItem = await CatalogItem.findOne({
-        type: "products",
-        key: productId,
-      }).lean();
-
-      if (catalogItem) {
-        productData = catalogItem.data;
+    if (mongoose.connection?.readyState === 1) {
+      const prodDoc = await Product.findOne({ id: productId }).lean();
+      if (prodDoc) {
+        productData = prodDoc;
       } else {
-        // Fallback search in products from data.js
-        productData = products.find((p) => p.id === productId);
+        const catalogItem = await CatalogItem.findOne({
+          type: "products",
+          key: productId,
+        }).lean();
+        if (catalogItem) {
+          productData = catalogItem.data;
+        }
       }
     }
 
     if (!productData) {
+      productData = products.find((p) => p.id === productId);
+    }
+
+    if (!productData) {
       return res.status(404).json({ message: "Product not found." });
+    }
+
+    const isDemo = req.auth.sub === DEMO_USER._id || req.auth.sub === "demo-user-sahil";
+    const dbConnected = mongoose.connection?.readyState === 1;
+
+    if (!dbConnected || isDemo) {
+      return res.json({
+        cart: [
+          {
+            id: productData.id,
+            name: productData.name,
+            price: productData.price,
+            img: productData.img,
+          },
+        ],
+      });
     }
 
     const user = await User.findById(req.auth.sub);
@@ -226,6 +289,13 @@ export const addToCart = async (req, res, next) => {
 export const removeFromCart = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const isDemo = req.auth.sub === DEMO_USER._id || req.auth.sub === "demo-user-sahil";
+    const dbConnected = mongoose.connection?.readyState === 1;
+
+    if (!dbConnected || isDemo) {
+      return res.json({ cart: [] });
+    }
+
     const user = await User.findById(req.auth.sub);
     if (!user) {
       return res.status(404).json({ message: "Account not found." });
@@ -249,6 +319,13 @@ export const removeFromCart = async (req, res, next) => {
 
 export const clearCart = async (req, res, next) => {
   try {
+    const isDemo = req.auth.sub === DEMO_USER._id || req.auth.sub === "demo-user-sahil";
+    const dbConnected = mongoose.connection?.readyState === 1;
+
+    if (!dbConnected || isDemo) {
+      return res.json({ cart: [] });
+    }
+
     const user = await User.findById(req.auth.sub);
     if (!user) {
       return res.status(404).json({ message: "Account not found." });
@@ -272,6 +349,14 @@ export const changePassword = async (req, res, next) => {
     if (newPassword.length < 8) {
       return res.status(400).json({ message: "New password must be at least 8 characters long." });
     }
+
+    const isDemo = req.auth.sub === DEMO_USER._id || req.auth.sub === "demo-user-sahil";
+    const dbConnected = mongoose.connection?.readyState === 1;
+
+    if (!dbConnected || isDemo) {
+      return res.json({ message: "Password updated successfully." });
+    }
+
     const user = await User.findById(req.auth.sub).select("+passwordHash");
     if (!user) {
       return res.status(404).json({ message: "User not found." });

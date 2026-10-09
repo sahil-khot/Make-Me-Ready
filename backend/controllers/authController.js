@@ -1,9 +1,29 @@
+import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
 import { User } from "../models/index.js";
 
 const emailPattern = /^\S+@\S+\.\S+$/;
+
+export const DEMO_USER = {
+  _id: "64a000000000000000000001",
+  id: "64a000000000000000000001",
+  email: "sahil@makemeready.in",
+  profile: {
+    name: "Sahil Khot",
+    city: "Mumbai",
+    gender: "Male",
+    avatar: "",
+    styles: ["Casual", "Minimal"],
+    occasions: ["Office / Work", "Party"],
+    brands: ["NIKE", "adidas"],
+    pantsSize: "32",
+    shirtSize: "L",
+    shoeSize: "UK 9",
+    tagline: "Style that completes you.",
+  },
+};
 
 export const publicUser = (user) => {
   if (!user) return null;
@@ -20,9 +40,11 @@ export const publicUser = (user) => {
 };
 
 export const makeSession = (user) => ({
-  token: jwt.sign({ sub: (user._id || user.id).toString() }, env.JWT_SECRET, {
-    expiresIn: "7d",
-  }),
+  token: jwt.sign(
+    { sub: (user._id || user.id || DEMO_USER._id).toString() },
+    env.JWT_SECRET,
+    { expiresIn: "7d" },
+  ),
   user: publicUser(user),
 });
 
@@ -43,6 +65,13 @@ export const register = async (req, res, next) => {
       return res
         .status(400)
         .json({ message: "Password must be at least 8 characters." });
+    }
+
+    if (mongoose.connection?.readyState !== 1) {
+      return res.status(503).json({
+        message:
+          "Database is currently unavailable. Please verify your MongoDB Atlas connection string in Vercel settings, or click Quick Login to explore immediately.",
+      });
     }
 
     const exists = await User.exists({ email: normalizedEmail });
@@ -81,6 +110,22 @@ export const login = async (req, res, next) => {
         .json({ message: "Email and password are required." });
     }
 
+    // Demo account fallback if database is offline or connecting
+    if (
+      normalizedEmail === "sahil@makemeready.in" &&
+      password === "Sahil@123" &&
+      mongoose.connection?.readyState !== 1
+    ) {
+      return res.json(makeSession(DEMO_USER));
+    }
+
+    if (mongoose.connection?.readyState !== 1) {
+      return res.status(503).json({
+        message:
+          "Database connection is not ready. Please use Quick Login or verify your MongoDB Atlas connection string in Vercel settings.",
+      });
+    }
+
     const user = await User.findOne({ email: normalizedEmail }).select(
       "+passwordHash",
     );
@@ -103,6 +148,14 @@ export const login = async (req, res, next) => {
 
 export const getMe = async (req, res, next) => {
   try {
+    if (
+      req.auth.sub === DEMO_USER._id ||
+      req.auth.sub === "demo-user-sahil" ||
+      mongoose.connection?.readyState !== 1
+    ) {
+      return res.json({ user: publicUser(DEMO_USER) });
+    }
+
     const user = await User.findById(req.auth.sub);
     if (!user) {
       return res.status(404).json({ message: "Account not found." });
@@ -117,28 +170,32 @@ export const quickLogin = async (req, res, next) => {
   try {
     const demoEmail = "sahil@makemeready.in";
     const demoPassword = "Sahil@123";
-    let user = await User.findOne({ email: demoEmail });
 
-    if (!user) {
-      const passwordHash = await bcrypt.hash(demoPassword, 12);
-      user = await User.create({
-        email: demoEmail,
-        passwordHash,
-        profile: {
-          name: "Sahil Khot",
-          city: "Mumbai",
-          gender: "Male",
-          avatar: "",
-        },
-      });
-    } else if (user.profile?.avatar?.includes("534528741775-53994a69daeb")) {
-      user.profile.avatar = "";
-      await user.save();
+    if (mongoose.connection?.readyState === 1) {
+      try {
+        let user = await User.findOne({ email: demoEmail });
+
+        if (!user) {
+          const passwordHash = await bcrypt.hash(demoPassword, 12);
+          user = await User.create({
+            email: demoEmail,
+            passwordHash,
+            profile: DEMO_USER.profile,
+          });
+        } else if (user.profile?.avatar?.includes("534528741775-53994a69daeb")) {
+          user.profile.avatar = "";
+          await user.save();
+        }
+
+        return res.json(makeSession(user));
+      } catch (dbErr) {
+        console.warn("DB query in quickLogin failed, falling back to demo user:", dbErr.message);
+      }
     }
 
-    return res.json(makeSession(user));
+    // Always succeed seamlessly with demo session
+    return res.json(makeSession(DEMO_USER));
   } catch (error) {
     next(error);
   }
 };
-

@@ -10,6 +10,10 @@ const authLimiter = rateLimit({
   limit: 50,
   standardHeaders: "draft-7",
   legacyHeaders: false,
+  validate: {
+    trustProxy: false,
+    xForwardedForHeader: false,
+  },
 });
 
 router.post("/register", authLimiter, register);

@@ -16,6 +16,7 @@ let databaseReady = false;
 let databaseMessage = "Connecting to database...";
 
 app.disable("x-powered-by");
+app.set("trust proxy", 1);
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
 // Permissive and secure CORS for local dev, Vercel preview domains, and configured origin

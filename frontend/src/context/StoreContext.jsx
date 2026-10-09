@@ -128,6 +128,7 @@ export function Store({ children }) {
   // Sync state with backend when authenticated
   useEffect(() => {
     if (!token) return;
+    if (token.startsWith("demo_token_")) return;
     let isMounted = true;
 
     apiRequest("/api/state", { auth: true })
