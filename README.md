@@ -204,14 +204,33 @@ Vercel detects the configuration from [`vercel.json`](file:///vercel.json) autom
 ### Step 4: Add Environment Variables in Vercel
 In the Vercel project deployment screen, open **Environment Variables** and add the following keys:
 
-| Variable Name | Value Description | Example / Note |
-|---|---|---|
-| `MONGODB_URI` | **MongoDB Atlas connection URI** | `mongodb+srv://user:pass@cluster.mongodb.net/make_me_ready?retryWrites=true&w=majority`<br>*Important:* Ensure Network Access in MongoDB Atlas allows `0.0.0.0/0` (Anywhere) so Vercel serverless IPs can connect. |
-| `JWT_SECRET` | Strong secret for auth tokens | Minimum 32 random characters |
-| `GEMINI_API_KEY` | Google Gemini API key (server) | Free from [Google AI Studio](https://aistudio.google.com/) |
-| `GEMINI_MODEL` | Gemini model ID | `gemini-3.5-flash-lite` |
-| `VITE_GEMINI_KEY` | Client Gemini fallback key | Same Gemini API key |
-| `CLIENT_ORIGIN` | Allowed CORS origins | `*` (or your production Vercel URL) |
+| Variable Name | Required | Description | Example / Note |
+|---|---|---|---|
+| `MONGODB_URI` | **Yes** | MongoDB Atlas connection string | `mongodb+srv://<username>:<password>@cluster0.mongodb.net/make_me_ready?retryWrites=true&w=majority` |
+| `JWT_SECRET` | **Yes** | Auth token signing secret | Minimum 32 random characters |
+| `GEMINI_API_KEY` | **Yes** | Google Gemini API key (AI Stylist backend) | Free from [Google AI Studio](https://aistudio.google.com/) |
+| `GEMINI_MODEL` | Optional | Gemini model identifier | `gemini-3.5-flash-lite` (default) |
+| `VITE_GEMINI_KEY` | Optional | Client Gemini fallback key | Same Gemini API key |
+| `CLIENT_ORIGIN` | Optional | Allowed CORS origins | `*` (or your production domain) |
+
+#### 📋 Quick Copy-Paste for Vercel
+You can paste these directly into Vercel's Environment Variables interface:
+
+```env
+MONGODB_URI=mongodb+srv://<db_user>:<db_password>@<cluster-host>/make_me_ready?retryWrites=true&w=majority
+JWT_SECRET=super_secret_make_me_ready_jwt_token_key_production_2026_xyz
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_MODEL=gemini-3.5-flash-lite
+VITE_GEMINI_KEY=your_gemini_api_key_here
+CLIENT_ORIGIN=*
+```
+
+> [!IMPORTANT]
+> **MongoDB Atlas Network Access:**
+> Because Vercel serverless functions run on dynamic cloud IPs, you **must** allow access from anywhere in MongoDB Atlas:
+> 1. Go to **MongoDB Atlas** > **Network Access**.
+> 2. Click **Add IP Address**.
+> 3. Select **Allow Access from Anywhere** (`0.0.0.0/0`) and click **Confirm**.
 
 ### Step 5: Click Deploy
 Click **Deploy**. Vercel will install dependencies, compile the Vite React frontend into `frontend/dist`, package `api/index.js` as serverless functions, and assign your production URL (e.g., `https://make-me-ready.vercel.app`).

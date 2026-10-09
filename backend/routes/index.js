@@ -7,6 +7,15 @@ import wardrobeRoutes from "./wardrobeRoutes.js";
 
 const router = Router();
 
+router.get("/", (_req, res) => {
+  res.json({
+    name: "Make Me Ready API",
+    status: "online",
+    version: "1.0.0",
+    health: "/api/health",
+  });
+});
+
 router.use("/auth", authRoutes);
 router.use("/assistant", assistantRoutes);
 router.use("/catalog", catalogRoutes);
