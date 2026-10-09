@@ -443,7 +443,7 @@ export default function Auth({ mode }) {
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-black/20" />
 
         <div className="relative">
-          <Logo />
+          <Logo size={52} big />
         </div>
 
         <div className="relative max-w-lg">
@@ -518,7 +518,7 @@ export default function Auth({ mode }) {
         <div className="m-auto w-full max-w-[560px] card p-6 md:p-10 bg-card/80 mt-6 mb-6 animate-up">
           <div className="text-center mb-6">
             <div className="flex justify-center">
-              <Logo text={!reg} big size={reg ? 36 : 44} />
+              <Logo text={!reg} big size={reg ? 48 : 56} />
             </div>
             {reg ? (
               <>

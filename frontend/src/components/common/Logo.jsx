@@ -1,15 +1,21 @@
-export const Logo = ({ size = 34, text = true, big = false }) => (
-  <div className="flex items-center gap-2.5">
+export const Logo = ({ size = 42, text = true, big = false, className = "" }) => (
+  <div className={`flex items-center gap-3 select-none ${className}`}>
     <img
-      src="/img/logo.jpg"
-      alt="Make Me Ready"
+      src="/MMR LOGO.png"
+      alt="Make Me Ready Logo"
       width={size}
       height={size}
-      style={{ width: size, height: size, borderRadius: "50%", objectFit: "cover" }}
+      className="object-contain shrink-0 rounded-xl drop-shadow-[0_2px_8px_rgba(245,158,11,0.2)]"
+      style={{
+        width: size,
+        height: size,
+      }}
     />
     {text && (
       <span
-        className={`font-serif font-semibold ${big ? "text-3xl" : "text-lg"}`}
+        className={`font-serif font-bold tracking-tight text-white whitespace-nowrap ${
+          big ? "text-2xl sm:text-3xl" : "text-lg sm:text-xl"
+        }`}
       >
         Make Me Ready
       </span>

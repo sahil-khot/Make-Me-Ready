@@ -704,22 +704,22 @@ export default function Shopping() {
       {/* ── Promotional Luxury Banners ── */}
       <div className="grid md:grid-cols-3 gap-5 mt-10">
         {[
-          ["Flat 40% OFF", "On Designer Dresses & Tops", "w-dress-1", "Women"],
-          ["Up to 30% OFF", "On Handcrafted Footwear", "w-footwear-1", "Women"],
-          ["Flat 25% OFF", "On Luxury Jewelry & Accs", "w-jewel-1", "Women"],
-        ].map(([title, desc, imKey, targetGender], i) => (
+          ["Flat 40% OFF", "On Designer Dresses & Tops", "/wardrobe/dress 1.png", "Women"],
+          ["Up to 30% OFF", "On Handcrafted Footwear", "/wardrobe/footware 1.png", "Women"],
+          ["Flat 25% OFF", "On Luxury Jewelry & Accs", "/wardrobe/j1.png", "Women"],
+        ].map(([title, desc, imgSrc, targetGender], i) => (
           <div
             key={title}
             className="relative overflow-hidden rounded-2xl border border-white/[.08] p-6 min-h-[170px] bg-gradient-to-r from-amber-500/10 to-[#121212]"
           >
             <img
-              src={IMG[imKey] || getImg(imKey) || "/img/hero-luxury.jpg"}
-              alt=""
+              src={imgSrc}
+              alt={title}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = "/img/hero-luxury.jpg";
               }}
-              className="absolute right-0 inset-y-0 w-1/2 h-full object-cover opacity-60 pointer-events-none"
+              className="absolute right-0 inset-y-0 w-1/2 h-full object-contain p-2 opacity-80 pointer-events-none"
             />
             <div className="relative z-10">
               <div className={`font-serif text-2xl font-bold ${i === 2 ? "text-amber-400" : "text-white"}`}>

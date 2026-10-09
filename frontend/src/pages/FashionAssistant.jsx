@@ -526,9 +526,9 @@ export default function FashionAssistant() {
                   {/* Brand Crown Avatar */}
                   <div className="w-10 h-10 rounded-full border border-amber-500/50 bg-[#161410] flex items-center justify-center shrink-0 p-1 shadow-md shadow-amber-500/10">
                     <img
-                      src="/img/logo.jpg"
+                      src="/MMR LOGO.png"
                       alt="Make Me Ready"
-                      className="w-full h-full rounded-full object-cover"
+                      className="w-full h-full rounded-full object-contain"
                     />
                   </div>
 

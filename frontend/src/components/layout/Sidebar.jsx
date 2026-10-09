@@ -100,8 +100,8 @@ export function Sidebar({ open, close }) {
         }}
       >
         {/* Header with Logo */}
-        <div className="h-[72px] px-4 sm:px-5 flex items-center border-b border-white/[.08] shrink-0">
-          <Logo size={32} />
+        <div className="h-[76px] px-4 sm:px-5 flex items-center border-b border-white/[.08] shrink-0">
+          <Logo size={44} />
         </div>
 
         {/* Navigation Items */}

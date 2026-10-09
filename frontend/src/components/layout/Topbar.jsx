@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, Search, Bell, ChevronDown, ShoppingCart } from "lucide-react";
+import { Menu, Search, ChevronDown, ShoppingCart } from "lucide-react";
 import { useStore } from "../../context/StoreContext.jsx";
 import { occasions } from "../../data.js";
 import { IMG, getUserAvatar } from "../../data/constants.js";
+import { Logo } from "../common/Logo.jsx";
 
 export function Topbar({ menu }) {
   const { user, logout, cart = [] } = useStore();
@@ -23,14 +24,17 @@ export function Topbar({ menu }) {
 
   return (
     <header className="h-[68px] flex items-center gap-4 px-4 md:px-6 xl:px-8 relative z-20">
-      <button
-        type="button"
-        aria-label="Menu"
-        className="lg:hidden text-white"
-        onClick={menu}
-      >
-        <Menu size={22} />
-      </button>
+      <div className="flex items-center gap-2 lg:hidden">
+        <button
+          type="button"
+          aria-label="Menu"
+          className="text-white p-1"
+          onClick={menu}
+        >
+          <Menu size={22} />
+        </button>
+        <Logo size={36} text={false} />
+      </div>
 
       <div className="relative flex-1 max-w-[620px]">
         <label className="sr-only" htmlFor="gs">
@@ -85,15 +89,6 @@ export function Topbar({ menu }) {
               {cart.length}
             </span>
           )}
-        </button>
-
-        <button
-          type="button"
-          aria-label="Notifications"
-          className="relative grid place-items-center w-10 h-10 rounded-full border border-line bg-card text-mute hover:text-white"
-        >
-          <Bell size={17} />
-          <i className="absolute top-2 right-2.5 w-1.5 h-1.5 rounded-full bg-acc" />
         </button>
 
         <div className="relative">
