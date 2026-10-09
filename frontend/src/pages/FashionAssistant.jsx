@@ -546,14 +546,12 @@ export default function FashionAssistant() {
               // Assistant Message
               return (
                 <div key={msg.id} className="flex items-start gap-3.5">
-                  {/* Brand Crown Avatar */}
-                  <div className="w-10 h-10 rounded-full border border-amber-500/50 bg-[#161410] flex items-center justify-center shrink-0 p-1 shadow-md shadow-amber-500/10">
-                    <img
-                      src="/MMR LOGO.png"
-                      alt="Make Me Ready"
-                      className="w-full h-full rounded-full object-contain"
-                    />
-                  </div>
+                  {/* Brand Crown Avatar - Single big prominent circle */}
+                  <img
+                    src="/MMR LOGO.png"
+                    alt="Make Me Ready"
+                    className="w-12 h-12 rounded-full object-contain shrink-0 shadow-lg shadow-amber-500/20"
+                  />
 
                   {/* Bubble Container */}
                   <div className="max-w-[85%] lg:max-w-[82%] bg-[#181613] border border-white/[.07] rounded-2xl rounded-tl-sm px-5 py-4 text-[15px] text-stone-200 leading-relaxed shadow-lg">
