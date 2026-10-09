@@ -4,6 +4,7 @@ node_modules/
 # Production build outputs
 dist/
 frontend/dist/
+.vercel/
 
 # Environment files (protect secrets)
 .env

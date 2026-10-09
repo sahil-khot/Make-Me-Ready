@@ -7,6 +7,17 @@ import { getGridFSBucket } from "../config/db.js";
 const publicImgDir = fileURLToPath(
   new URL("../../frontend/public/img/", import.meta.url),
 );
+const distImgDir = fileURLToPath(
+  new URL("../../frontend/dist/img/", import.meta.url),
+);
+
+const getLocalImagePath = (filename) => {
+  const pPath = join(publicImgDir, filename);
+  if (existsSync(pPath)) return pPath;
+  const dPath = join(distImgDir, filename);
+  if (existsSync(dPath)) return dPath;
+  return null;
+};
 
 const mimeTypes = {
   jpg: "image/jpeg",
@@ -41,9 +52,9 @@ export const sendImage = async (req, res, next) => {
       }
     }
 
-    // 2. Fallback to local static images in frontend/public/img
-    const localPath = join(publicImgDir, filename);
-    if (existsSync(localPath)) {
+    // 2. Fallback to local static images
+    const localPath = getLocalImagePath(filename);
+    if (localPath) {
       res.set("Content-Type", contentType);
       res.set("Cache-Control", "public, max-age=31536000, immutable");
       return createReadStream(localPath).pipe(res);
@@ -52,8 +63,8 @@ export const sendImage = async (req, res, next) => {
     return res.status(404).json({ message: "Image not found." });
   } catch (error) {
     // If GridFS failed, try local file fallback
-    const localPath = join(publicImgDir, filename);
-    if (existsSync(localPath)) {
+    const localPath = getLocalImagePath(filename);
+    if (localPath) {
       res.set("Content-Type", contentType);
       res.set("Cache-Control", "public, max-age=31536000, immutable");
       return createReadStream(localPath).pipe(res);

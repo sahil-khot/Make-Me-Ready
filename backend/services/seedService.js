@@ -219,3 +219,24 @@ export async function seedCatalog() {
   }
 }
 
+let hasSeeded = false;
+let seedingPromise = null;
+
+export async function seedCatalogOnce() {
+  if (hasSeeded) return;
+  if (seedingPromise) return seedingPromise;
+
+  seedingPromise = (async () => {
+    try {
+      await seedCatalog();
+      hasSeeded = true;
+    } catch (err) {
+      console.warn("Seeding catalog encountered error:", err.message);
+    } finally {
+      seedingPromise = null;
+    }
+  })();
+
+  return seedingPromise;
+}
+

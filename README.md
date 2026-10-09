@@ -27,14 +27,18 @@ Make Me Ready is a comprehensive full-stack fashion curation and wardrobe intell
 
 ```
 Make-Me-Ready/
+├── api/
+│   └── index.js                   # Vercel Serverless Function entrypoint
 ├── backend/                       # Express.js REST API
 │   ├── .env                       # Backend environment configuration (git-ignored)
 │   ├── .env.example               # Backend template with instructions
-│   ├── index.js                   # Application entrypoint & HTTP server
+│   ├── app.js                     # Express application definition & route assembly
+│   ├── index.js                   # Standalone HTTP server for local development
 │   ├── config/
-│   │   ├── db.js                  # Mongoose connection & GridFS bucket setup
+│   │   ├── db.js                  # Mongoose connection (serverless cached) & GridFS bucket setup
 │   │   └── env.js                 # Environment variables loader
 │   ├── controllers/
+│   │   ├── assistantController.js # AI Stylist chat endpoint (gemini-3.5-flash-lite)
 │   │   ├── authController.js      # User registration, authentication & quick login
 │   │   ├── catalogController.js   # Occasions, looks, products & configuration
 │   │   ├── userController.js      # User state, profile, cart, favorites & looks
@@ -52,6 +56,7 @@ Make-Me-Ready/
 │   │   ├── Config.js              # App configuration schema
 │   │   └── CatalogItem.js         # Polymorphic catalog compatibility schema
 │   ├── routes/
+│   │   ├── assistantRoutes.js     # /api/assistant routes
 │   │   ├── authRoutes.js          # /api/auth routes
 │   │   ├── catalogRoutes.js       # /api/catalog routes
 │   │   ├── userRoutes.js          # /api/state, /api/profile, /api/cart routes
@@ -98,6 +103,7 @@ Make-Me-Ready/
 │       │   └── Profile.jsx        # Style profile, measurements & security
 │       └── ui.jsx                 # UI component exports (Layout, Hero, Modal, etc.)
 │
+├── vercel.json                    # Vercel deployment & serverless routing configuration
 ├── package.json                   # Root monorepo scripts & dependencies
 └── README.md
 ```
@@ -167,6 +173,50 @@ npm run dev
 You can log in instantly using the **Quick Login** button on the sign-in page, or enter:
 - **Email**: `sahil@makemeready.in`
 - **Password**: `Sahil@123`
+
+---
+
+## 🚀 Deploying to Vercel (Frontend & Backend)
+
+Make Me Ready is configured for **zero-friction single-project fullstack deployment on Vercel**. With [`vercel.json`](file:///vercel.json) and [`api/index.js`](file:///api/index.js), the frontend is built into static edge assets and the Express backend runs automatically as high-performance Serverless Functions under the same domain.
+
+### Step 1: Push your latest code to GitHub
+Make sure all your changes are committed and pushed to your GitHub repository:
+```bash
+git add .
+git commit -m "feat: configure fullstack vercel deployment"
+git push origin main
+```
+
+### Step 2: Import Project on Vercel
+1. Log in to your [Vercel Dashboard](https://vercel.com/dashboard).
+2. Click **Add New...** > **Project**.
+3. Import your **`sahil-khot/Make-Me-Ready`** repository.
+
+### Step 3: Configure Build & Project Settings
+Vercel detects the configuration from [`vercel.json`](file:///vercel.json) automatically:
+- **Framework Preset**: Vite / Other
+- **Root Directory**: `./` (Leave as default project root)
+- **Build Command**: `npm run build`
+- **Output Directory**: `frontend/dist`
+- **Install Command**: `npm install`
+
+### Step 4: Add Environment Variables in Vercel
+In the Vercel project deployment screen, open **Environment Variables** and add the following keys:
+
+| Variable Name | Value Description | Example / Note |
+|---|---|---|
+| `MONGODB_URI` | **MongoDB Atlas connection URI** | `mongodb+srv://user:pass@cluster.mongodb.net/make_me_ready?retryWrites=true&w=majority`<br>*Important:* Ensure Network Access in MongoDB Atlas allows `0.0.0.0/0` (Anywhere) so Vercel serverless IPs can connect. |
+| `JWT_SECRET` | Strong secret for auth tokens | Minimum 32 random characters |
+| `GEMINI_API_KEY` | Google Gemini API key (server) | Free from [Google AI Studio](https://aistudio.google.com/) |
+| `GEMINI_MODEL` | Gemini model ID | `gemini-3.5-flash-lite` |
+| `VITE_GEMINI_KEY` | Client Gemini fallback key | Same Gemini API key |
+| `CLIENT_ORIGIN` | Allowed CORS origins | `*` (or your production Vercel URL) |
+
+### Step 5: Click Deploy
+Click **Deploy**. Vercel will install dependencies, compile the Vite React frontend into `frontend/dist`, package `api/index.js` as serverless functions, and assign your production URL (e.g., `https://make-me-ready.vercel.app`).
+
+Both the frontend and all `/api/*` endpoints (authentication, catalog, wardrobe, cart, AI assistant) will run together seamlessly on your Vercel domain!
 
 ---
 

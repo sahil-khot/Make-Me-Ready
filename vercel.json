@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "frontend/dist",
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 15,
+      "memory": 1024
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/health",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/img/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
