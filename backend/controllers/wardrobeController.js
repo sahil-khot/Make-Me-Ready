@@ -9,6 +9,14 @@ const extensionMap = {
   "image/gif": "gif",
 };
 
+const formatImageUrl = (img) => {
+  if (!img) return "/img/white-shirt.jpg";
+  if (img.startsWith("http://") || img.startsWith("https://") || img.startsWith("/")) {
+    return img;
+  }
+  return `/img/${encodeURIComponent(img)}`;
+};
+
 export const addWardrobeItem = async (req, res, next) => {
   try {
     const name = String(req.body?.name || "").trim();
@@ -38,6 +46,8 @@ export const addWardrobeItem = async (req, res, next) => {
           stream.end(req.file.buffer);
         });
       }
+    } else if (req.body?.imageFile || req.body?.img) {
+      imageFile = String(req.body.imageFile || req.body.img).trim();
     }
 
     const item = await WardrobeItem.create({
@@ -60,7 +70,7 @@ export const addWardrobeItem = async (req, res, next) => {
         brand: item.brand,
         color: item.color,
         size: item.size,
-        img: `/img/${encodeURIComponent(item.imageFile)}`,
+        img: formatImageUrl(item.imageFile),
       },
     });
   } catch (error) {
@@ -83,7 +93,7 @@ export const getWardrobeItems = async (req, res, next) => {
         brand: item.brand,
         color: item.color,
         size: item.size,
-        img: `/img/${encodeURIComponent(item.imageFile)}`,
+        img: formatImageUrl(item.imageFile),
       })),
     });
   } catch (error) {

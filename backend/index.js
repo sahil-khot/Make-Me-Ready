@@ -39,11 +39,11 @@ app.get("/api/health", (_req, res) =>
 app.get("/img/:filename", sendImage);
 app.get("/api/images/:filename", sendImage);
 
-const wardrobeDir = fileURLToPath(
-  new URL("../frontend/public/wardrobe", import.meta.url),
+const publicDir = fileURLToPath(
+  new URL("../frontend/public", import.meta.url),
 );
-if (existsSync(wardrobeDir)) {
-  app.use("/wardrobe", express.static(wardrobeDir));
+if (existsSync(publicDir)) {
+  app.use(express.static(publicDir));
 }
 
 // Main API routes

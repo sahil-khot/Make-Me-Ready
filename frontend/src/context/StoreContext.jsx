@@ -319,6 +319,16 @@ export function Store({ children }) {
     setCart((prev) =>
       prev.filter((item) => (item.id || item.productId) !== productId)
     );
+    if (token) {
+      try {
+        await apiRequest(`/api/cart/${encodeURIComponent(productId)}`, {
+          method: "DELETE",
+          auth: true,
+        });
+      } catch (err) {
+        console.warn("Cart remove remote note:", err.message);
+      }
+    }
   };
 
   const isInCart = (productId) => {
@@ -326,9 +336,19 @@ export function Store({ children }) {
     return cart.some((item) => (item.id || item.productId) === productId);
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
     setCart([]);
     localStorage.setItem("mmr_cart", JSON.stringify([]));
+    if (token) {
+      try {
+        await apiRequest("/api/cart", {
+          method: "DELETE",
+          auth: true,
+        });
+      } catch (err) {
+        console.warn("Cart clear remote note:", err.message);
+      }
+    }
   };
 
   const addToWardrobe = async (product) => {

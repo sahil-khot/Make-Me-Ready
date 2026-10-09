@@ -13,6 +13,7 @@ import {
   Wand2,
   Calendar,
   Layers,
+  Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Hero, Section, Modal } from "../ui.jsx";
@@ -271,6 +272,59 @@ export default function Recommendations() {
   const [searchQuery, setSearchQuery] = useState("");
   const [modalLook, setModalLook] = useState(null);
   const [aiModal, setAiModal] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+  const [savingId, setSavingId] = useState(null);
+
+  const triggerToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(""), 3000);
+  };
+
+  const handleSaveRecommendation = (l) => {
+    if (!l) return;
+    // Check if already saved to prevent duplicate saves
+    if (saved.includes(l.id)) {
+      triggerToast(`"${l.title}" is already in your Saved Looks`);
+      return;
+    }
+
+    setSavingId(l.id);
+
+    try {
+      // 1. Package complete outfit object with all details
+      const lookToSave = {
+        id: l.id,
+        title: l.title,
+        img: l.img,
+        image: l.img,
+        occ: l.occ || "Casual",
+        category: l.occ || "Casual",
+        tags: l.tags || [],
+        matchScore: l.matchScore || 94,
+        matchPercentage: l.matchScore || 94,
+        style: l.tags?.[0] || "Curated",
+        summary: l.desc || `${l.title} - curated style recommendation.`,
+        gender: (l.gender || (isWomenLook(l) ? "Women" : "Men")),
+        pieces: l.pieces || [],
+        savedAt: new Date().toISOString(),
+      };
+
+      // 2. Persist to mmr_custom_looks in localStorage for SavedLooks page
+      const existing = JSON.parse(localStorage.getItem("mmr_custom_looks") || "[]");
+      const updated = [lookToSave, ...existing.filter((item) => item.id !== l.id)];
+      localStorage.setItem("mmr_custom_looks", JSON.stringify(updated.slice(0, 60)));
+      window.dispatchEvent(new Event("storage"));
+
+      // 3. Save ID in StoreContext
+      toggleSave(l.id);
+      triggerToast(`✓ "${l.title}" saved to your Saved Looks!`);
+    } catch (err) {
+      console.warn("Error saving recommendation look:", err);
+      triggerToast(`Could not save "${l.title}"`);
+    } finally {
+      setTimeout(() => setSavingId(null), 300);
+    }
+  };
 
   const isMenLook = (l) => {
     if (!l) return false;
@@ -536,21 +590,25 @@ export default function Recommendations() {
                     {/* Top Right Save Button */}
                     <button
                       type="button"
-                      aria-label="Save Look"
+                      aria-label={isSaved ? "Saved to your looks" : "Save this Look"}
                       onClick={(e) => {
                         e.stopPropagation();
-                        toggleSave(l.id);
+                        handleSaveRecommendation(l);
                       }}
                       className={`absolute top-2.5 right-2.5 grid place-items-center w-8 h-8 rounded-full backdrop-blur-md transition-all z-10 ${
                         isSaved
-                          ? "bg-amber-500 text-black shadow-lg shadow-amber-500/30 scale-110"
-                          : "bg-black/70 text-white/80 hover:text-amber-400 hover:bg-black/90 border border-white/10"
+                          ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 cursor-default"
+                          : "bg-black/70 text-white/80 hover:text-amber-400 hover:bg-black/90 border border-white/10 cursor-pointer"
                       }`}
                     >
-                      <HeartIcon
-                        size={15}
-                        className={isSaved ? "fill-black text-black" : "text-white"}
-                      />
+                      {isSaved ? (
+                        <Check size={14} className="text-white" />
+                      ) : (
+                        <HeartIcon
+                          size={15}
+                          className="text-white"
+                        />
+                      )}
                     </button>
 
                     {/* Hover Quick View Trigger */}
@@ -588,22 +646,47 @@ export default function Recommendations() {
                     {/* Card Actions */}
                     <div className="pt-2 border-t border-white/[.06] flex items-center justify-between gap-2">
                       <button
-                        onClick={() => nv(`/create-outfit?occ=${l.occ}`)}
-                        className="flex-1 py-2 px-3 rounded-xl bg-white/5 hover:bg-amber-500 hover:text-black text-xs font-semibold text-stone-300 hover:font-bold transition flex items-center justify-center gap-1.5"
+                        type="button"
+                        disabled={isSaved || savingId === l.id}
+                        onClick={() => handleSaveRecommendation(l)}
+                        className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5 ${
+                          isSaved
+                            ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 cursor-default font-bold"
+                            : savingId === l.id
+                            ? "bg-amber-500/20 text-amber-400 border border-amber-500/30 cursor-wait"
+                            : "bg-white/5 hover:bg-amber-500 hover:text-black text-stone-300 hover:font-bold border border-transparent cursor-pointer"
+                        }`}
+                        title={isSaved ? "Saved to your Saved Looks" : "Save this Look to Saved Looks"}
                       >
-                        <Wand2 size={13} />
-                        <span>Try in Studio</span>
+                        {isSaved ? (
+                          <>
+                            <Check size={13} className="text-emerald-400" />
+                            <span>Saved</span>
+                          </>
+                        ) : savingId === l.id ? (
+                          <>
+                            <Loader2 size={13} className="animate-spin text-amber-400" />
+                            <span>Saving...</span>
+                          </>
+                        ) : (
+                          <>
+                            <HeartIcon size={13} />
+                            <span>Save this Look</span>
+                          </>
+                        )}
                       </button>
                       <button
-                        onClick={() => toggleSave(l.id)}
+                        type="button"
+                        onClick={() => handleSaveRecommendation(l)}
+                        disabled={isSaved}
                         className={`p-2 rounded-xl border transition ${
                           isSaved
-                            ? "bg-amber-500/15 text-amber-400 border-amber-500/40"
-                            : "border-white/10 text-stone-400 hover:text-white hover:border-white/20"
+                            ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30 cursor-default"
+                            : "border-white/10 text-stone-400 hover:text-white hover:border-white/20 cursor-pointer"
                         }`}
                         title={isSaved ? "Saved to your looks" : "Save look"}
                       >
-                        {isSaved ? <Check size={14} /> : <HeartIcon size={14} />}
+                        {isSaved ? <Check size={14} className="text-emerald-400" /> : <HeartIcon size={14} />}
                       </button>
                     </div>
                   </div>
@@ -857,22 +940,26 @@ export default function Recommendations() {
                   </p>
                 </div>
                 <button
-                  onClick={() => toggleSave(modalLook.id)}
+                  type="button"
+                  onClick={() => handleSaveRecommendation(modalLook)}
+                  disabled={saved.includes(modalLook.id)}
                   className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
                     saved.includes(modalLook.id)
-                      ? "bg-acc text-black shadow-md"
-                      : "btn-o"
+                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-default font-bold"
+                      : "btn-o cursor-pointer"
                   }`}
                 >
-                  <HeartIcon
-                    size={14}
-                    className={
-                      saved.includes(modalLook.id) ? "fill-black" : "text-acc"
-                    }
-                  />
-                  <span>
-                    {saved.includes(modalLook.id) ? "Saved in Wardrobe" : "Save Look"}
-                  </span>
+                  {saved.includes(modalLook.id) ? (
+                    <>
+                      <Check size={14} className="text-emerald-400" />
+                      <span>Saved</span>
+                    </>
+                  ) : (
+                    <>
+                      <HeartIcon size={14} className="text-acc" />
+                      <span>Save this Look</span>
+                    </>
+                  )}
                 </button>
               </div>
 
@@ -946,6 +1033,13 @@ export default function Recommendations() {
           </button>
         </div>
       </Modal>
+
+      {/* ── Toast Alert Banner ── */}
+      {toastMsg && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#141414] border border-amber-500/40 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 animate-bounce">
+          <span>{toastMsg}</span>
+        </div>
+      )}
     </div>
   );
 }

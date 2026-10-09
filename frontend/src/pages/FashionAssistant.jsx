@@ -17,10 +17,10 @@ import { IMG } from "../data/constants.js";
 
 // ─── Gemini Models & Fallback ────────────────────────────────────────────────
 const CANDIDATE_MODELS = [
-  "gemini-3.7-flash",
-  "gemini-3.5-flash",
-  "gemini-flash-lite-latest",
-  "gemini-3-flash-preview",
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+  "gemini-2.5-flash-lite",
 ];
 
 const SYSTEM_PROMPT = `You are the personal Fashion Assistant for "Make Me Ready", an AI-powered styling and wardrobe management platform.

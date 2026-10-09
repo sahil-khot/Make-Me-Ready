@@ -1,128 +1,233 @@
-# Make Me Ready 👔👗
+# Make Me Ready 👔👗✨
 
-> **Style That Completes You.**
+> **Personalized AI Styling & Digital Wardrobe Platform**
 
-A full-stack AI-driven personal stylist and wardrobe management platform built with React, Vite, Express, and MongoDB.
+Make Me Ready is a comprehensive full-stack fashion curation and wardrobe intelligence application built with **React 18 + Vite**, **Express.js**, and **MongoDB**. It pairs digital wardrobe management with AI styling intelligence (powered by Google Gemini), occasion-based outfit generation, curated luxury shopping, and a seamless checkout experience.
 
 ---
 
-## 📁 Project Architecture & Folder Structure
+## 🌟 Key Features
+
+| Feature | Description |
+|---|---|
+| 🤖 **AI Fashion Stylist** | Intelligent styling consultant powered by Google Gemini API providing instant outfit suggestions, color palettes, aesthetics, and grooming advice. |
+| ✨ **AI Outfit Generator** | Dynamic 4-step outfit generator tailoring curated combinations to occasions, user gender, aesthetic preferences, and items in the user's wardrobe. |
+| 👗 **Digital Wardrobe** | Visual wardrobe inventory supporting categorisation (Tops, Pants, Dresses, Footwear, Jewelry, Accessories), custom item upload via Multer & GridFS, and persistent sync. |
+| 🛍️ **Luxury Shopping Catalog** | Multi-category designer apparel catalog with gender filtering, instant "Add to Wardrobe", and "Add to Cart" functionality. |
+| 💳 **Checkout & Payment** | Full checkout flow supporting UPI (GPay, PhonePe, Paytm), Cards, Net Banking, and Cash on Delivery with delivery address management. |
+| 🎯 **Occasion Collections** | 20+ occasions across Personal, Professional, Social, Travel, Festive, and Traditional themes. |
+| 💡 **Curated Recommendations** | 12 high-fashion editorial looks per gender with quick Save to Looks and detailed breakdowns. |
+| 💖 **Saved Looks** | Personal fashion lookbook with instant filtering, unsaving, and local-first fallback persistence. |
+| 👤 **User Profile & Styling DNA** | Profile completion tracking, body measurements, brand and aesthetic preferences, multi-address book, and secure password updates. |
+| ⚡ **One-Click Quick Login** | Instant demo login option with pre-configured profile credentials (`sahil@makemeready.in`) for instant testing. |
+
+---
+
+## 📁 Repository Structure
 
 ```
-make-me-ready/
-├── backend/
-│   ├── .env.example            # Backend environment template
-│   ├── index.js                # Server entrypoint & route mounting
+Make-Me-Ready/
+├── backend/                       # Express.js REST API
+│   ├── .env                       # Backend environment configuration (git-ignored)
+│   ├── .env.example               # Backend template with instructions
+│   ├── index.js                   # Application entrypoint & HTTP server
 │   ├── config/
-│   │   ├── db.js               # MongoDB connection & GridFS bucket provider
-│   │   └── env.js              # Environment variable parser & fallbacks
+│   │   ├── db.js                  # Mongoose connection & GridFS bucket setup
+│   │   └── env.js                 # Environment variables loader
 │   ├── controllers/
-│   │   ├── authController.js   # User registration, login & session handling
-│   │   ├── catalogController.js# Catalog, occasions, and looks API
-│   │   ├── userController.js   # Profile, favorites, saved looks & cart
-│   │   └── wardrobeController.js # Wardrobe item uploads & image handling
+│   │   ├── authController.js      # User registration, authentication & quick login
+│   │   ├── catalogController.js   # Occasions, looks, products & configuration
+│   │   ├── userController.js      # User state, profile, cart, favorites & looks
+│   │   └── wardrobeController.js  # Wardrobe item creation, streaming & deletion
 │   ├── middleware/
-│   │   ├── auth.js             # JWT authentication middleware
-│   │   ├── errorHandler.js     # Centralized API error handling
-│   │   └── upload.js           # Multer configuration for image uploads
+│   │   ├── auth.js                # JWT Bearer token authentication guard
+│   │   ├── errorHandler.js        # Centralized HTTP error handler
+│   │   └── upload.js              # Multer memory storage configuration
 │   ├── models/
-│   │   ├── User.js             # User & profile schema
-│   │   ├── WardrobeItem.js     # Wardrobe item schema
-│   │   ├── CatalogItem.js      # Dynamic catalog & configuration schema
-│   │   └── index.js            # Barrel export for models
+│   │   ├── User.js                # User accounts & profile schema
+│   │   ├── WardrobeItem.js        # User digital wardrobe schema
+│   │   ├── Product.js             # E-commerce catalog item schema
+│   │   ├── Look.js                # Curated outfit looks schema
+│   │   ├── Occasion.js            # Occasions schema
+│   │   ├── Config.js              # App configuration schema
+│   │   └── CatalogItem.js         # Polymorphic catalog compatibility schema
 │   ├── routes/
-│   │   ├── authRoutes.js       # /api/auth endpoints
-│   │   ├── catalogRoutes.js    # /api/catalog endpoints
-│   │   ├── userRoutes.js       # /api/state, /api/profile, etc.
-│   │   ├── wardrobeRoutes.js   # /api/wardrobe endpoints
-│   │   └── index.js            # Master API router
+│   │   ├── authRoutes.js          # /api/auth routes
+│   │   ├── catalogRoutes.js       # /api/catalog routes
+│   │   ├── userRoutes.js          # /api/state, /api/profile, /api/cart routes
+│   │   ├── wardrobeRoutes.js      # /api/wardrobe routes
+│   │   └── index.js               # Route mounting
 │   └── services/
-│       ├── imageService.js     # GridFS streaming with public image fallback
-│       └── seedService.js      # Automated catalog & image library seeding
-├── frontend/
-│   ├── index.html
-│   ├── vite.config.js
+│       ├── imageService.js        # GridFS stream & static fallback image handler
+│       └── seedService.js         # Automatic database catalog seeding
+│
+├── frontend/                      # React 18 + Vite Single Page Application
+│   ├── .env                       # Frontend environment configuration (git-ignored)
+│   ├── .env.example               # Frontend environment template
+│   ├── index.html                 # HTML shell
+│   ├── vite.config.js             # Vite configuration with /api & /img proxy
+│   ├── tailwind.config.js         # Design tokens & color system
 │   ├── public/
-│   │   └── img/                # High-resolution wardrobe & occasion imagery
+│   │   ├── wardrobe/              # High-resolution wardrobe piece assets
+│   │   ├── Recommendations/       # Curated editorial look assets
+│   │   ├── Occasions/             # Occasion artwork assets
+│   │   └── BackGround Images/     # Background images
 │   └── src/
-│       ├── App.jsx             # Route definitions & protected route guards
-│       ├── main.jsx            # Application entrypoint
-│       ├── index.css           # Tailwind & custom CSS design tokens
+│       ├── App.jsx                # Application routes & authentication guards
+│       ├── main.jsx               # React DOM entrypoint
+│       ├── store.jsx              # Re-export of StoreContext hook
+│       ├── index.css              # Custom styling & utilities
 │       ├── api/
-│       │   └── client.js       # Typed API client with token & status tracking
-│       ├── components/
-│       │   ├── cards/          # LookCard, OccCard, WardrobeCard
-│       │   ├── common/         # Hero, Modal, Tabs, Section, Logo, Icon, Heart
-│       │   └── layout/         # Sidebar, Topbar, Layout wrapper
+│       │   └── client.js          # API client wrapper with JWT token handling
 │       ├── context/
-│       │   └── StoreContext.jsx# Application context, auth state, local storage
+│       │   └── StoreContext.jsx   # Global application state (auth, cart, wardrobe)
 │       ├── data/
-│       │   └── constants.js    # Catalog, occasion & navigation definitions
-│       └── pages/
-│           ├── Auth.jsx        # Login & Multi-step registration
-│           ├── CreateOutfit.jsx# Interactive Outfit Builder
-│           ├── Home.jsx        # Dashboard & quick style actions
-│           ├── Occasions.jsx   # Curated occasion recommendations
-│           ├── Profile.jsx     # User style profile, measurements & preferences
-│           ├── Recommendations.jsx # AI-powered style recommendations
-│           ├── SavedLooks.jsx  # User saved outfits collection
-│           ├── Shopping.jsx    # Curated brand catalog & cart
-│           └── Wardrobe.jsx    # Digital wardrobe inventory & photo upload
-├── package.json
+│       │   ├── constants.js       # Navigation, image paths, brands & colors
+│       │   └── data.js            # Curated catalog dataset & helper functions
+│       ├── pages/
+│       │   ├── Auth.jsx           # Login, registration & quick login
+│       │   ├── Home.jsx           # Dashboard & quick actions
+│       │   ├── Wardrobe.jsx       # Digital wardrobe gallery & item uploader
+│       │   ├── CreateOutfit.jsx   # 4-step interactive outfit creator
+│       │   ├── Occasions.jsx      # Occasion browser
+│       │   ├── FashionAssistant.jsx # AI Stylist chat powered by Gemini
+│       │   ├── Recommendations.jsx# Curated fashion looks & save system
+│       │   ├── SavedLooks.jsx     # Saved looks collection
+│       │   ├── Shopping.jsx       # Shopping catalog & cart
+│       │   ├── Payment.jsx        # Order checkout, address & payment
+│       │   └── Profile.jsx        # Style profile, measurements & security
+│       └── ui.jsx                 # UI component exports (Layout, Hero, Modal, etc.)
+│
+├── package.json                   # Root monorepo scripts & dependencies
 └── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+## ⚙️ Environment Configuration
 
-### 1. Prerequisites
-- Node.js (v18+)
-- MongoDB (Local MongoDB instance or MongoDB Atlas cluster)
+### Backend (`backend/.env`)
 
-### 2. Environment Configuration
-Copy `.env.example` to `backend/.env`:
-```sh
-cp .env.example backend/.env
-```
-Ensure your database URI and JWT secret are configured:
+Create `backend/.env` with the following variables:
+
 ```env
+# MongoDB Connection String (Local or MongoDB Atlas)
 MONGODB_URI=mongodb://127.0.0.1:27017/make_me_ready
-JWT_SECRET=your-secret-key-at-least-32-characters-long
+
+# JWT Signing Secret (Minimum 32 characters recommended)
+JWT_SECRET=super_secret_make_me_ready_jwt_token_key_development_2026_xyz
+
+# Server Port
 PORT=3001
+
+# Allowed Client Origin (for CORS)
 CLIENT_ORIGIN=http://localhost:5173
 ```
 
-### 3. Installation
-```sh
+### Frontend (`frontend/.env`)
+
+Create `frontend/.env` with the following variables:
+
+```env
+# Backend API Base URL (Local Development)
+VITE_API_URL=http://localhost:3001
+
+# Google Gemini API Key (Get free key from https://aistudio.google.com/)
+VITE_GEMINI_KEY=your_gemini_api_key_here
+```
+
+> **Note:** `.env` files are excluded from Git by `.gitignore` to protect sensitive credentials. Template files (`.env.example` and `frontend/.env.example`) are provided for reference.
+
+---
+
+## 🚀 Quick Start Guide
+
+### 1. Prerequisites
+- **Node.js** (v18.0.0 or higher)
+- **npm** (v9.0.0 or higher)
+- **MongoDB** running locally on port 27017, or a [MongoDB Atlas](https://www.mongodb.com/atlas) connection URI
+
+### 2. Installation
+Install all dependencies from the root directory:
+```bash
 npm install
 ```
 
-### 4. Running the Project
-To run both backend API and Vite frontend simultaneously:
-```sh
+### 3. Run in Development Mode
+Start both frontend and backend concurrently:
+```bash
 npm run dev
 ```
-- **Frontend**: [http://localhost:5173](http://localhost:5173)
+
+- **Frontend App**: [http://localhost:5173](http://localhost:5173)
 - **Backend API**: [http://localhost:3001](http://localhost:3001)
 - **Health Check**: [http://localhost:3001/api/health](http://localhost:3001/api/health)
 
----
-
-## 🛠 Available Scripts
-
-- `npm run dev`: Starts concurrently both Express API and Vite Dev Server.
-- `npm run dev:client`: Runs Vite frontend dev server only.
-- `npm run dev:server`: Runs Express backend with live reload (`--watch`).
-- `npm run build`: Generates the production build of the frontend.
-- `npm start`: Runs the Express backend in production mode (serves frontend build).
+### 4. Demo Credentials
+You can log in instantly using the **Quick Login** button on the sign-in page, or enter:
+- **Email**: `sahil@makemeready.in`
+- **Password**: `Sahil@123`
 
 ---
 
-## 🔐 Authentication & Security
+## 🛠️ Available NPM Scripts
 
-- **JWT Sessions**: Secure Bearer tokens with 7-day expiration.
-- **Password Hashing**: Salted bcrypt hashing (12 rounds).
-- **Rate Limiting**: IP-based rate limiting on sensitive authentication routes.
-- **Security Headers**: Helmet integration with cross-origin resource policy support.
-- **File Validation**: Strict mimetype validation and file size limits for wardrobe uploads.
+| Command | Action |
+|---|---|
+| `npm run dev` | Runs backend (`node --watch`) and frontend (`vite`) concurrently |
+| `npm run dev:server` | Starts the Express server with live reload (`--watch`) |
+| `npm run dev:client` | Starts the Vite development server on port 5173 |
+| `npm run build` | Builds the production bundle of the frontend into `frontend/dist` |
+| `npm start` | Runs the production backend (serves API and compiled frontend) |
+| `npm run preview` | Previews the built frontend with Vite preview server |
+
+---
+
+## 🌐 API Reference
+
+### Authentication
+- `POST /api/auth/register` — Create a new account
+- `POST /api/auth/login` — Sign in and get JWT token
+- `POST /api/auth/quick-login` — Instant sign-in with demo account
+- `GET /api/auth/me` — Get authenticated user details
+
+### User & Preferences
+- `GET /api/state` — Retrieve user profile, wardrobe, cart, favorites, and saved looks
+- `PATCH /api/profile` — Update user profile details and style preferences
+- `POST /api/change-password` — Change account password
+- `PUT /api/favorites` — Toggle favorite item ID
+- `PUT /api/saved-looks` — Toggle saved look ID
+- `POST /api/cart` — Add product to cart
+- `DELETE /api/cart/:id` — Remove item from cart
+- `DELETE /api/cart` — Clear cart
+
+### Wardrobe
+- `GET /api/wardrobe` — List all wardrobe items for user
+- `POST /api/wardrobe` — Add new wardrobe item (supports file upload or catalog reference)
+- `DELETE /api/wardrobe/:id` — Delete wardrobe item
+
+### Catalog
+- `GET /api/catalog` — Get curated occasions, wardrobe pieces, looks, and products
+
+### Images & System
+- `GET /img/:filename` — Stream image from GridFS or local asset storage
+- `GET /api/health` — API and database connectivity status check
+
+---
+
+## 🔒 Security Practices
+
+- **Bcrypt Password Encryption**: Salted passwords hashed with 12 rounds.
+- **JWT Authentication**: State verified using signed JWTs with expiration.
+- **Rate Limiting**: Built-in rate limiting on authentication routes to mitigate brute force attacks.
+- **Helmet Headers**: Cross-origin and HTTP header hardening.
+- **CORS Protection**: Restricted to allowed client origins.
+- **Secret Protection**: `.gitignore` configured to prevent accidental leakage of environment credentials.
+
+---
+
+## 👨‍💻 Author
+
+Created by **Sahil Khot**  
+GitHub: [@sahil-khot](https://github.com/sahil-khot)  
+Project Repository: [sahil-khot/Make-Me-Ready](https://github.com/sahil-khot/Make-Me-Ready)

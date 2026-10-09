@@ -6,6 +6,8 @@ import {
   toggleFavorite,
   toggleSavedLook,
   addToCart,
+  removeFromCart,
+  clearCart,
   changePassword,
 } from "../controllers/userController.js";
 
@@ -19,5 +21,7 @@ router.post("/change-password", changePassword);
 router.put("/favorites", toggleFavorite);
 router.put("/saved-looks", toggleSavedLook);
 router.post("/cart", addToCart);
+router.delete("/cart/:id", removeFromCart);
+router.delete("/cart", clearCart);
 
 export default router;

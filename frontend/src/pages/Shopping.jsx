@@ -22,6 +22,7 @@ import {
   Watch,
   Gem,
   MoreHorizontal,
+  Loader2,
 } from "lucide-react";
 import { Section, Modal } from "../ui.jsx";
 import { useStore } from "../store.jsx";
@@ -45,6 +46,8 @@ const ProductCard = ({
   saved,
   onToggleSave,
   onQuickView,
+  isAddingCart,
+  isAddingWardrobe,
 }) => (
   <div
     onClick={() => onQuickView(p)}
@@ -118,6 +121,7 @@ const ProductCard = ({
       <div className="grid grid-cols-2 gap-2 pt-1">
         <button
           type="button"
+          disabled={isAddingCart}
           onClick={(e) => {
             e.stopPropagation();
             onAddToCart(p);
@@ -126,9 +130,14 @@ const ProductCard = ({
             inCart
               ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
               : "bg-white/[.08] hover:bg-white/[.15] text-white border border-white/10"
-          }`}
+          } ${isAddingCart ? "opacity-60 cursor-wait" : ""}`}
         >
-          {inCart ? (
+          {isAddingCart ? (
+            <>
+              <Loader2 size={12} className="animate-spin text-amber-400" />
+              <span>Adding...</span>
+            </>
+          ) : inCart ? (
             <>
               <Check size={12} className="stroke-[3]" />
               <span>Added to Cart</span>
@@ -143,6 +152,7 @@ const ProductCard = ({
 
         <button
           type="button"
+          disabled={isAddingWardrobe}
           onClick={(e) => {
             e.stopPropagation();
             onAddToWardrobe(p);
@@ -151,9 +161,14 @@ const ProductCard = ({
             inWardrobe
               ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
               : "bg-gradient-to-r from-[#f59e0b] to-[#d97706] hover:brightness-110 text-black shadow-sm shadow-amber-500/20"
-          }`}
+          } ${isAddingWardrobe ? "opacity-60 cursor-wait" : ""}`}
         >
-          {inWardrobe ? (
+          {isAddingWardrobe ? (
+            <>
+              <Loader2 size={12} className="animate-spin text-black" />
+              <span>Adding...</span>
+            </>
+          ) : inWardrobe ? (
             <>
               <Check size={12} className="stroke-[3]" />
               <span>In Wardrobe</span>
@@ -188,14 +203,14 @@ export default function Shopping() {
     menProducts = [],
   } = useStore();
 
-  const { brands = ["Gucci", "Prada", "Armani", "Zara", "Burberry", "Ralph Lauren"] } = catalog;
-
   // Gender filter preference: defaults to user gender preference
   const [genderFilter, setGenderFilter] = useState(() => (isFemale ? "Women" : "Men"));
   const [selectedCat, setSelectedCat] = useState("All");
   const [toast, setToast] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [quickProduct, setQuickProduct] = useState(null);
+  const [loadingCartIds, setLoadingCartIds] = useState({});
+  const [loadingWardrobeIds, setLoadingWardrobeIds] = useState({});
 
   const triggerToast = (msg) => {
     setToast(msg);
@@ -203,20 +218,30 @@ export default function Shopping() {
   };
 
   const handleAddToCart = async (p) => {
+    setLoadingCartIds((prev) => ({ ...prev, [p.id]: true }));
     try {
       await addCart(p);
       triggerToast(`✓ "${p.name}" added to cart`);
     } catch (err) {
       triggerToast(err.message || "Could not add to cart");
+    } finally {
+      setTimeout(() => {
+        setLoadingCartIds((prev) => ({ ...prev, [p.id]: false }));
+      }, 250);
     }
   };
 
   const handleAddToWardrobe = async (p) => {
+    setLoadingWardrobeIds((prev) => ({ ...prev, [p.id]: true }));
     try {
       await addToWardrobe(p);
       triggerToast(`✓ "${p.name}" added to your wardrobe!`);
     } catch (err) {
       triggerToast(err.message || "Could not add to wardrobe");
+    } finally {
+      setTimeout(() => {
+        setLoadingWardrobeIds((prev) => ({ ...prev, [p.id]: false }));
+      }, 250);
     }
   };
 
@@ -521,23 +546,6 @@ export default function Shopping() {
         </div>
       </Section>
 
-      {/* ── Top Designer Brands ── */}
-      <Section title="Featured Designer Brands">
-        <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-none">
-          {brands.map((b) => (
-            <div
-              key={b}
-              className="card shrink-0 px-6 h-14 grid place-items-center font-serif font-bold tracking-wide hover:border-amber-500/50 transition cursor-default bg-[#141414]"
-            >
-              {b}
-            </div>
-          ))}
-          <div className="grid place-items-center px-3 text-amber-400 shrink-0">
-            <ChevronRight />
-          </div>
-        </div>
-      </Section>
-
       {/* ── Featured Outfits Strip (Redesigned with generous breathing room & larger cards) ── */}
       {outfitStrip.length > 0 && (
         <Section
@@ -672,6 +680,8 @@ export default function Shopping() {
                 saved={isSaved(p.id)}
                 onToggleSave={handleToggleSave}
                 onQuickView={setQuickProduct}
+                isAddingCart={Boolean(loadingCartIds[p.id])}
+                isAddingWardrobe={Boolean(loadingWardrobeIds[p.id])}
               />
             ))}
           </div>

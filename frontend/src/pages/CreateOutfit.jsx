@@ -23,6 +23,7 @@ import {
   CheckCircle2,
   Watch,
   Smile,
+  Loader2,
 } from "lucide-react";
 import { Hero, Modal } from "../ui.jsx";
 import { useStore } from "../store.jsx";
@@ -439,11 +440,22 @@ export default function CreateOutfit() {
     return occasionList.find((o) => o.id === selectedOccId) || occasionList[0];
   }, [selectedOccId]);
 
-  // Step navigation helper
+  // Step navigation helper & loading state
+  const [stepLoading, setStepLoading] = useState(false);
+
   const goToStep = (newStep) => {
     setStep(newStep);
     setMaxStepReached((prev) => Math.max(prev, newStep));
     window.scrollTo({ top: 320, behavior: "smooth" });
+  };
+
+  const handleNextStep = (newStep) => {
+    if (stepLoading) return;
+    setStepLoading(true);
+    setTimeout(() => {
+      goToStep(newStep);
+      setStepLoading(false);
+    }, 280);
   };
 
   // Update occasion from external location state if provided
@@ -581,13 +593,19 @@ export default function CreateOutfit() {
   };
 
   // ── "Generate Another Set" Handler (Sets 1 -> 2 -> 3 -> 4) ──
+  const [isSetTransitioning, setIsSetTransitioning] = useState(false);
+
   const handleNextSet = () => {
-    if (currentSetIndex < 3 && sessionSets.length > currentSetIndex + 1) {
-      const nextIdx = currentSetIndex + 1;
-      setCurrentSetIndex(nextIdx);
-      setGeneratedLooks(sessionSets[nextIdx]);
-      triggerToast(`✨ Showing Set ${nextIdx + 1} of 4 (${(nextIdx + 1) * 3}/12 recommendations)`);
-      window.scrollTo({ top: 380, behavior: "smooth" });
+    if (currentSetIndex < 3 && sessionSets.length > currentSetIndex + 1 && !isSetTransitioning) {
+      setIsSetTransitioning(true);
+      setTimeout(() => {
+        const nextIdx = currentSetIndex + 1;
+        setCurrentSetIndex(nextIdx);
+        setGeneratedLooks(sessionSets[nextIdx]);
+        setIsSetTransitioning(false);
+        triggerToast(`✨ Showing Set ${nextIdx + 1} of 4 (${(nextIdx + 1) * 3}/12 recommendations)`);
+        window.scrollTo({ top: 380, behavior: "smooth" });
+      }, 350);
     }
   };
 
@@ -785,12 +803,21 @@ export default function CreateOutfit() {
               </button>
               <button
                 type="button"
-                disabled={!selectedOccId}
-                onClick={() => goToStep(2)}
-                className="btn-p h-10 px-6 text-xs text-black font-semibold flex items-center gap-2 shadow-md shadow-amber-500/20 disabled:opacity-40"
+                disabled={!selectedOccId || stepLoading}
+                onClick={() => handleNextStep(2)}
+                className="btn-p h-11 px-8 text-sm text-black font-bold flex items-center gap-2 shadow-lg shadow-amber-500/30 hover:scale-[1.02] transition-transform disabled:opacity-40 cursor-pointer"
               >
-                <span>Continue to Preferences</span>
-                <ArrowRight size={14} />
+                {stepLoading ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin text-black" />
+                    <span>Loading...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Next</span>
+                    <ArrowRight size={16} />
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -872,12 +899,21 @@ export default function CreateOutfit() {
           <div className="pt-4 flex justify-end">
             <button
               type="button"
-              disabled={!selectedOccId}
-              onClick={() => goToStep(2)}
-              className="btn-p h-12 px-8 text-sm text-black font-semibold flex items-center gap-2 shadow-lg shadow-amber-500/25 disabled:opacity-40 cursor-pointer"
+              disabled={!selectedOccId || stepLoading}
+              onClick={() => handleNextStep(2)}
+              className="btn-p h-13 px-10 text-base text-black font-bold flex items-center gap-2.5 shadow-xl shadow-amber-500/35 hover:scale-[1.02] transition-transform disabled:opacity-40 cursor-pointer"
             >
-              <span>Continue to Preferences</span>
-              <ArrowRight size={16} />
+              {stepLoading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin text-black" />
+                  <span>Loading...</span>
+                </>
+              ) : (
+                <>
+                  <span>Next</span>
+                  <ArrowRight size={18} />
+                </>
+              )}
             </button>
           </div>
         </section>
@@ -1133,11 +1169,21 @@ export default function CreateOutfit() {
             </button>
             <button
               type="button"
-              onClick={() => goToStep(3)}
-              className="btn-p h-11 px-7 text-xs text-black font-semibold flex items-center gap-2 shadow-lg shadow-amber-500/25 cursor-pointer"
+              disabled={stepLoading}
+              onClick={() => handleNextStep(3)}
+              className="btn-p h-11 px-7 text-xs text-black font-semibold flex items-center gap-2 shadow-lg shadow-amber-500/25 cursor-pointer disabled:opacity-50"
             >
-              <span>Continue to Wardrobe</span>
-              <ArrowRight size={14} />
+              {stepLoading ? (
+                <>
+                  <Loader2 size={14} className="animate-spin text-black" />
+                  <span>Loading...</span>
+                </>
+              ) : (
+                <>
+                  <span>Next</span>
+                  <ArrowRight size={14} />
+                </>
+              )}
             </button>
           </div>
         </section>
@@ -1383,11 +1429,21 @@ export default function CreateOutfit() {
                   {currentSetIndex < 3 ? (
                     <button
                       type="button"
+                      disabled={isSetTransitioning}
                       onClick={handleNextSet}
-                      className="btn-p h-10 px-4 text-xs text-black font-semibold flex items-center gap-1.5 shadow-md shadow-amber-500/20"
+                      className="btn-p h-10 px-4 text-xs text-black font-semibold flex items-center gap-1.5 shadow-md shadow-amber-500/20 disabled:opacity-60"
                     >
-                      <Sparkles size={13} />
-                      <span>Generate Another Set ({currentSetIndex + 2}/4)</span>
+                      {isSetTransitioning ? (
+                        <>
+                          <Loader2 size={13} className="animate-spin text-black" />
+                          <span>Loading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles size={13} />
+                          <span>Generate Another Set ({currentSetIndex + 2}/4)</span>
+                        </>
+                      )}
                     </button>
                   ) : (
                     <span className="text-xs font-semibold px-3 py-2 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
@@ -1399,10 +1455,10 @@ export default function CreateOutfit() {
                     type="button"
                     onClick={generateOutfits}
                     className="btn-s h-10 px-4 text-xs text-stone-300 hover:text-white flex items-center gap-1.5"
-                    title="Start a new session with 12 fresh shuffled recommendations"
+                    title="Generate more outfits"
                   >
                     <RefreshCw size={13} />
-                    <span>New Shuffled Session</span>
+                    <span>Generate More Outfits</span>
                   </button>
 
                   <button
@@ -1575,11 +1631,21 @@ export default function CreateOutfit() {
                   {currentSetIndex < 3 ? (
                     <button
                       type="button"
+                      disabled={isSetTransitioning}
                       onClick={handleNextSet}
-                      className="btn-p h-11 px-5 text-xs text-black font-semibold flex items-center gap-2 shadow-md shadow-amber-500/20"
+                      className="btn-p h-11 px-5 text-xs text-black font-semibold flex items-center gap-2 shadow-md shadow-amber-500/20 disabled:opacity-60"
                     >
-                      <Sparkles size={14} />
-                      <span>Generate Another Set ({currentSetIndex + 2} of 4)</span>
+                      {isSetTransitioning ? (
+                        <>
+                          <Loader2 size={14} className="animate-spin text-black" />
+                          <span>Loading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles size={14} />
+                          <span>Generate Another Set ({currentSetIndex + 2} of 4)</span>
+                        </>
+                      )}
                     </button>
                   ) : (
                     <div className="flex flex-wrap items-center gap-2.5">
@@ -1592,7 +1658,7 @@ export default function CreateOutfit() {
                         className="btn-p h-11 px-5 text-xs text-black font-semibold flex items-center gap-1.5 shadow-md shadow-amber-500/20"
                       >
                         <RefreshCw size={13} />
-                        <span>Start New Session</span>
+                        <span>Generate More Outfits</span>
                       </button>
                     </div>
                   )}

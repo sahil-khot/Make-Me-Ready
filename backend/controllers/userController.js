@@ -1,7 +1,15 @@
 import bcrypt from "bcryptjs";
-import { User, WardrobeItem, CatalogItem } from "../models/index.js";
+import { User, WardrobeItem, CatalogItem, Product } from "../models/index.js";
 import { publicUser } from "./authController.js";
 import { products } from "../../frontend/src/data.js";
+
+const formatImageUrl = (img) => {
+  if (!img) return "/img/white-shirt.jpg";
+  if (img.startsWith("http://") || img.startsWith("https://") || img.startsWith("/")) {
+    return img;
+  }
+  return `/img/${encodeURIComponent(img)}`;
+};
 
 export const getUserState = async (req, res, next) => {
   try {
@@ -29,7 +37,7 @@ export const getUserState = async (req, res, next) => {
         name: item.name,
         cat: item.cat,
         tag: item.tag,
-        img: `/img/${encodeURIComponent(item.imageFile)}`,
+        img: formatImageUrl(item.imageFile),
       })),
     });
   } catch (error) {
@@ -158,17 +166,22 @@ export const addToCart = async (req, res, next) => {
 
     let productData = null;
 
-    // Try finding in DB catalog
-    const catalogItem = await CatalogItem.findOne({
-      type: "products",
-      key: productId,
-    }).lean();
-
-    if (catalogItem) {
-      productData = catalogItem.data;
+    // Try finding in dedicated Product collection first
+    const prodDoc = await Product.findOne({ id: productId }).lean();
+    if (prodDoc) {
+      productData = prodDoc;
     } else {
-      // Fallback search in products from data.js
-      productData = products.find((p) => p.id === productId);
+      const catalogItem = await CatalogItem.findOne({
+        type: "products",
+        key: productId,
+      }).lean();
+
+      if (catalogItem) {
+        productData = catalogItem.data;
+      } else {
+        // Fallback search in products from data.js
+        productData = products.find((p) => p.id === productId);
+      }
     }
 
     if (!productData) {
@@ -181,13 +194,39 @@ export const addToCart = async (req, res, next) => {
     }
 
     user.cart = user.cart || [];
-    user.cart.push({
-      productId,
-      name: productData.name,
-      price: productData.price,
-      image: productData.img,
-    });
+    const alreadyExists = user.cart.some((c) => c.productId === productId);
+    if (!alreadyExists) {
+      user.cart.push({
+        productId,
+        name: productData.name,
+        price: productData.price,
+        image: productData.img,
+      });
+      await user.save();
+    }
 
+    return res.json({
+      cart: user.cart.map((line) => ({
+        id: line.productId,
+        name: line.name,
+        price: line.price,
+        img: line.image,
+      })),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeFromCart = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(req.auth.sub);
+    if (!user) {
+      return res.status(404).json({ message: "Account not found." });
+    }
+
+    user.cart = (user.cart || []).filter((item) => item.productId !== id);
     await user.save();
 
     return res.json({
@@ -198,6 +237,22 @@ export const addToCart = async (req, res, next) => {
         img: line.image,
       })),
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const clearCart = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.auth.sub);
+    if (!user) {
+      return res.status(404).json({ message: "Account not found." });
+    }
+
+    user.cart = [];
+    await user.save();
+
+    return res.json({ cart: [] });
   } catch (error) {
     next(error);
   }
