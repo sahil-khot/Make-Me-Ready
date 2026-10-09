@@ -17,10 +17,10 @@ import { IMG } from "../data/constants.js";
 
 // ─── Gemini Models & Fallback ────────────────────────────────────────────────
 const CANDIDATE_MODELS = [
-  "gemini-2.5-flash",
-  "gemini-2.0-flash",
-  "gemini-1.5-flash",
-  "gemini-2.5-flash-lite",
+  "gemini-3.5-flash-lite",
+  "gemini-3.5-flash",
+  "gemini-3.8-flash",
+  "gemini-flash-lite-latest",
 ];
 
 const SYSTEM_PROMPT = `You are the personal Fashion Assistant for "Make Me Ready", an AI-powered styling and wardrobe management platform.
@@ -40,9 +40,28 @@ Formatting:
 - Keep responses readable, friendly, and structured.`;
 
 async function askGemini(history, newMessage) {
+  // 1. Try secure backend proxy first (keeps API key secure on server)
+  try {
+    const backendRes = await fetch("/api/assistant/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: newMessage, history }),
+    });
+
+    if (backendRes.ok) {
+      const data = await backendRes.json();
+      if (data.reply) return data.reply;
+    }
+  } catch (backendErr) {
+    console.warn("Backend assistant route unavailable, falling back to direct client API:", backendErr);
+  }
+
+  // 2. Direct client fallback using VITE_GEMINI_KEY if configured
   const apiKey = import.meta.env.VITE_GEMINI_KEY;
   if (!apiKey) {
-    throw new Error("Gemini API key is not configured.");
+    throw new Error(
+      "Gemini API key is not configured. Please set GEMINI_API_KEY in your environment."
+    );
   }
 
   const contents = [
@@ -96,6 +115,10 @@ async function askGemini(history, newMessage) {
     }
   }
 
+  // User-friendly error message format
+  if (lastError && lastError.toLowerCase().includes("quota")) {
+    throw new Error("Gemini API rate limit reached. Please wait a few moments and try again.");
+  }
   throw new Error(lastError || "Could not connect to Gemini AI. Please try again.");
 }
 

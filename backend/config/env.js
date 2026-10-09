@@ -24,4 +24,7 @@ export const env = {
   CLIENT_ORIGIN: (process.env.CLIENT_ORIGIN || "http://localhost:5173")
     .split(",")
     .map((item) => item.trim()),
+  GEMINI_API_KEY:
+    process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_KEY || "",
+  GEMINI_MODEL: process.env.GEMINI_MODEL || "gemini-3.5-flash-lite",
 };
