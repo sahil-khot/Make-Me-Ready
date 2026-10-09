@@ -30,7 +30,7 @@ import { useStore } from "../store.jsx";
 import { IMG, occasionList } from "../data/constants.js";
 
 // Stepper Component
-const Stepper = ({ currentStep, onStepClick, maxStepReached }) => {
+const Stepper = ({ currentStep, onStepClick, maxStepReached, isGenerated }) => {
   const steps = [
     { num: 1, label: "Occasion" },
     { num: 2, label: "Preferences" },
@@ -42,7 +42,7 @@ const Stepper = ({ currentStep, onStepClick, maxStepReached }) => {
     <div className="flex items-center justify-between gap-2 p-3 sm:p-4 rounded-2xl bg-[#141414] border border-white/[.08]">
       {steps.map((s, idx) => {
         const isCurrent = currentStep === s.num;
-        const isCompleted = currentStep > s.num;
+        const isCompleted = currentStep > s.num || (s.num === 4 && Boolean(isGenerated));
         const canClick = s.num <= maxStepReached;
 
         return (
@@ -57,10 +57,10 @@ const Stepper = ({ currentStep, onStepClick, maxStepReached }) => {
             >
               <span
                 className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full text-xs font-bold grid place-items-center transition ${
-                  isCurrent
+                  isCompleted
+                    ? "bg-emerald-500 text-black shadow-md shadow-emerald-500/30 ring-2 ring-emerald-500/50"
+                    : isCurrent
                     ? "bg-amber-500 text-black shadow-md shadow-amber-500/25 ring-2 ring-amber-500/40"
-                    : isCompleted
-                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/50"
                     : "bg-white/5 border border-white/10 text-stone-400"
                 }`}
               >
@@ -69,20 +69,22 @@ const Stepper = ({ currentStep, onStepClick, maxStepReached }) => {
               <div className="hidden sm:block">
                 <span
                   className={`block text-xs font-semibold leading-tight ${
-                    isCurrent ? "text-amber-400" : isCompleted ? "text-white" : "text-stone-400"
+                    isCompleted ? "text-emerald-400" : isCurrent ? "text-amber-400" : "text-stone-400"
                   }`}
                 >
                   {s.label}
                 </span>
-                <span className="text-[10px] text-stone-400">
-                  {isCurrent ? "In Progress" : isCompleted ? "Completed" : `Step ${s.num}`}
+                <span className={`text-[10px] ${isCompleted ? "text-emerald-400/90 font-medium" : "text-stone-400"}`}>
+                  {isCompleted ? "Generated" : isCurrent ? "In Progress" : `Step ${s.num}`}
                 </span>
               </div>
             </button>
             {idx < steps.length - 1 && (
               <div
                 className={`flex-1 h-0.5 mx-1 sm:mx-2 rounded-full transition-colors ${
-                  currentStep > s.num ? "bg-emerald-500/50" : "bg-white/[.08]"
+                  currentStep > s.num || (s.num === 3 && Boolean(isGenerated))
+                    ? "bg-emerald-500/50"
+                    : "bg-white/[.08]"
                 }`}
               />
             )}
@@ -773,7 +775,12 @@ export default function CreateOutfit() {
       </Hero>
 
       {/* ── 4-Step Visual Stepper Tracker ── */}
-      <Stepper currentStep={step} onStepClick={goToStep} maxStepReached={maxStepReached} />
+      <Stepper
+        currentStep={step}
+        onStepClick={goToStep}
+        maxStepReached={maxStepReached}
+        isGenerated={Boolean(step === 4 && generatedLooks.length > 0 && !isGenerating)}
+      />
 
       {/* ════════════════════════════════════════════════════════════════════════════
           STEP 1: SELECT OCCASION
@@ -1210,9 +1217,9 @@ export default function CreateOutfit() {
             <button
               type="button"
               onClick={generateOutfits}
-              className="btn-p h-11 px-7 text-xs text-black font-semibold flex items-center gap-2 shadow-lg shadow-amber-500/25"
+              className="btn-p h-13 sm:h-14 px-8 sm:px-10 text-sm sm:text-base text-black font-bold flex items-center gap-2.5 shadow-xl shadow-amber-500/30 hover:scale-[1.03] transition-all cursor-pointer"
             >
-              <Sparkles size={14} />
+              <Sparkles size={18} />
               <span>Generate My Outfit</span>
             </button>
           </div>
@@ -1348,18 +1355,10 @@ export default function CreateOutfit() {
             <button
               type="button"
               onClick={() => goToStep(2)}
-              className="btn-s h-11 px-5 text-xs text-stone-300 flex items-center gap-2"
+              className="btn-s h-11 px-5 text-xs text-stone-300 flex items-center gap-2 cursor-pointer"
             >
               <ArrowLeft size={14} />
               <span>Back to Preferences</span>
-            </button>
-            <button
-              type="button"
-              onClick={generateOutfits}
-              className="btn-p h-12 px-8 text-sm text-black font-semibold flex items-center gap-2 shadow-lg shadow-amber-500/25 cursor-pointer"
-            >
-              <Sparkles size={16} />
-              <span>Generate My Outfit</span>
             </button>
           </div>
         </section>

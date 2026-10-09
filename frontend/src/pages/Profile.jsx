@@ -33,6 +33,7 @@ import { useStore } from "../store.jsx";
 import {
   IMG,
   getImg,
+  getUserAvatar,
   colors as defaultColorList,
   styles as defaultStylesList,
   brands as defaultBrandsList,
@@ -216,7 +217,6 @@ const AVATAR_PRESETS = [
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&h=300&q=80",
   "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&h=300&q=80",
   "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&h=300&q=80",
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&h=300&q=80",
 ];
 
 const BODY_TYPES = ["Slim", "Athletic", "Average", "Muscular", "Plus Size"];
@@ -870,7 +870,7 @@ export default function Profile() {
               title="Click to change profile picture"
             >
               <img
-                src={user?.avatar || IMG.avatar}
+                src={getUserAvatar(user)}
                 alt={name || "User Avatar"}
                 className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-acc shadow-[0_0_25px_rgba(245,158,11,0.25)] group-hover:brightness-90 transition"
               />
@@ -1371,7 +1371,7 @@ export default function Profile() {
             {/* Profile Picture Bar */}
             <div className="flex items-center gap-5 p-4 rounded-2xl bg-white/[.02] border border-line">
               <img
-                src={user?.avatar || IMG.avatar}
+                src={getUserAvatar(user)}
                 alt="Profile avatar"
                 className="w-16 h-16 rounded-full object-cover border-2 border-acc"
               />
@@ -2378,7 +2378,7 @@ export default function Profile() {
           <div className="text-center">
             <div className="relative inline-block">
               <img
-                src={user?.avatar || IMG.avatar}
+                src={getUserAvatar(user)}
                 alt="Current profile"
                 className="w-28 h-28 rounded-full object-cover border-2 border-acc shadow-lg mx-auto"
               />

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { LogOut, ArrowLeftRight, Pin, PinOff } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Logo } from "../common/Logo.jsx";
 import { Icon } from "../common/Icon.jsx";
 import { useStore } from "../../context/StoreContext.jsx";
@@ -99,44 +99,9 @@ export function Sidebar({ open, close }) {
             "radial-gradient(420px 320px at 0% 100%, rgba(216, 137, 36, 0.22), transparent)",
         }}
       >
-        {/* Header with Logo, Pin and Shift Buttons */}
-        <div className="h-[72px] px-4 sm:px-5 flex items-center justify-between border-b border-white/[.08] gap-2 shrink-0">
+        {/* Header with Logo */}
+        <div className="h-[72px] px-4 sm:px-5 flex items-center border-b border-white/[.08] shrink-0">
           <Logo size={32} />
-          <div className="flex items-center gap-1.5 shrink-0">
-            {/* Pin / Unpin button */}
-            <button
-              type="button"
-              onClick={toggleSidebarPinned}
-              title={
-                sidebarPinned
-                  ? "Unpin sidebar (make detachable / floating)"
-                  : "Pin sidebar (dock to edge)"
-              }
-              aria-label={sidebarPinned ? "Unpin sidebar" : "Pin sidebar"}
-              className={`w-8 h-8 rounded-xl grid place-items-center transition border text-sm font-semibold cursor-pointer select-none ${
-                sidebarPinned
-                  ? "text-amber-400 bg-amber-500/10 border-amber-500/30 hover:bg-amber-500/20"
-                  : "text-stone-400 hover:text-white bg-white/[.04] border-white/[.08] hover:border-white/20"
-              }`}
-            >
-              {sidebarPinned ? (
-                <Pin size={15} className="rotate-45" />
-              ) : (
-                <PinOff size={15} />
-              )}
-            </button>
-
-            {/* Position toggle button */}
-            <button
-              type="button"
-              onClick={toggleSidebarPos}
-              title={isRight ? "Move sidebar to left" : "Move sidebar to right"}
-              aria-label="Toggle sidebar position"
-              className="w-8 h-8 rounded-xl grid place-items-center text-stone-400 hover:text-amber-400 hover:bg-white/[.06] transition border border-white/[.08] hover:border-amber-500/40 text-sm font-semibold cursor-pointer select-none"
-            >
-              <ArrowLeftRight size={14} />
-            </button>
-          </div>
         </div>
 
         {/* Navigation Items */}

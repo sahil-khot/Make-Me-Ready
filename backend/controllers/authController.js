@@ -128,9 +128,12 @@ export const quickLogin = async (req, res, next) => {
           name: "Sahil Khot",
           city: "Mumbai",
           gender: "Male",
-          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&h=300&q=80",
+          avatar: "",
         },
       });
+    } else if (user.profile?.avatar?.includes("534528741775-53994a69daeb")) {
+      user.profile.avatar = "";
+      await user.save();
     }
 
     return res.json(makeSession(user));

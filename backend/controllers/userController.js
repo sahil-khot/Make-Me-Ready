@@ -18,6 +18,11 @@ export const getUserState = async (req, res, next) => {
       return res.status(401).json({ message: "Account not found." });
     }
 
+    if (user.profile?.avatar?.includes("534528741775-53994a69daeb")) {
+      user.profile.avatar = "";
+      await user.save();
+    }
+
     const wardrobe = await WardrobeItem.find({ userId: user._id })
       .sort({ createdAt: -1 })
       .lean();

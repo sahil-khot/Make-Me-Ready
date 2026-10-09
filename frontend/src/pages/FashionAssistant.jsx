@@ -505,7 +505,7 @@ export default function FashionAssistant() {
                     <div className="max-w-[80%] lg:max-w-[70%] bg-[#362414] border border-amber-600/30 rounded-2xl rounded-tr-sm px-5 py-3.5 text-[15px] text-white leading-relaxed shadow-md">
                       {msg.content}
                     </div>
-                    {user?.avatar ? (
+                    {user?.avatar && !user.avatar.includes("534528741775-53994a69daeb") ? (
                       <img
                         src={user.avatar}
                         alt="User"

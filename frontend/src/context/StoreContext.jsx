@@ -53,7 +53,16 @@ const initialCatalog = {
 
 export function Store({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem("mmr_token"));
-  const [user, setUser] = useState(() => readCache("makeMeReadyUser", null));
+  const [user, setUser] = useState(() => {
+    const cached = readCache("makeMeReadyUser", null);
+    if (cached && cached.avatar && cached.avatar.includes("534528741775-53994a69daeb")) {
+      cached.avatar = "";
+      try {
+        localStorage.setItem("makeMeReadyUser", JSON.stringify(cached));
+      } catch {}
+    }
+    return cached;
+  });
   const [favs, setFavs] = useState(() => readCache("mmr_favs", []));
   const [saved, setSaved] = useState(() => readCache("mmr_saved", []));
   const [cart, setCart] = useState(() => readCache("mmr_cart", []));
@@ -199,7 +208,7 @@ export function Store({ children }) {
         email: "sahil@makemeready.in",
         city: "Mumbai",
         gender: "Male",
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&h=300&q=80",
+        avatar: "",
       };
       const demoSession = {
         token: "demo_token_" + Date.now(),

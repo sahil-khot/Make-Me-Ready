@@ -151,9 +151,20 @@ export const IMG = {
   'hero-recommendations':   '/BackGround Images/Recommendations BackGround Image.png',
   'hero-saved-looks':       '/BackGround Images/Saved Looks BG.png',
   'hero-shopping':          '/BackGround Images/Shopping BackGround Image.png',
+  'hero-login':             '/BackGround Images/Login BG.png',
   'auth-login':             '/BackGround Images/Login BG.png',
   'auth-signup':            '/BackGround Images/Create Account BG.png',
-  'avatar':                 U('photo-1534528741775-53994a69daeb', 400, 400),
+  'avatar':                 `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><rect width='128' height='128' fill='%23202c33'/><circle cx='64' cy='46' r='22' fill='%238696a0'/><path d='M64 78 C 42 78 26 94 22 116 C 34 124 48 128 64 128 C 80 128 94 124 106 116 C 102 94 86 78 64 78 Z' fill='%238696a0'/></svg>`,
+};
+
+export const DEFAULT_AVATAR = IMG.avatar;
+
+export const getUserAvatar = (user) => {
+  const av = user?.avatar || (typeof user === 'string' ? user : '');
+  if (!av || av.includes('photo-1534528741775-53994a69daeb')) {
+    return DEFAULT_AVATAR;
+  }
+  return av;
 };
 
 /** Get a catalog image URL by key, with a safe fallback */

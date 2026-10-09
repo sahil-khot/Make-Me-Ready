@@ -200,9 +200,12 @@ export async function seedCatalog() {
           name: "Sahil Khot",
           city: "Mumbai",
           gender: "Male",
-          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&h=300&q=80",
+          avatar: "",
         },
       });
+    } else if (existingDemoUser.profile?.avatar?.includes("534528741775-53994a69daeb")) {
+      existingDemoUser.profile.avatar = "";
+      await existingDemoUser.save();
     }
 
     console.log(
